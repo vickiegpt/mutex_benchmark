@@ -45,7 +45,7 @@ public:
         }
     }
     void unlock(size_t thread_id) override {
-        std::atomic_thread_fence(std::memory_order_seq_cst);
+        Fence();
         number[thread_id] = 0;
     }
     void destroy() override {

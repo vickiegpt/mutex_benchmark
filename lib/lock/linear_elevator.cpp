@@ -40,6 +40,7 @@ public:
         volatile bool *given_lock = get_thread_n_given_lock(thread_id);
         thread_n_is_waiting[thread_id] = true;
         if (designated_waker_lock.trylock(thread_id)) {
+            Fence();
             // This thread will wake if
             // a) the unlocker makes a mistake and doesn't realize anyone is waiting or
             // b) (more likely) if this thread is the first to get to the lock
@@ -66,6 +67,7 @@ public:
                 thread_n_is_waiting[thread_id] = false;
                 Fence();
                 *get_thread_n_given_lock(next_successor_index) = true;
+                Fence();
                 return; // Successfully passed off to successor
             }
         }

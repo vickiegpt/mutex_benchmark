@@ -30,7 +30,7 @@ public:
         Fence();
         size_t my_bakery_number = 1;
         ThreadData *other_thread;
-        for (size_t i = 0; i < num_threads; i++) {
+        for (size_t i = 0; i < num_threads; i+=1) {
             other_thread = get(i);
             if (other_thread->number + 1 > my_bakery_number) {
                 my_bakery_number = other_thread->number + 1;

@@ -114,6 +114,7 @@ int max_contention_bench(
                     }
                     (*counter)++;
                     *last = i;
+                    Fence();
                     busy_sleep(rand() % max_critical_delay_iterations);
 
                     // Unlock

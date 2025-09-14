@@ -138,8 +138,7 @@ public:
             flag[dequeue()] = true;
         } else {
             flag[num_threads] = true;            
-
-            std::atomic_thread_fence(std::memory_order_seq_cst);
+            Fence();
         }
     }
 

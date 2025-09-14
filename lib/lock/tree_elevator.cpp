@@ -110,7 +110,7 @@ public:
         // Contention loop
         if (designated_waker_lock.trylock(thread_id)) {
             // Fence included in algorithm. TODO test
-            FENCE();
+            Fence();
             volatile bool *designated_waker_flag = get_flag(num_threads);
             while (*my_flag == false && *designated_waker_flag == false) {
                 // spin_delay_exponential(); // Wait (TODO test spin_delay_exp here)
@@ -140,10 +140,9 @@ public:
         if (!queue_empty()) {
             *get_flag(dequeue()) = true;
         } else {
-            *get_flag(num_threads) = true;            
-
-            std::atomic_thread_fence(std::memory_order_seq_cst);
-        }
+            *get_flag(num_threads) = true; 
+            Fence();
+        }   
     }
 
     void destroy() override {

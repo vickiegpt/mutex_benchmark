@@ -34,9 +34,9 @@ public:
         this->_cxl_region = _cxl_region;
         size_t offset = 0;
         offset += std::hardware_destructive_interference_size * (num_threads + 1);
-        this->x = (volatile size_t*)&_cxl_region[offset];
+        this->x = (volatile std::atomic<size_t>*)&_cxl_region[offset];
         offset += sizeof(size_t);
-        this->y = (volatile size_t*)&_cxl_region[offset];
+        this->y = (volatile std::atomic<size_t>*)&_cxl_region[offset];
         offset += sizeof(size_t);
         this->fast = (volatile bool*)&_cxl_region[offset];
         *fast = false;
@@ -74,9 +74,9 @@ public:
     
     bool trylock(size_t thread_id){
         volatile bool *my_b = get_b(thread_id);
+        *my_b=true; //going for the lock
         *x = thread_id+1; //first confirmation
         Fence();
-
         if (*y!=0){
             *my_b = false; //no longer going for the lock
             return false; //wait for whoever was trying to get it to get it
@@ -88,17 +88,19 @@ public:
         if (*x!=thread_id+1){ //someone started going for the lock
             *my_b = false; //not longer going for the lock
             Fence();
-            for (int j=0; j<(int)num_threads; j++){while(*get_b(j)){}} //wait for contention to go down
+            for (int j=0; j<(int)num_threads; j+=1){while(*get_b(j)){}} //wait for contention to go down
 
 
             if (*y!=thread_id+1){ //while waiting, someone messed with second confirmation
                 return false; //wait for the person to unlock
             }
         }
-        bool leader = false;
+        bool leader;
         if (!*fast){
             leader=true;
             *fast=leader;
+        } else {
+            leader=false;
         }
         *y=0;
         *my_b=false;
@@ -121,8 +123,8 @@ public:
     }
 private:
     volatile char *_cxl_region;
-    volatile size_t *x;
-    volatile size_t *y;
+    volatile std::atomic<size_t>  *x;
+    volatile std::atomic<size_t> *y;
     volatile bool *fast;
 
     size_t num_threads;

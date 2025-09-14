@@ -32,7 +32,7 @@ public:
 
     bool trylock(size_t thread_id) override {
         in_contention[thread_id] = true;
-        std::atomic_thread_fence(std::memory_order_seq_cst);
+        Fence();
         for (size_t higher_priority_thread = 0; higher_priority_thread < thread_id; higher_priority_thread++) {
             if (in_contention[higher_priority_thread]) {
                 in_contention[thread_id] = false;
