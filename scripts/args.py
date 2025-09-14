@@ -110,7 +110,13 @@ def init_args():
         if ('base' in args.set):
             Constants.mutex_names.extend(Constants.Defaults.BASE_SET)
         if ('cxl' in args.set):
-            Constants.mutex_names.extend(Constants.Defaults.CXL_MUTEXES)
+            Constants.mutex_names.extend(Constants.Defaults.CXL_SET)
+        if ('software_cxl' in args.set):
+            Constants.mutex_names.extend(Constants.Defaults.SOFTWARE_CXL_SET)
+        if ('hardware_cxl' in args.set):
+            Constants.mutex_names.extend(Constants.Defaults.HARDWARE_CXL_SET)
+        if ('combined_cxl' in args.set):
+            Constants.mutex_names.extend(Constants.Defaults.COMBINED_CXL_SET)
 
     elif args.include:
         Constants.mutex_names = args.include

@@ -117,7 +117,6 @@ class Constants:
 
 
 
-
         # note: CLH technically works but it makes one allocation per
         # lock operation, so it is too slow.
         # peterson is also probaby really really slow
@@ -142,6 +141,26 @@ class Constants:
             "ticket",
         ]
 
+        SOFTWARE_CXL_SET = [
+            "bakery_nonatomic",
+            "lamport",
+            "linear_bl_elevator",
+            "linear_lamport_elevator",
+            "tree_bl_elevator",
+            "tree_lamport_elevator",
+        ]
+
+        HARDWARE_CXL_SET = [
+            "spin",
+            "exp_spin",
+            "hopscotch",
+            "ticket",
+            "mcs",
+            "hbo" # NUMA
+        ]
+
+        COMBINED_CXL_SET = SOFTWARE_CXL_SET + HARDWARE_CXL_SET
+
         CONDITIONAL_COMPILATION_MUTEXES = [
             "nsync",
             "boost",
@@ -158,7 +177,7 @@ class Constants:
         LOGS_FOLDER          = "./data/logs"
         EXECUTABLE           = f"./build/apps/{EXECUTABLE_NAME}/{EXECUTABLE_NAME}"
         MULTITHREADED        = False
-        THREAD_LEVEL         = True
+        THREAD_LEVEL         = False
         SCATTER              = False
         LOG                  = logging.INFO
         SKIP                 = 1
