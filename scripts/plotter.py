@@ -3,6 +3,7 @@ import numpy as np # pyright: ignore[reportMissingImports]
 import matplotlib.pyplot as plt # pyright: ignore[reportMissingModuleSource]
 import seaborn as sns # pyright: ignore[reportMissingModuleSource]
 import itertools
+import os
 
 from math import ceil
 
@@ -48,6 +49,11 @@ def get_savefig_filepath():
     else:
         extension += "_local"
     triplet = f"{Constants.bench_n_threads}_{Constants.bench_n_seconds}_{Constants.n_program_iterations}"
+
+    figs_dir = os.path.join(Constants.data_folder, "..", "figs")
+    if not os.path.exists(figs_dir):
+        os.makedirs(figs_dir, exist_ok=True)
+
     name_base = f"{Constants.data_folder}/../figs/{formatted_digits}_{triplet}-{extension}"
     n = 0
     while isfile(f"{name_base}{n}.png"):
