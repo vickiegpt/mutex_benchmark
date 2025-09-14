@@ -156,7 +156,7 @@ class Constants:
             "hopscotch",
             "ticket",
             "mcs",
-            "hbo" # NUMA
+            #"hbo" # NUMA
         ]
 
         COMBINED_CXL_SET = SOFTWARE_CXL_SET + HARDWARE_CXL_SET
