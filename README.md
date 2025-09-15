@@ -15,8 +15,6 @@ pip install matplotlib pandas
 
 ## Experiment Running
 
-### Max Benchmark
-
 Series of commands to run experiments
 
 This command runs each iteration for 5 seconds with an expected total of 8 threads 3 times (8 5 3)
@@ -42,4 +40,9 @@ python3 -m scripts.main 8 5 3 --iter-threads 1 8 1 --bench max -s combined_cxl -
 If the -hcxl flag is added to the run command, the allocation function will be changed from malloc to mmap, mbind to nodemask = 1UL. This can be modified in the lib/utils/cxl_utils.cpp file.
 ```python
 python3 -m scripts.main 8 5 3 --iter-threads 1 8 1 --bench max -s software_cxl  -hcxl
+```
+
+You can select different the min benchmark as following: 
+```python
+python3 -m scripts.main 8 5 3 --iter-threads 1 8 1 --bench min -s software_cxl  
 ```
