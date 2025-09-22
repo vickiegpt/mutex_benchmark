@@ -53,5 +53,6 @@ void report_thread_latency(struct per_thread_stats *stats, bool csv, bool thread
 
 void busy_sleep(size_t iterations);
 SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads);
+void numa_delete(SoftwareMutex* ptr);
 
 #endif // __BENCH_UTILS_HPP_
