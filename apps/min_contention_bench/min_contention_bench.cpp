@@ -9,6 +9,10 @@
 #include <atomic>
 #include <memory>
 
+#include <numa.h>
+#include <numaif.h>
+
+
 #include "min_contention_bench.hpp"
 #include "bench_utils.hpp"
 #include "cxl_utils.hpp"
@@ -24,6 +28,15 @@ int min_contention_bench(
     int stagger_ms,
     SoftwareMutex* lock
 ) {
+
+    #ifdef hardware_cxl
+        int numa = numa_available()+1;
+    #else
+        int numa = 0;
+    #endif
+
+
+
     lock->init(num_threads);
     auto start_flag = std::make_shared<std::atomic<bool>>(false);
     auto end_flag   = std::make_shared<std::atomic<bool>>(false);
@@ -94,7 +107,13 @@ int min_contention_bench(
 
     lock->destroy();
     free((void*)counter);
-    delete lock;
+
+    if (numa){
+        numa_delete(lock);
+    } else {
+        // delete lock;//TODO WHY
+    }
+
 
     if (!no_output) {
         report_thread_latency(&thread_args[i].stats, csv, thread_level);

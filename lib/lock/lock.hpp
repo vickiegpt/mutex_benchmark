@@ -59,8 +59,8 @@ class SoftwareMutex {
 public:
     // Large padding to increase mutex size (e.g., for NUMA testing)
     // Adjust this value to control the size of each mutex object
-    static constexpr size_t MUTEX_PADDING_SIZE = 1000000000; // 1GB per mutex
-    const char name_[MUTEX_PADDING_SIZE] = {'\0'};
+    // static constexpr size_t MUTEX_PADDING_SIZE = 1000000000; // 1GB per mutex
+    // const char name_[MUTEX_PADDING_SIZE] = {'\0'};
     SoftwareMutex() = default;
     virtual ~SoftwareMutex() = default;
 

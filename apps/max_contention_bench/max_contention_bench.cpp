@@ -33,8 +33,16 @@ int max_contention_bench(
     int stagger_ms,
     SoftwareMutex* lock
 ) {
+
+#ifdef cxl
+#elif defined(hardware_cxl)
+    int numa = numa_available()+1;
+#else
+    int numa = 0;
+#endif
+
     // Set process-wide memory policy to node 2 to prevent any allocations on nodes 0 and 1
-    if (numa_available() >= 0) {
+    if (numa) {
         unsigned long nodemask[16] = {0};
         nodemask[0] = 1UL << 2;  // Node 2
         unsigned long maxnode = sizeof(nodemask) * 8;
@@ -130,20 +138,23 @@ int max_contention_bench(
     */
 
     // Get memory policy for smaller allocations
-    if (get_mempolicy(&mode, nodemask, maxnode, nullptr, 0) == 0) {
-        fprintf(stderr, "DEBUG: get_mempolicy succeeded, mode=%d\n", mode);
-        fprintf(stderr, "DEBUG: nodemask[0]=0x%lx\n", nodemask[0]);
+    if(numa){
+        if (get_mempolicy(&mode, nodemask, maxnode, nullptr, 0) == 0) {
+            fprintf(stderr, "DEBUG: get_mempolicy succeeded, mode=%d\n", mode);
+            fprintf(stderr, "DEBUG: nodemask[0]=0x%lx\n", nodemask[0]);
 
-        if (mode == MPOL_BIND || mode == MPOL_PREFERRED) {
-            for (int node = 0; node <= numa_max_node(); node++) {
-                if (nodemask[node / (sizeof(unsigned long) * 8)] & (1UL << (node % (sizeof(unsigned long) * 8)))) {
-                    preferred_node = node;
-                    fprintf(stderr, "DEBUG: Found node %d in mask\n", node);
-                    break;
+            if (mode == MPOL_BIND || mode == MPOL_PREFERRED) {
+                for (int node = 0; node <= numa_max_node(); node++) {
+                    if (nodemask[node / (sizeof(unsigned long) * 8)] & (1UL << (node % (sizeof(unsigned long) * 8)))) {
+                        preferred_node = node;
+                        fprintf(stderr, "DEBUG: Found node %d in mask\n", node);
+                        break;
+                    }
                 }
             }
         }
     }
+
 
     lock->init(num_threads);
 
@@ -153,7 +164,7 @@ int max_contention_bench(
     volatile int* total_unfair;
 
     // Force allocate control variables on node 2
-    if (numa_available() >= 0) {
+    if (numa) {
         fprintf(stderr, "DEBUG: Allocating control variables on node 2\n");
         counter = (volatile int*)numa_alloc_onnode(sizeof(int), 2);
         last = (volatile int*)numa_alloc_onnode(sizeof(int), 2);
@@ -174,7 +185,7 @@ int max_contention_bench(
     std::atomic<bool>* start_flag_raw = nullptr;
     std::atomic<bool>* end_flag_raw = nullptr;
 
-    if (numa_available() >= 0) {
+    if (numa) {
         start_flag_raw = (std::atomic<bool>*)numa_alloc_onnode(sizeof(std::atomic<bool>), 2);
         end_flag_raw = (std::atomic<bool>*)numa_alloc_onnode(sizeof(std::atomic<bool>), 2);
         new (start_flag_raw) std::atomic<bool>(false);
@@ -309,14 +320,17 @@ int max_contention_bench(
     lock->destroy();
 
     // Free NUMA-allocated memory properly
-    if (numa_available() >= 0) {
+    if (numa) {
         numa_free((void*)counter, sizeof(int));
         numa_free((void*)last, sizeof(int));
         numa_free((void*)total_unfair, sizeof(int));
+         // Use NUMA-aware delete for the lock object
+        numa_delete(lock);
     } else {
         delete counter;
         delete last;
         delete total_unfair;
+        // delete lock; //TODO WHY
     }
 
     // COMMENTED OUT: Using memeater for preallocation instead
@@ -328,10 +342,6 @@ int max_contention_bench(
         fprintf(stderr, "DEBUG: Freed 256GB allocation\n");
     }
     */
-
-    // Use NUMA-aware delete for the lock object
-    numa_delete(lock);
-
 
 
     if (!no_output && !rusage) {

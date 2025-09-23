@@ -11,14 +11,15 @@
 #include <cassert>
 #include <set>
 #include <unistd.h>
+#include <numa.h>
 
 //syscall only on linux
 #ifdef __linux__
 #include <sys/syscall.h>
 #endif
 
-static inline int numa_available() { return -1; }
-static inline int numa_max_node() { return 0; }
+// static inline int numa_available() { return -1; }
+// static inline int numa_max_node() { return 0; }
 
 namespace hclh {
 
