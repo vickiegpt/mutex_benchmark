@@ -64,7 +64,8 @@ def fix_legend_point_size(axes=None):
     if axes is None:
         axes = [plt]
     for ax in axes:
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize='small')
+        # legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize='small')
+        legend = ax.legend(fontsize='small')
         for handle in legend.legend_handles: # type: ignore
             handle._sizes = [30]
 
@@ -153,19 +154,52 @@ def plot_iter(data):
     for mutex_name, df in data:
         logger.info(f"lineplot_with_std: Plotting {mutex_name=}")
         style = get_style(mutex_name)
-        df["Throughput (Iterations / Second)"] = df["# Iterations"] / Constants.bench_n_seconds
+        # df["Throughput (Iterations / Second)"] = df["# Iterations"] / Constants.bench_n_seconds
+        df["Iterations"] = df["# Iterations"] 
+
         sns.lineplot(
             df, 
             x=Constants.iter_variable_name, 
-            y="Throughput (Iterations / Second)", 
-            errorbar=("sd", Constants.stdev_scale), 
+            y="Iterations", 
+            errorbar=None,
             label=mutex_name,
             marker=style["marker"],
             color=style["color"]
         )
+
+        # sns.lineplot(
+        #     df, 
+        #     x=Constants.iter_variable_name, 
+        #     y="Throughput (Iterations / Second)", 
+        #     errorbar=("sd", Constants.stdev_scale), 
+        #     label=mutex_name,
+        #     marker=style["marker"],
+        #     color=style["color"]
+        # )
+
     plt.grid()
     plt.yscale("log")
+    # plt.ylim(0, 20000)
     display()
+
+def plot_std_dev(data):
+    for mutex_name, df in data:
+        logger.info(f"Standard Deviation: Plotting {mutex_name=}")
+        style = get_style(mutex_name)
+        df["Standard Deviation"] = df["# Iterations"].std()
+        sns.lineplot(
+            df,
+            x=Constants.iter_variable_name,
+            y="Standard Deviation",
+            label=mutex_name,
+            marker=style["marker"],
+            color=style["color"]
+        )
+
+    plt.grid()
+    # plt.ylim(0, 20000)
+    display()
+
 
 def plot_iter_rusage(data):
     _, axis = plt.subplots(1, 2)

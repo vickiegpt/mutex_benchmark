@@ -143,20 +143,23 @@ class Constants:
 
         SOFTWARE_CXL_SET = [
             "bakery_nonatomic",
-            "lamport",
+        #    "burns_lamport",
+           "lamport",
             "linear_bl_elevator",
-            "linear_lamport_elevator",
+           "linear_lamport_elevator",
             "tree_bl_elevator",
-            "tree_lamport_elevator",
+           "tree_lamport_elevator",
+            "peterson",
+            "knuth",
+            "boulangerie",
         ]
 
         HARDWARE_CXL_SET = [
             "spin",
             "exp_spin",
-            "hopscotch",
             "ticket",
-            "mcs",
-            #"hbo" # NUMA
+            # "mcs",
+            "mcs_local",
         ]
 
         COMBINED_CXL_SET = SOFTWARE_CXL_SET + HARDWARE_CXL_SET

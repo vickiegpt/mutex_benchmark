@@ -1,6 +1,6 @@
 from .runner import run_experiment_iter_single_threaded, run_experiment_lock_level_single_threaded
 from .dataloader import load_data_iter, load_data_lock_level, debug_print_averages_lock_level
-from .plotter import plot_lock_level, plot_iter, plot_iter_rusage
+from .plotter import plot_lock_level, plot_iter, plot_iter_rusage, plot_std_dev
 from .builder import setup, build
 from .logger import init_logger
 from .args import init_args
@@ -23,12 +23,14 @@ def run_experiment_iter():
         if Constants.rusage:
             plot_iter_rusage(data)
         else:
-            plot_iter(data)
+            plot_std_dev(data)
+            # plot_iter(data)
 
 def main():
     setup()
     init_args()
-    build()
+    if not Constants.skip_experiment:
+        build()
     init_logger()
 
     if Constants.iter:

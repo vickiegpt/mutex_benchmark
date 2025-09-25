@@ -94,6 +94,9 @@ def init_args():
     parser.add_argument('--bench', type=str, default='max')
     parser.add_argument('--skip-plotting', action='store_true')
 
+    # parser.add_argument('--numactl',  action='store_true',
+    #                     help='use numactl to bind memory')
+
     args = parser.parse_args()
 
     Constants.mutex_names = []
@@ -173,6 +176,7 @@ def init_args():
     Constants.bench = args.bench
     Constants.groups = args.groups
     Constants.stdev_scale = args.stdev
+    # Constants.numactl = args.numactl
 
     if (args.bench=='max'):
         Constants.executable = "./build/apps/max_contention_bench/max_contention_bench"

@@ -5,6 +5,8 @@ env/*
 .DS_Store
 subprojects/nsync
 data/generated/*
+data/generated*/*
+
 data/logs/*
 data/figs/*
 .env/
