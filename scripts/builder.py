@@ -25,6 +25,11 @@ def build():
         cpp_args.append("'-lnuma'")
     elif Constants.software_cxl:
         cpp_args.append("'-Dsoftware_cxl'")
+    elif Constants.uc_cxl:
+        cpp_args.append("'-Duc_cxl'")
+    if Constants.cached_sc:
+        cpp_args.append("'-Dcached_sc'")
+        cpp_args.append("'-mclflushopt'")
     cpp_args.append("'-mwaitpkg'")
     cpp_args.append("'-std=c++20'")
     for mutex_name in Constants.Defaults.CONDITIONAL_COMPILATION_MUTEXES:

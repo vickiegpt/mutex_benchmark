@@ -16,15 +16,21 @@ public:
         for (size_t my_level = 0; my_level < num_threads - 1; my_level++) {
             // printf("%ld: my_level=%ld\n", thread_id, my_level);
             level[thread_id] = my_level;
+            FLUSH(&level[thread_id]);
             last_to_enter[my_level] = thread_id;
+            FLUSH(&last_to_enter[my_level]);
             while (true) {
+                INVALIDATE(&last_to_enter[my_level]);
                 if (last_to_enter[my_level] != thread_id) {
                     goto next_level;
                 }
                 bool other_thread_higher = false;
                 for (size_t other_thread_id = 0; other_thread_id < num_threads; other_thread_id++) {
-                    if (other_thread_id != thread_id && level[other_thread_id] >= level[thread_id]) {
-                        other_thread_higher = true;
+                    if (other_thread_id != thread_id) {
+                        INVALIDATE(&level[other_thread_id]);
+                        if (level[other_thread_id] >= level[thread_id]) {
+                            other_thread_higher = true;
+                        }
                     }
                 }
                 if (!other_thread_higher) {
@@ -38,6 +44,7 @@ public:
 
     void unlock(size_t thread_id) override {
         level[thread_id] = -1;
+        FLUSH(&level[thread_id]);
         // printf("%ld: Unlocked.\n", thread_id);
     }
 

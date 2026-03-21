@@ -1,0 +1,229 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{tangYggdrasilReducingNetwork2024}
+\citation{goukDirectAccessHighPerformance}
+\citation{suetterleinSynchronizationCXLBased2024}
+\@writefile{toc}{\contentsline {section}{Abstract}{1}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{ramosEIRNfMutex_benchmark2025}
+\citation{richinsAITaxHidden2019,tithiScalingIntelligenceDesigning2025,ultrascale_playbook,gangidiRDMAEthernetDistributed2024}
+\citation{patelSplitwiseEfficientGenerative2024a}
+\citation{tangYggdrasilReducingNetwork2024}
+\citation{zhongMyCXLPool2025,liPondCXLBasedMemory2023,goukDirectAccessHighPerformance,kwonDisaggregatedMemorySystem2019,ewaisDisaggregatedMemoryDatacenter2023}
+\citation{dangAdvancedThreadSynchronization2017,balajiEfficientSupportMultithreaded2008,dozsaEnablingConcurrentMultithreaded2010}
+\citation{boyd-wickizerNonscalableLocksAre}
+\citation{sharmaIntroductionComputeExpress}
+\citation{goukDirectAccessHighPerformance}
+\citation{lamportMutualExclusionProblem,lamportMutualExclusionProblema}
+\citation{wangIntelligentMultiPortMemory2008}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}CXL Fabric-Attached Memory for AI Workloads}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Coherence Models in CXL}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Hardware-managed coherence.}{2}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Software-managed coherence.}{2}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Memory Access Modes for CXL}{2}{subsection.2.3}\protected@file@percent }
+\newlabel{sec:access-modes}{{2.3}{2}{Memory Access Modes for CXL}{subsection.2.3}{}}
+\citation{suetterleinSynchronizationCXLBased2024}
+\citation{lamportMutualExclusionProblem,lamportMutualExclusionProblema}
+\citation{suetterleinSynchronizationCXLBased2024}
+\@writefile{toc}{\contentsline {paragraph}{Cached with hardware coherence (Cached-HC).}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cached with software coherence (Cached-SC).}{3}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Uncached (UC).}{3}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Non-temporal (NT).}{3}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why access modes matter for synchronization.}{3}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Mutual Exclusion}{3}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Polling as Notification Mechanism}{3}{subsubsection.2.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Software Locks}{3}{subsubsection.2.4.2}\protected@file@percent }
+\citation{herlihyWaitfreeSynchronization1991}
+\citation{schweizerEvaluatingCostAtomic2020}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}Hardware Locks}{4}{subsubsection.2.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}Interaction of Access Modes and Lock Types}{4}{subsubsection.2.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Experimental Platform}{4}{section.3}\protected@file@percent }
+\newlabel{sec:platform}{{3}{4}{Experimental Platform}{section.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Scope of the platform.}{4}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Hardware Configuration}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}BISnp Coherence Implementation}{4}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces CXL Type-2 FPGA platform architecture with programmable delay buffer. The delay buffer intercepts read responses between the CXL controller and memory controller, injecting configurable latency to emulate different CXL fabric topologies. Write operations bypass the delay buffer as lock implementations are dominated by read-path latency from polling.}}{5}{figure.caption.10}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig-cxl-fpga-arch}{{1}{5}{CXL Type-2 FPGA platform architecture with programmable delay buffer. The delay buffer intercepts read responses between the CXL controller and memory controller, injecting configurable latency to emulate different CXL fabric topologies. Write operations bypass the delay buffer as lock implementations are dominated by read-path latency from polling}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Access Mode Implementation}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cached-HC.}{5}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cached-SC.}{5}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{UC.}{5}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NT.}{5}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Programmable Delay Injection}{5}{subsection.3.4}\protected@file@percent }
+\citation{yangUnlockingPotentialCXL2025}
+\citation{lamportNewSolutionDijkstras1974}
+\citation{mosesHoodBakeryAlgorithm2015}
+\citation{lamportFastMutualExclusion1987}
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{petersonMythsMutualExclusion1981}
+\citation{knuthAdditionalCommentsProblem1966}
+\citation{andersonPerformanceSpinLock1990}
+\citation{andersonPerformanceSpinLock1990}
+\citation{mellor-crummeyAlgorithmsScalableSynchronization1991}
+\citation{mellor-crummeyAlgorithmsScalableSynchronization1991}
+\citation{lamportNewSolutionDijkstras1974}
+\citation{mosesHoodBakeryAlgorithm2015}
+\citation{lamportFastMutualExclusion1987}
+\citation{petersonMythsMutualExclusion1981}
+\citation{knuthAdditionalCommentsProblem1966}
+\@writefile{toc}{\contentsline {paragraph}{Validation.}{6}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Resource Utilization}{6}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Methodology}{6}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Benchmark Design}{6}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Max contention.}{6}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Moderate contention.}{6}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Min contention.}{6}{section*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Critical section design.}{6}{section*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Parameters.}{6}{section*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Access mode configuration.}{6}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Mutex Implementations}{6}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why these locks?}{6}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Software locks.}{6}{section*.25}\protected@file@percent }
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{burnsAllertonconf,hesselinkVerifyingSimplificationMutual2013}
+\citation{andersonPerformanceSpinLock1990}
+\citation{mellor-crummeyAlgorithmsScalableSynchronization1991}
+\citation{mellor-crummeyAlgorithmsScalableSynchronization1991}
+\citation{ramosEIRNfMutex_benchmark2025}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Lock implementations and their applicable access modes. Hardware locks require cached access with hardware coherence (Cached-HC) for RMW atomics. Software locks are evaluated under cached software coherence (Cached-SC), uncached (UC), and non-temporal (NT) access modes.}}{7}{table.caption.17}\protected@file@percent }
+\newlabel{tab:Locks}{{1}{7}{Lock implementations and their applicable access modes. Hardware locks require cached access with hardware coherence (Cached-HC) for RMW atomics. Software locks are evaluated under cached software coherence (Cached-SC), uncached (UC), and non-temporal (NT) access modes}{table.caption.17}{}}
+\@writefile{toc}{\contentsline {paragraph}{Hardware locks.}{7}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Memory ordering.}{7}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Storage overhead.}{7}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Evaluation}{7}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Experimental Setup}{7}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Single-host setup.}{7}{section*.30}\protected@file@percent }
+\citation{buhrHighcontentionMutualExclusion2018}
+\newlabel{fig-max_dram}{{2a}{8}{Max Bench: DRAM Baseline}{figure.caption.29}{}}
+\newlabel{sub@fig-max_dram}{{a}{8}{Max Bench: DRAM Baseline}{figure.caption.29}{}}
+\newlabel{fig-max_low}{{2b}{8}{Max Bench: CXL 400ns}{figure.caption.29}{}}
+\newlabel{sub@fig-max_low}{{b}{8}{Max Bench: CXL 400ns}{figure.caption.29}{}}
+\newlabel{fig-max_high}{{2c}{8}{Max Bench: CXL 2$\mu $s}{figure.caption.29}{}}
+\newlabel{sub@fig-max_high}{{c}{8}{Max Bench: CXL 2$\mu $s}{figure.caption.29}{}}
+\newlabel{fig-min_dram}{{2d}{8}{Min Bench: DRAM Baseline}{figure.caption.29}{}}
+\newlabel{sub@fig-min_dram}{{d}{8}{Min Bench: DRAM Baseline}{figure.caption.29}{}}
+\newlabel{fig-min_low}{{2e}{8}{Min Bench: CXL 400ns}{figure.caption.29}{}}
+\newlabel{sub@fig-min_low}{{e}{8}{Min Bench: CXL 400ns}{figure.caption.29}{}}
+\newlabel{fig-min_high}{{2f}{8}{Min Bench: CXL 2$\mu $s}{figure.caption.29}{}}
+\newlabel{sub@fig-min_high}{{f}{8}{Min Bench: CXL 2$\mu $s}{figure.caption.29}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Lock throughput (acquisitions/second) across DRAM baseline and CXL latency configurations under max contention (top) and min contention (bottom) with cached access (Cached-HC for hardware locks, Cached-SC for software locks). Thread count ranges from 1 to 64.}}{8}{figure.caption.29}\protected@file@percent }
+\newlabel{fig-cached-results}{{2}{8}{Lock throughput (acquisitions/second) across DRAM baseline and CXL latency configurations under max contention (top) and min contention (bottom) with cached access (Cached-HC for hardware locks, Cached-SC for software locks). Thread count ranges from 1 to 64}{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Cached Access Results}{8}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}Max Contention}{8}{subsubsection.5.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{DRAM baseline (Figure\nonbreakingspace \ref {fig-max_dram}).}{8}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{CXL 400\,ns (Figure\nonbreakingspace \ref {fig-max_low}).}{8}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{CXL 2\,$\mu $s (Figure\nonbreakingspace \ref {fig-max_high}).}{9}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.2}Min Contention}{9}{subsubsection.5.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.3}Fairness Analysis}{9}{subsubsection.5.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Uncached and Non-Temporal Access Results}{9}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:uc-nt-results}{{5.3}{9}{Uncached and Non-Temporal Access Results}{subsection.5.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Relative throughput across access modes at 400\,ns CXL latency, 32 threads, max contention. Baseline is MCS under Cached-HC. ``---'' indicates the mode is not applicable to that lock type.}}{9}{table.caption.34}\protected@file@percent }
+\newlabel{tab:access-mode-comparison}{{2}{9}{Relative throughput across access modes at 400\,ns CXL latency, 32 threads, max contention. Baseline is MCS under Cached-HC. ``---'' indicates the mode is not applicable to that lock type}{table.caption.34}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}Impact of Access Mode on Software Lock Throughput}{9}{subsubsection.5.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cached-SC vs.\ UC.}{9}{section*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{UC vs.\ NT.}{9}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key finding: UC access is ``good enough'' at higher latencies.}{10}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}Crossover Analysis}{10}{subsubsection.5.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.3}Per-Access Latency Breakdown}{10}{subsubsection.5.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Moderate Contention and Indexed Critical Section}{10}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Moderate contention.}{10}{section*.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Indexed critical section.}{10}{section*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Discussion}{10}{subsection.5.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5.5}{10}{Discussion}{subsection.5.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Single-host vs.\ multi-host.}{10}{section*.40}\protected@file@percent }
+\citation{suetterleinSynchronizationCXLBased2024}
+\citation{hongDawnDisaggregationCoherence2025,10.1145/3678015.3680494}
+\citation{davidEverythingYouAlways2013}
+\citation{diceCompactNUMAAwareLocks2019,luchangcoHierarchicalCLHQueue2006,chabbiHighPerformanceLocks2015}
+\citation{diceLockCohortingGeneral}
+\citation{boyd-wickizerNonscalableLocksAre}
+\citation{buhrHighcontentionMutualExclusion2018}
+\citation{kashyapSchedulerCooperativeLocks2020}
+\@writefile{toc}{\contentsline {paragraph}{Practical deployment guidance.}{11}{section*.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Coherence overhead decomposition.}{11}{section*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Space overhead.}{11}{section*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Related Work}{11}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{CXL synchronization.}{11}{section*.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Synchronization on NUMA and distributed shared memory.}{11}{section*.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Lock design and fairness.}{11}{section*.46}\protected@file@percent }
+\citation{yangOptaneMemory}
+\citation{wangIntelligentMultiPortMemory2008}
+\citation{yangUnlockingPotentialCXL2025}
+\citation{guirouxMulticoreLocksCase}
+\citation{diceLockCohortingGeneral}
+\citation{maHydraRPCRPCCXL}
+\citation{hongDawnDisaggregationCoherence2025}
+\citation{herlihyWaitfreeSynchronization1991}
+\bibdata{MutexBenchmarks}
+\bibcite{mosesHoodBakeryAlgorithm2015}{{1}{}{{}}{{}}}
+\bibcite{10.1145/3678015.3680494}{{2}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {paragraph}{Uncached and non-temporal memory access.}{12}{section*.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Future Work}{12}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Multi-host evaluation.}{12}{section*.48}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Application-level impact.}{12}{section*.49}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{NUMA-aware lock adaptation.}{12}{section*.50}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Notification mechanisms.}{12}{section*.51}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Lock-free and wait-free data structures.}{12}{section*.52}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{12}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{12}{section*.54}\protected@file@percent }
+\bibcite{andersonPerformanceSpinLock1990}{{3}{}{{}}{{}}}
+\bibcite{balajiEfficientSupportMultithreaded2008}{{4}{}{{}}{{}}}
+\bibcite{boyd-wickizerNonscalableLocksAre}{{5}{}{{}}{{}}}
+\bibcite{buhrHighcontentionMutualExclusion2018}{{6}{}{{}}{{}}}
+\bibcite{burnsAllertonconf}{{7}{}{{}}{{}}}
+\bibcite{chabbiHighPerformanceLocks2015}{{8}{}{{}}{{}}}
+\bibcite{dangAdvancedThreadSynchronization2017}{{9}{}{{}}{{}}}
+\bibcite{davidEverythingYouAlways2013}{{10}{}{{}}{{}}}
+\bibcite{diceCompactNUMAAwareLocks2019}{{11}{}{{}}{{}}}
+\bibcite{diceLockCohortingGeneral}{{12}{}{{}}{{}}}
+\bibcite{dozsaEnablingConcurrentMultithreaded2010}{{13}{}{{}}{{}}}
+\bibcite{ewaisDisaggregatedMemoryDatacenter2023}{{14}{}{{}}{{}}}
+\bibcite{gangidiRDMAEthernetDistributed2024}{{15}{}{{}}{{}}}
+\bibcite{goukDirectAccessHighPerformance}{{16}{}{{}}{{}}}
+\bibcite{guirouxMulticoreLocksCase}{{17}{}{{}}{{}}}
+\bibcite{herlihyWaitfreeSynchronization1991}{{18}{}{{}}{{}}}
+\bibcite{hesselinkVerifyingSimplificationMutual2013}{{19}{}{{}}{{}}}
+\bibcite{hongDawnDisaggregationCoherence2025}{{20}{}{{}}{{}}}
+\bibcite{kashyapSchedulerCooperativeLocks2020}{{21}{}{{}}{{}}}
+\bibcite{knuthAdditionalCommentsProblem1966}{{22}{}{{}}{{}}}
+\bibcite{kwonDisaggregatedMemorySystem2019}{{23}{}{{}}{{}}}
+\bibcite{lamportMutualExclusionProblem}{{24}{}{{}}{{}}}
+\bibcite{lamportMutualExclusionProblema}{{25}{}{{}}{{}}}
+\bibcite{lamportNewSolutionDijkstras1974}{{26}{}{{}}{{}}}
+\bibcite{lamportFastMutualExclusion1987}{{27}{}{{}}{{}}}
+\bibcite{liPondCXLBasedMemory2023}{{28}{}{{}}{{}}}
+\bibcite{luchangcoHierarchicalCLHQueue2006}{{29}{}{{}}{{}}}
+\bibcite{maHydraRPCRPCCXL}{{30}{}{{}}{{}}}
+\bibcite{mellor-crummeyAlgorithmsScalableSynchronization1991}{{31}{}{{}}{{}}}
+\bibcite{ultrascale_playbook}{{32}{}{{}}{{}}}
+\bibcite{patelSplitwiseEfficientGenerative2024a}{{33}{}{{}}{{}}}
+\bibcite{petersonMythsMutualExclusion1981}{{34}{}{{}}{{}}}
+\bibcite{ramosEIRNfMutex_benchmark2025}{{35}{}{{}}{{}}}
+\bibcite{richinsAITaxHidden2019}{{36}{}{{}}{{}}}
+\bibcite{schweizerEvaluatingCostAtomic2020}{{37}{}{{}}{{}}}
+\bibcite{sharmaIntroductionComputeExpress}{{38}{}{{}}{{}}}
+\bibcite{suetterleinSynchronizationCXLBased2024}{{39}{}{{}}{{}}}
+\bibcite{tangYggdrasilReducingNetwork2024}{{40}{}{{}}{{}}}
+\bibcite{tithiScalingIntelligenceDesigning2025}{{41}{}{{}}{{}}}
+\bibcite{wangIntelligentMultiPortMemory2008}{{42}{}{{}}{{}}}
+\bibcite{yangOptaneMemory}{{43}{}{{}}{{}}}
+\bibcite{yangUnlockingPotentialCXL2025}{{44}{}{{}}{{}}}
+\bibcite{zhongMyCXLPool2025}{{45}{}{{}}{{}}}
+\bibstyle{plain}
+\newlabel{tocindent-1}{0pt}
+\newlabel{tocindent0}{0pt}
+\newlabel{tocindent1}{4.65pt}
+\newlabel{tocindent2}{11.49998pt}
+\newlabel{tocindent3}{22.8pt}
+\newlabel{tocindent4}{0pt}
+\newlabel{tocindent5}{0pt}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\newlabel{TotPages}{{14}{14}{}{page.14}{}}
+\gdef \@abspage@last{14}

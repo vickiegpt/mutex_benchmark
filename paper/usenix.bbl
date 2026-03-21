@@ -1,0 +1,285 @@
+\begin{thebibliography}{10}
+
+\bibitem{mosesHoodBakeryAlgorithm2015}
+{\em Under the {{Hood}} of the {{Bakery Algorithm}}: {{Mutual Exclusion}} as a
+  {{Matter}} of {{Priority}}}, pages 399--413.
+\newblock Springer International Publishing, Cham, 2015.
+
+\bibitem{10.1145/3678015.3680494}
+Peter Alvaro, Matthew Adiletta, David Cheng, Adrian Cockroft, Frank Hady,
+  Ramesh Illikkal, Esteban Ramos, and Robert Soul\'{e}.
+\newblock Notnets: Accelerating microservices by bypassing the network.
+\newblock In {\em Proceedings of the 15th ACM SIGOPS Asia-Pacific Workshop on
+  Systems}, APSys '24, page 67–73, New York, NY, USA, 2024. Association for
+  Computing Machinery.
+
+\bibitem{andersonPerformanceSpinLock1990}
+T.E. Anderson.
+\newblock The performance of spin lock alternatives for shared-memory
+  multiprocessors.
+\newblock {\em IEEE Transactions on Parallel and Distributed Systems},
+  1(1):6--16, January 1990.
+
+\bibitem{balajiEfficientSupportMultithreaded2008}
+Pavan Balaji, Darius Buntinas, David Goodell, William Gropp, and Rajeev Thakur.
+\newblock Toward {{Efficient Support}} for {{Multithreaded MPI Communication}}.
+\newblock In Alexey Lastovetsky, Tahar Kechadi, and Jack Dongarra, editors,
+  {\em Recent {{Advances}} in {{Parallel Virtual Machine}} and {{Message
+  Passing Interface}}}, volume 5205, pages 120--129. Springer Berlin
+  Heidelberg, Berlin, Heidelberg, 2008.
+
+\bibitem{boyd-wickizerNonscalableLocksAre}
+Silas {Boyd-Wickizer}, M~Frans Kaashoek, Robert Morris, and Nickolai Zeldovich.
+\newblock Non-scalable locks are dangerous.
+
+\bibitem{buhrHighcontentionMutualExclusion2018}
+Peter~A. Buhr, David Dice, and Wim~H. Hesselink.
+\newblock High-contention mutual exclusion by elevator algorithms.
+\newblock {\em Concurrency and Computation: Practice and Experience},
+  30(18):e4475, 2018.
+
+\bibitem{burnsAllertonconf}
+{\relax JE}~Burns and {\relax NA}~Lynch.
+\newblock Allertonconf.
+\newblock In {\em Proceedings of the 18th {{Annual Allerton Conference}} on
+  {{Communications}}, {{Control}} and {{Computing}}, {{Monticello}},
+  {{Illinois}}, {{USA}}, 1980; 833--842.}
+
+\bibitem{chabbiHighPerformanceLocks2015}
+Milind Chabbi, Michael Fagan, and John {Mellor-Crummey}.
+\newblock High performance locks for multi-level {{NUMA}} systems.
+\newblock In {\em Proceedings of the 20th {{ACM SIGPLAN Symposium}} on
+  {{Principles}} and {{Practice}} of {{Parallel Programming}}}, {{PPoPP}} 2015,
+  pages 215--226, New York, NY, USA, January 2015. Association for Computing
+  Machinery.
+
+\bibitem{dangAdvancedThreadSynchronization2017}
+Hoang-Vu Dang, Sangmin Seo, Abdelhalim Amer, and Pavan Balaji.
+\newblock Advanced {{Thread Synchronization}} for {{Multithreaded MPI
+  Implementations}}.
+\newblock In {\em 2017 17th {{IEEE}}/{{ACM International Symposium}} on
+  {{Cluster}}, {{Cloud}} and {{Grid Computing}} ({{CCGRID}})}, pages 314--324,
+  Madrid, Spain, May 2017. IEEE.
+
+\bibitem{davidEverythingYouAlways2013}
+Tudor David, Rachid Guerraoui, and Vasileios Trigonakis.
+\newblock Everything you always wanted to know about synchronization but were
+  afraid to ask.
+\newblock In {\em Proceedings of the 24th ACM Symposium on Operating Systems
+  Principles (SOSP)}, pages 33--48, 2013.
+
+\bibitem{diceCompactNUMAAwareLocks2019}
+Dave Dice and Alex Kogan.
+\newblock Compact {{NUMA-Aware Locks}}, March 2019.
+
+\bibitem{diceLockCohortingGeneral}
+David Dice, Virendra~J Marathe, and Nir Shavit.
+\newblock Lock {{Cohorting}}: {{A General Technique}} for {{Designing NUMA
+  Locks}}.
+
+\bibitem{dozsaEnablingConcurrentMultithreaded2010}
+G{\'a}bor D{\'o}zsa, Sameer Kumar, Pavan Balaji, Darius Buntinas, David
+  Goodell, William Gropp, Joe Ratterman, and Rajeev Thakur.
+\newblock Enabling {{Concurrent Multithreaded MPI Communication}} on
+  {{Multicore Petascale Systems}}.
+\newblock In David Hutchison, Takeo Kanade, Josef Kittler, Jon~M. Kleinberg,
+  Friedemann Mattern, John~C. Mitchell, Moni Naor, Oscar Nierstrasz,
+  C.~Pandu~Rangan, Bernhard Steffen, Madhu Sudan, Demetri Terzopoulos, Doug
+  Tygar, Moshe~Y. Vardi, Gerhard Weikum, Rainer Keller, Edgar Gabriel, Michael
+  Resch, and Jack Dongarra, editors, {\em Recent {{Advances}} in the {{Message
+  Passing Interface}}}, volume 6305, pages 11--20. Springer Berlin Heidelberg,
+  Berlin, Heidelberg, 2010.
+
+\bibitem{ewaisDisaggregatedMemoryDatacenter2023}
+Mohammad Ewais and Paul Chow.
+\newblock Disaggregated {{Memory}} in the {{Datacenter}}: {{A Survey}}.
+\newblock {\em IEEE Access}, 11:20688--20712, 2023.
+
+\bibitem{gangidiRDMAEthernetDistributed2024}
+Adithya Gangidi, Rui Miao, Shengbao Zheng, Sai~Jayesh Bondu, Guilherme Goes,
+  Hany Morsy, Rohit Puri, Mohammad Riftadi, Ashmitha~Jeevaraj Shetty, Jingyi
+  Yang, Shuqiang Zhang, Mikel~Jimenez Fernandez, Shashidhar Gandham, and Hongyi
+  Zeng.
+\newblock {{RDMA}} over {{Ethernet}} for {{Distributed Training}} at {{Meta
+  Scale}}.
+\newblock In {\em Proceedings of the {{ACM SIGCOMM}} 2024 {{Conference}}},
+  pages 57--70, Sydney NSW Australia, August 2024. ACM.
+
+\bibitem{goukDirectAccessHighPerformance}
+Donghyun Gouk, Sangwon Lee, Miryeong Kwon, and Myoungsoo Jung.
+\newblock Direct {{Access}}, {{High-Performance Memory Disaggregation}} with
+  {{DirectCXL}}.
+
+\bibitem{guirouxMulticoreLocksCase}
+Hugo Guiroux and Renaud Lachaize.
+\newblock Multicore {{Locks}}: {{The Case Is Not Closed Yet}}.
+
+\bibitem{herlihyWaitfreeSynchronization1991}
+Maurice Herlihy.
+\newblock Wait-free synchronization.
+\newblock {\em ACM Trans. Program. Lang. Syst.}, 13(1):124--149, January 1991.
+
+\bibitem{hesselinkVerifyingSimplificationMutual2013}
+Wim~H. Hesselink.
+\newblock Verifying a simplification of mutual exclusion by
+  {{Lycklama}}--{{Hadzilacos}}.
+\newblock {\em Acta Informatica}, 50(3):199--228, May 2013.
+
+\bibitem{hongDawnDisaggregationCoherence2025}
+Jaewan Hong, Marcos~K. Aguilera, Emmanuel Amaro, Vincent Liu, Aurojit Panda,
+  and Ion Stoica.
+\newblock The {{Dawn}} of {{Disaggregation}} and the {{Coherence Conundrum}}:
+  {{A Call}} for {{Federated Coherence}}, April 2025.
+
+\bibitem{kashyapSchedulerCooperativeLocks2020}
+Sanidhya Kashyap, Arun Iyer, et~al.
+\newblock Shfllock: Scheduler-cooperative locks.
+\newblock In {\em Proceedings of the 15th European Conference on Computer
+  Systems (EuroSys)}, 2020.
+
+\bibitem{knuthAdditionalCommentsProblem1966}
+Donald~E. Knuth.
+\newblock Additional comments on a problem in concurrent programming control.
+\newblock {\em Commun. ACM}, 9(5):321--322, May 1966.
+
+\bibitem{kwonDisaggregatedMemorySystem2019}
+Youngeun Kwon and Minsoo Rhu.
+\newblock A {{Disaggregated Memory System}} for {{Deep Learning}}.
+\newblock {\em IEEE Micro}, 39(5):82--90, September 2019.
+
+\bibitem{lamportMutualExclusionProblem}
+L~Lamport.
+\newblock The {{Mutual Exclusion Problem Part I}}: {{A Theory}} of
+  {{Interprocess Communication}}.
+
+\bibitem{lamportMutualExclusionProblema}
+L~Lamport.
+\newblock The {{Mutual Exclusion Problem Part II}}: {{Statement}} and
+  {{Solutions}}.
+
+\bibitem{lamportNewSolutionDijkstras1974}
+Leslie Lamport.
+\newblock A {{New Solution}} of {{Dijkstra}}'s {{Concurrent Programming
+  Problem}}.
+\newblock 17(8), 1974.
+
+\bibitem{lamportFastMutualExclusion1987}
+Leslie Lamport.
+\newblock A fast mutual exclusion algorithm.
+\newblock {\em ACM Trans. Comput. Syst.}, 5(1):1--11, January 1987.
+
+\bibitem{liPondCXLBasedMemory2023}
+Huaicheng Li, Daniel~S. Berger, Lisa Hsu, Daniel Ernst, Pantea Zardoshti,
+  Stanko Novakovic, Monish Shah, Samir Rajadnya, Scott Lee, Ishwar Agarwal,
+  Mark~D. Hill, Marcus Fontoura, and Ricardo Bianchini.
+\newblock Pond: {{CXL-Based Memory Pooling Systems}} for {{Cloud Platforms}}.
+\newblock In {\em Proceedings of the 28th {{ACM International Conference}} on
+  {{Architectural Support}} for {{Programming Languages}} and {{Operating
+  Systems}}, {{Volume}} 2}, pages 574--587, Vancouver BC Canada, January 2023.
+  ACM.
+
+\bibitem{luchangcoHierarchicalCLHQueue2006}
+Victor Luchangco, Dan Nussbaum, and Nir Shavit.
+\newblock A {{Hierarchical CLH Queue Lock}}.
+\newblock In David Hutchison, Takeo Kanade, Josef Kittler, Jon~M. Kleinberg,
+  Friedemann Mattern, John~C. Mitchell, Moni Naor, Oscar Nierstrasz,
+  C.~Pandu~Rangan, Bernhard Steffen, Madhu Sudan, Demetri Terzopoulos, Dough
+  Tygar, Moshe~Y. Vardi, Gerhard Weikum, Wolfgang~E. Nagel, Wolfgang~V. Walter,
+  and Wolfgang Lehner, editors, {\em Euro-{{Par}} 2006 {{Parallel
+  Processing}}}, volume 4128, pages 801--810. Springer Berlin Heidelberg,
+  Berlin, Heidelberg, 2006.
+
+\bibitem{maHydraRPCRPCCXL}
+Teng Ma, Chengkun Wei, Haoyu Li, and Mingxing Zhang.
+\newblock {{HydraRPC}}: {{RPC}} in the {{CXL Era}}.
+
+\bibitem{mellor-crummeyAlgorithmsScalableSynchronization1991}
+John~M. {Mellor-Crummey} and Michael~L. Scott.
+\newblock Algorithms for scalable synchronization on shared-memory
+  multiprocessors.
+\newblock {\em ACM Trans. Comput. Syst.}, 9(1):21--65, February 1991.
+
+\bibitem{ultrascale_playbook}
+Haojun Zhao Phuc Nguyen Mohamed Mekkouri Leandro Werra Thomas~Wolf
+  Nouamane~Tazi, Ferdinand~Mom.
+\newblock The ultra-scale playbook: Training llms on gpu clusters, 2025.
+
+\bibitem{patelSplitwiseEfficientGenerative2024a}
+Pratyush Patel, Esha Choukse, Chaojie Zhang, Aashaka Shah, {\'I}{\~n}igo Goiri,
+  Saeed Maleki, and Ricardo Bianchini.
+\newblock Splitwise: {{Efficient}} generative {{LLM}} inference using phase
+  splitting, May 2024.
+
+\bibitem{petersonMythsMutualExclusion1981}
+G.~L. Peterson.
+\newblock Myths about the mutual exclusion problem.
+\newblock {\em Information Processing Letters}, 12(3):115--116, June 1981.
+
+\bibitem{ramosEIRNfMutex_benchmark2025}
+Esteban Ramos.
+\newblock {{EIRNf}}/mutex\_benchmark, September 2025.
+
+\bibitem{richinsAITaxHidden2019}
+Daniel Richins, Dharmisha Doshi, Matthew Blackmore, Aswathy~Thulaseedharan
+  Nair, Neha Pathapati, Ankit Patel, Brainard Daguman, Daniel Dobrijalowski,
+  Ramesh Illikkal, Kevin Long, David Zimmerman, and Vijay~Janapa Reddi.
+\newblock {{AI Tax}}: {{The Hidden Cost}} of {{AI Data Center Applications}}.
+\newblock {\em ACM Trans. Comput. Syst.}, 37(1-4):1--32, November 2019.
+
+\bibitem{schweizerEvaluatingCostAtomic2020}
+Hermann Schweizer, Maciej Besta, and Torsten Hoefler.
+\newblock Evaluating the {{Cost}} of {{Atomic Operations}} on {{Modern
+  Architectures}}, October 2020.
+
+\bibitem{sharmaIntroductionComputeExpress}
+Debendra~Das Sharma.
+\newblock An {{Introduction}} to the {{Compute Express LinkTM}} ({{CXLTM}})
+  {{Interconnect}}.
+
+\bibitem{suetterleinSynchronizationCXLBased2024}
+Joshua Suetterlein, Joseph Manzano, and Andres Marquez.
+\newblock Synchronization for {{CXL Based Memory}}.
+\newblock In {\em Proceedings of the {{International Symposium}} on {{Memory
+  Systems}}}, pages 178--185, Washington DC USA, September 2024. ACM.
+
+\bibitem{tangYggdrasilReducingNetwork2024}
+Wenda Tang, Ying Han, Tianxiang Ai, Guanghui Li, Bin Yu, and Xin Yang.
+\newblock Yggdrasil: {{Reducing Network I}}/{{O Tax}} with ({{CXL-Based}})
+  {{Distributed Shared Memory}}.
+\newblock In {\em Proceedings of the 53rd {{International Conference}} on
+  {{Parallel Processing}}}, pages 597--606, Gotland Sweden, August 2024. ACM.
+
+\bibitem{tithiScalingIntelligenceDesigning2025}
+Jesmin~Jahan Tithi, Hanjiang Wu, Avishaii Abuhatzera, and Fabrizio Petrini.
+\newblock Scaling {{Intelligence}}: {{Designing Data Centers}} for {{Next-Gen
+  Language Models}}, September 2025.
+
+\bibitem{wangIntelligentMultiPortMemory2008}
+Zuo Wang, Qi~Zuo, and Jiaxing Li.
+\newblock An {{Intelligent Multi-Port Memory}}.
+\newblock In {\em 2008 {{International Symposium}} on {{Intelligent Information
+  Technology Application Workshops}}}, pages 251--254, December 2008.
+
+\bibitem{yangOptaneMemory}
+Jian Yang, Juno Kim, Morteza Hoseinzadeh, Joseph Izraelevitz, and Steven
+  Swanson.
+\newblock An empirical guide to the behavior and use of scalable persistent
+  memory.
+\newblock In {\em Proceedings of the 18th USENIX Conference on File and Storage
+  Technologies (FAST)}, 2020.
+
+\bibitem{yangUnlockingPotentialCXL2025}
+Xinjun Yang et~al.
+\newblock Unlocking the potential of {CXL} for disaggregated memory in
+  cloud-native databases.
+\newblock In {\em Companion of the 2025 International Conference on Management
+  of Data (SIGMOD)}, 2025.
+
+\bibitem{zhongMyCXLPool2025}
+Yuhong Zhong, Daniel~S. Berger, Pantea Zardoshti, Enrique Saurez, Jacob Nelson,
+  Antonis Psistakis, Joshua Fried, and Asaf Cidon.
+\newblock My {{CXL Pool Obviates Your PCIe Switch}}.
+\newblock In {\em Proceedings of the {{Workshop}} on {{Hot Topics}} in
+  {{Operating Systems}}}, pages 58--66, Banff AB Canada, May 2025. ACM.
+
+\end{thebibliography}

@@ -1,0 +1,43 @@
+\section{Introduction}
+
+% Pain point: the deployment decision
+CXL 3.0 fabric-attached memory (FAM) enables multiple hosts to share a common memory pool, offering a low-overhead alternative to RDMA-based data movement for AI training, inference serving, and large-scale data analytics~\cite{tangYggdrasilReducingNetwork2024}.
+Yet sharing memory demands synchronization, and the choice of synchronization mechanism is tightly coupled to an expensive architectural decision: \emph{does the deployment require multi-host hardware cache coherence?}
+
+Hardware coherence extends the back-invalidation snoop (BISnp) protocol across hosts, enabling read-modify-write (RMW) atomics and the high-performance locks they support (e.g., MCS, ticket).
+However, supporting BISnp at scale requires substantial device-side snoop filters, cross-host invalidation traffic, and protocol complexity that grows with the number of hosts and memory capacity~\cite{goukDirectAccessHighPerformance}.
+The alternative---software-managed coherence---avoids this infrastructure entirely but restricts synchronization to load/store-based software locks with traditionally higher overhead.
+
+Between these two extremes lie access modes that the CXL ecosystem supports but that have received no attention for synchronization:
+\begin{itemize}
+    \item \textbf{Uncached (UC) access:} bypasses the host cache hierarchy entirely, issuing every load and store directly to the CXL device. This eliminates coherence traffic at the cost of losing cache-line locality.
+    \item \textbf{Non-temporal (NT) access:} uses streaming store/load instructions (\texttt{movntdq}, \texttt{movntdqa}) that bypass the cache and exploit write-combining buffers, reducing interconnect transactions for write-heavy paths.
+\end{itemize}
+
+No prior work quantifies how these access modes compare for synchronization.
+The only existing study of CXL synchronization~\cite{suetterleinSynchronizationCXLBased2024} evaluates software locks against a single RMW atomic but does not measure hardware coherence overhead, does not explore uncached or non-temporal access, and does not identify when software solutions become preferable.
+System architects today lack the quantitative evidence needed to decide among these options.
+
+% What we do
+This paper fills that gap with a systematic, hardware-validated evaluation.
+We implement 13 mutex algorithms---9 software locks and 4 hardware locks---and benchmark each under four CXL memory access modes (cached with hardware coherence, cached with software coherence, uncached, and non-temporal) across programmable latencies from 400\,ns to 10\,$\mu$s on a BittWare IA-780i FPGA platform.
+To enable this evaluation, we build the first FPGA-based CXL Type-2 device with hardware coherence (BISnp) support and programmable delay injection, allowing controlled emulation of deployment scenarios from local memory expansion to cross-rack fabric access.
+
+% Key findings
+Our evaluation yields three actionable findings:
+\begin{enumerate}[noitemsep,topsep=4pt]
+    \item \textbf{Hardware coherence is not always worth its cost.}
+    At 400\,ns CXL latency, coherence protocol overhead reduces MCS lock throughput by up to 47\% compared to DRAM-local operation, while the best software lock (Elevator-BL) under uncached access loses only 12\% relative to coherent MCS at 10\,$\mu$s latency.
+    \item \textbf{Uncached and non-temporal access are viable for synchronization.}
+    UC access eliminates coherence traffic and delivers predictable scaling; NT stores further improve write-heavy lock paths by 8--15\% through write-combining.
+    These modes provide a ``good enough'' synchronization substrate for deployments that cannot justify hardware coherence.
+    \item \textbf{The optimal access mode depends on quantifiable parameters.}
+    We identify crossover points in thread count, contention level, and fabric latency where each mode becomes cost-effective, enabling data-driven architectural decisions.
+\end{enumerate}
+
+This paper makes the following contributions:
+\begin{enumerate}[noitemsep,topsep=4pt]
+    \item The first systematic evaluation of mutex performance across four CXL memory access modes (hardware-coherent, software-coherent, uncached, non-temporal), providing quantitative crossover points for architectural decisions.
+    \item An FPGA-based CXL Type-2 device with hardware coherence (BISnp) and programmable delay injection for controlled synchronization experiments.
+    \item An open-source mutex benchmark suite targeting CXL shared FAM environments~\cite{ramosEIRNfMutex_benchmark2025}.
+\end{enumerate}

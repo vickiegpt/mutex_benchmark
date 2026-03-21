@@ -27,20 +27,24 @@ public:
         ThreadData *td = get(thread_id);
 
         td->choosing = 1;
+        FLUSH(&td->choosing);
         FENCE();
         int max_number = 0;
         ThreadData *other_thread;
         for (size_t i = 0; i < num_threads; ++i) {
             other_thread = get(i);
+            INVALIDATE(&other_thread->number);
             if (other_thread->number > max_number) {
                 max_number = other_thread->number;
             }
         }
         td->number = max_number + 1;
+        FLUSH(&td->number);
         FENCE();
         td->choosing = 0;
+        FLUSH(&td->choosing);
         FENCE();
-        
+
         //limit the number of thread to check
         size_t limit;
         if (td->number == 1 && thread_id > 0) {
@@ -57,12 +61,14 @@ public:
                 continue;
             }
             while (other_thread->choosing) {
+                INVALIDATE(&other_thread->choosing);
                 // Wait for that thread to be done choosing a number.
             }
             prev_j = other_thread->number;
             curr_j = other_thread->number;
             while (curr_j != 0 && (curr_j < td->number || (curr_j == td->number && j < thread_id)) && curr_j == prev_j) {
                 prev_j = curr_j;
+                INVALIDATE(&other_thread->number);
                 curr_j = other_thread->number;
             }
         }
@@ -71,6 +77,7 @@ public:
 
     void unlock(size_t thread_id) override {
         get(thread_id)->number = 0;
+        FLUSH(&get(thread_id)->number);
     }
 
     void destroy() override {

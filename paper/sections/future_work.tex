@@ -1,0 +1,26 @@
+\section{Future Work}
+
+\paragraph{Multi-host evaluation.}
+Our single-host results isolate coherence protocol overhead but do not capture cross-host effects (switch latency, inter-host snooping, snoop filter scaling).
+Evaluating on a true multi-host CXL switch topology~\cite{yangUnlockingPotentialCXL2025} would validate whether our crossover points hold and whether hardware coherence overhead increases with host count as we predict.
+We expect the crossover to shift in favor of UC/NT access, as each additional host increases the snoop filter pressure and invalidation traffic.
+
+\paragraph{Application-level impact.}
+Lock choice matters only insofar as it affects end-to-end application performance.
+Evaluating with real workloads---shared indexes, distributed key-value stores, parallel communication primitives (AllReduce, AllGather)---would quantify how much of the application's critical path is attributable to lock overhead and whether the access mode crossover points translate to application-level gains.
+Our indexed critical section results (Section~\ref{sec:discussion}) suggest that the impact of access mode choice diminishes with critical section size, but this needs validation with full applications.
+Recent work shows that lock performance is highly workload-dependent~\cite{guirouxMulticoreLocksCase}; CXL access modes add another dimension to this dependence.
+
+\paragraph{NUMA-aware lock adaptation.}
+CXL fabric topologies share characteristics with NUMA (non-uniform latency, locality effects), motivating the adaptation of NUMA lock techniques---particularly cohorting~\cite{diceLockCohortingGeneral}---to CXL.
+A CXL-aware cohort lock could form cohorts based on switch proximity rather than NUMA node, reducing cross-switch traffic while using UC access within each cohort.
+The Elevator lock's successor-notification design is already partially amenable to cohorting, as the notification order could be biased toward threads on the same switch.
+
+\paragraph{Notification mechanisms.}
+Polling dominates the overhead of all locks in our evaluation.
+Alternative notification mechanisms---PCIe device interrupts, \texttt{mwait}/\texttt{umonitor} instructions~\cite{maHydraRPCRPCCXL}, network-assisted sleep/wake~\cite{hongDawnDisaggregationCoherence2025}---could fundamentally change the trade-off between access modes by reducing the cost of UC polling.
+If efficient sleep/wake is available, UC access becomes more attractive, as the per-poll round-trip cost matters less when polls are infrequent.
+
+\paragraph{Lock-free and wait-free data structures.}
+RMW atomics enable lock-free data structures~\cite{herlihyWaitfreeSynchronization1991} that avoid mutual exclusion entirely.
+Comparing lock-free structures under hardware coherence against locked structures under UC access would quantify the value of RMW semantics beyond simple mutual exclusion and determine whether the coherence infrastructure is justified by enabling fundamentally different concurrency paradigms.

@@ -1,0 +1,68 @@
+\documentclass[sigplan,twocolumn,review,anonymous]{acmart}
+\acmSubmissionID{806}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+% Optional: Remove the ACM reference between the abstract and the main text.
+\settopmatter{printfolios=true,printacmref=false}
+% ----- Packages -----
+
+% to be able to draw some self-contained figs
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs} 
+
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+
+% -- COMMENTS ON --
+\newcommand{\newcommenter}[3]{%
+    \newcommand{#1}[1]{%
+        \textcolor{#2}{\small\textsf{[{#3}: {##1}]}}%
+    }%
+}%
+
+% -- COMMENTS OFF --
+% \newcommand{\newcommenter}[3]{\newcommand{#1}[1]{}}
+
+% Comment colors
+\definecolor{ERColor}{rgb}{0.54, 0.17, 0.89}
+% Commenters
+\newcommenter{\er}{ERColor}{ER}
+
+
+% inlined bib file
+\usepackage{filecontents}
+%-------------------------------------------------------------------------------
+\begin{document}
+%-------------------------------------------------------------------------------
+
+%don't want date printed
+% \date{}
+
+% make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+% \title{\Large \bf CXL Memory Software and Hardware Synchronization Benchmark}
+\title{When Is Hardware Coherence Worth It? Quantifying Synchronization Across CXL Memory Access Modes}
+
+\author{Anonymous Authors}
+\input{sections/abstract}
+\maketitle
+\input{sections/intro}
+\input{sections/background}
+\input{sections/fpga}
+\input{sections/methodology}
+\input{sections/evaluation}
+\input{sections/related_work}
+\input{sections/future_work}
+\input{sections/conclusion}
+
+%-------------------------------------------------------------------------------
+\bibliography{MutexBenchmarks}
+\bibliographystyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%  LocalWords:  endnotes includegraphics fread ptr nobj noindent
+%%  LocalWords:  pdflatex acks

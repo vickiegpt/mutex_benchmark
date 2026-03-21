@@ -74,6 +74,10 @@ def init_args():
                         help='compile with emucxl allocation for cxl machine/software')
     parser.add_argument('--hcxl', action='store_true',
                         help='compile with emucxl allocation for cxl machine/hardware')
+    parser.add_argument('--uc', action='store_true',
+                        help='compile for UC (uncacheable) access via device-backed mmap')
+    parser.add_argument('--cached-sc', action='store_true',
+                        help='enable clflush/sfence for Cached-SC access mode')
 
     logg = parser.add_mutually_exclusive_group()
     logg.add_argument('-d','--debug',    action='store_const', dest='log', const='DEBUG',
@@ -188,6 +192,8 @@ def init_args():
     Constants.skip_plotting = args.skip_plotting
     Constants.software_cxl = args.scxl
     Constants.hardware_cxl = args.hcxl
+    Constants.uc_cxl = args.uc
+    Constants.cached_sc = args.cached_sc
 
     # if Constants.cxl:
     #     for mutex_name in Constants.mutex_names:

@@ -10,6 +10,10 @@ def get_data_file_name(mutex_name, i, **kwargs):
         name_root += "-hcxl"
     if Constants.software_cxl:
         name_root += "-sxcl"
+    if Constants.uc_cxl:
+        name_root += "-uc"
+    if Constants.cached_sc:
+        name_root += "-cachedsc"
     for name, value in kwargs.items():
         name_root += f"-{name}={value}"
     name = name_root + ".csv"

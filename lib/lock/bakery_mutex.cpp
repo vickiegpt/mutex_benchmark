@@ -25,21 +25,27 @@ public:
         // struct timespec nanosleep_timespec = { 0, 10 };
         // Get "bakery number"
         choosing[thread_id] = true;
+        FLUSH(&choosing[thread_id]);
         size_t my_bakery_number = 1;
         for (size_t i = 0; i < num_threads; i++) {
+            INVALIDATE(&number[i]);
             if (number[i] + 1 > my_bakery_number) {
                 my_bakery_number = number[i] + 1;
             }
         }
         number[thread_id] = my_bakery_number;
+        FLUSH(&number[thread_id]);
         choosing[thread_id] = false;
+        FLUSH(&choosing[thread_id]);
         // Lock waiting part
         for (size_t j = 0; j < num_threads; j++) {
             while (choosing[j] != 0) {
+                INVALIDATE(&choosing[j]);
                 // Wait for that thread to be done choosing a number.
             }
-            while ((number[j] != 0 && number[j] < number[thread_id]) 
+            while ((number[j] != 0 && number[j] < number[thread_id])
                 || (number[j] == number[thread_id] && j < thread_id)) {
+                INVALIDATE(&number[j]);
                 // Stall until our bakery number is the lowest..
             }
         }
@@ -47,6 +53,7 @@ public:
     void unlock(size_t thread_id) override {
         std::atomic_thread_fence(std::memory_order_seq_cst);
         number[thread_id] = 0;
+        FLUSH(&number[thread_id]);
     }
     void destroy() override {
         FREE((void*)_cxl_region, _cxl_region_size);

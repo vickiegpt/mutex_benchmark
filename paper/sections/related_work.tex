@@ -1,0 +1,34 @@
+\section{Related Work}
+
+\paragraph{CXL synchronization.}
+Suetterlein et al.~\cite{suetterleinSynchronizationCXLBased2024} explore software locks in CXL memory using a Tournament Peterson lock, comparing against single RMW atomic operations.
+Their work highlights that contention spreading across multiple cache lines improves performance, a result we reproduce and extend.
+However, their evaluation does not measure hardware coherence protocol overhead (they compare against bare atomic operations, not hardware locks), does not explore uncached or non-temporal access modes, and does not identify crossover points between software and hardware approaches.
+Our work extends this by evaluating 13 lock implementations across four access modes with quantitative crossover analysis.
+Other work has discussed the need for coherence-free synchronization in CXL~\cite{hongDawnDisaggregationCoherence2025,10.1145/3678015.3680494} but without systematic evaluation on hardware.
+
+\paragraph{Synchronization on NUMA and distributed shared memory.}
+The comprehensive study by David et al.~\cite{davidEverythingYouAlways2013} characterizes synchronization primitives across NUMA topologies, demonstrating that lock performance is architecture-dependent and that no single lock dominates across all configurations.
+Our work applies a similar methodology to the CXL domain, where the additional dimension of access mode selection (cached vs.\ uncached vs.\ non-temporal) creates new trade-offs not present in traditional NUMA.
+Specifically, NUMA systems always use cached coherent access; the option to bypass the cache entirely (UC/NT) is unique to CXL's disaggregated memory model.
+
+NUMA-aware locks~\cite{diceCompactNUMAAwareLocks2019,luchangcoHierarchicalCLHQueue2006,chabbiHighPerformanceLocks2015} exploit locality through cohorting~\cite{diceLockCohortingGeneral}, where threads on the same NUMA node form cohorts to reduce cross-node traffic.
+This technique is highly effective when locality is well-defined (i.e., fixed NUMA node assignments).
+Adapting cohorting to CXL requires new locality abstractions: in a switched CXL fabric, ``locality'' depends on the number of switch hops between a host and the memory device, which may change dynamically as memory is remapped.
+
+Boyd-Wickizer et al.~\cite{boyd-wickizerNonscalableLocksAre} demonstrate that non-scalable locks can cause sudden performance collapse at critical thread counts, motivating our evaluation across a wide range of concurrency levels.
+Our results confirm this pattern for spin and ticket locks in CXL environments, with the collapse occurring at lower thread counts under hardware coherence due to amplified coherence traffic.
+
+\paragraph{Lock design and fairness.}
+Buhr et al.~\cite{buhrHighcontentionMutualExclusion2018} propose the Elevator lock family that we evaluate, demonstrating that software locks can achieve performance competitive with hardware locks by reducing contention through explicit successor notification.
+Our CXL evaluation confirms this finding and shows that the advantage grows with CXL latency.
+
+Beyond acquisition fairness, recent work examines \emph{usage} fairness---ensuring equitable critical section time across threads~\cite{kashyapSchedulerCooperativeLocks2020}.
+In CXL environments, usage fairness interacts with access mode: under UC access, all threads pay equal CXL round-trip costs, while under Cached-HC, the thread that last held the lock benefits from cached state (the ``local spinning'' advantage).
+We leave usage fairness evaluation to future work but note that UC access inherently provides more equitable costs across threads.
+
+\paragraph{Uncached and non-temporal memory access.}
+UC and NT access modes are well-studied for MMIO, persistent memory~\cite{yangOptaneMemory}, and GPU memory~\cite{wangIntelligentMultiPortMemory2008}, but have not been evaluated for inter-host synchronization over CXL.
+Persistent memory work is particularly relevant: Intel Optane DIMM research extensively characterized the performance of NT stores via write-combining for persistent data structures.
+Our work applies similar techniques to synchronization primitives, showing that the write-combining benefit translates to lock unlock paths.
+The key difference from persistent memory is that CXL memory has higher base latency (400\,ns+ vs.\ $\sim$300\,ns for Optane) and does not require persistence guarantees, simplifying the fence requirements.

@@ -1,0 +1,1332 @@
+@inproceedings{yangUnlockingPotentialCXL2025,
+  title = {Unlocking the Potential of {CXL} for Disaggregated Memory in Cloud-Native Databases},
+  author = {Yang, Xinjun and others},
+  booktitle = {Companion of the 2025 International Conference on Management of Data (SIGMOD)},
+  year = {2025},
+}
+
+@inproceedings{davidEverythingYouAlways2013,
+  title = {Everything You Always Wanted to Know About Synchronization but Were Afraid to Ask},
+  author = {David, Tudor and Guerraoui, Rachid and Trigonakis, Vasileios},
+  booktitle = {Proceedings of the 24th ACM Symposium on Operating Systems Principles (SOSP)},
+  year = {2013},
+  pages = {33--48},
+}
+
+@inproceedings{kashyapSchedulerCooperativeLocks2020,
+  title = {Shfllock: Scheduler-Cooperative Locks},
+  author = {Kashyap, Sanidhya and Iyer, Arun and others},
+  booktitle = {Proceedings of the 15th European Conference on Computer Systems (EuroSys)},
+  year = {2020},
+}
+
+@inproceedings{yangOptaneMemory,
+  title = {An Empirical Guide to the Behavior and Use of Scalable Persistent Memory},
+  author = {Yang, Jian and Kim, Juno and Hoseinzadeh, Morteza and Izraelevitz, Joseph and Swanson, Steven},
+  booktitle = {Proceedings of the 18th USENIX Conference on File and Storage Technologies (FAST)},
+  year = {2020},
+}
+
+@article{andersonPerformanceSpinLock1990,
+  title = {The Performance of Spin Lock Alternatives for Shared-Memory Multiprocessors},
+  author = {Anderson, T.E.},
+  year = {1990},
+  month = jan,
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  volume = {1},
+  number = {1},
+  pages = {6--16},
+  issn = {1558-2183},
+  doi = {10.1109/71.80120},
+  urldate = {2025-09-25},
+  abstract = {The author examines the questions of whether there are efficient algorithms for software spin-waiting given hardware support for atomic instructions, or whether more complex kinds of hardware support are needed for performance. He considers the performance of a number of software spin-waiting algorithms. Arbitration for control of a lock is in many ways similar to arbitration for control of a network connecting a distributed system. He applies several of the static and dynamic arbitration methods originally developed for networks to spin locks. A novel method is proposed for explicitly queueing spinning processors in software by assigning each a unique number when it arrives at the lock. Control of the lock can then be passed to the next processor in line with minimal effect on other processors.{$<>$}},
+  keywords = {Bandwidth,Control systems,Costs,Data structures,Hardware,Marine technology,Read-write memory,Software algorithms,Software performance,Spinning},
+  file = {/Users/estebanramos/Zotero/storage/5WSNAYI8/Anderson - 1990 - The performance of spin lock alternatives for shared-memory multiprocessors.pdf}
+}
+
+@incollection{balajiEfficientSupportMultithreaded2008,
+  title = {Toward {{Efficient Support}} for {{Multithreaded MPI Communication}}},
+  booktitle = {Recent {{Advances}} in {{Parallel Virtual Machine}} and {{Message Passing Interface}}},
+  author = {Balaji, Pavan and Buntinas, Darius and Goodell, David and Gropp, William and Thakur, Rajeev},
+  editor = {Lastovetsky, Alexey and Kechadi, Tahar and Dongarra, Jack},
+  year = {2008},
+  volume = {5205},
+  pages = {120--129},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-540-87475-1_20},
+  urldate = {2025-09-26},
+  abstract = {To make the most effective use of parallel machines that are being built out of increasingly large multicore chips, researchers are exploring the use of programming models comprising a mixture of MPI and threads. Such hybrid models require efficient support from an MPI implementation for MPI messages sent from multiple threads simultaneously. In this paper, we explore the issues involved in designing such an implementation. We present four approaches to building a fully thread-safe MPI implementation, with decreasing levels of critical-section granularity (from coarse-grain locks to fine-grain locks to lock-free operations) and correspondingly increasing levels of complexity. We describe how we have structured our implementation to support all four approaches and enable one to be selected at build time. We present performance results with a message-rate benchmark to demonstrate the performance implications of the different approaches.},
+  isbn = {978-3-540-87474-4 978-3-540-87475-1},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/MGRFEAHP/Balaji et al. - 2008 - Toward Efficient Support for Multithreaded MPI Communication.pdf}
+}
+
+@article{boyd-wickizerNonscalableLocksAre,
+  title = {Non-Scalable Locks Are Dangerous},
+  author = {{Boyd-Wickizer}, Silas and Kaashoek, M Frans and Morris, Robert and Zeldovich, Nickolai},
+  abstract = {Several operating systems rely on non-scalable spin locks for serialization. For example, the Linux kernel uses ticket spin locks, even though scalable locks have better theoretical properties. Using Linux on a 48-core machine, this paper shows that non-scalable locks can cause dramatic collapse in the performance of real workloads, even for very short critical sections. The nature and sudden onset of collapse are explained with a new Markovbased performance model. Replacing the offending nonscalable spin locks with scalable spin locks avoids the collapse and requires modest changes to source code.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/MDDUZGJE/Boyd-Wickizer et al. - Non-scalable locks are dangerous.pdf}
+}
+
+@article{buhrHighcontentionMutualExclusion2018,
+  title = {High-Contention Mutual Exclusion by Elevator Algorithms},
+  author = {Buhr, Peter A. and Dice, David and Hesselink, Wim H.},
+  year = {2018},
+  journal = {Concurrency and Computation: Practice and Experience},
+  volume = {30},
+  number = {18},
+  pages = {e4475},
+  issn = {1532-0634},
+  doi = {10.1002/cpe.4475},
+  urldate = {2025-06-25},
+  abstract = {This paper presents new starvation-free hardware-assisted and software-only algorithms for the N-thread mutual-exclusion problem. The hardware-assisted versions use a single atomic-CAS instruction and no fences. The software-only algorithms simulate the CAS instruction using a variation of Burns-Lamport (1 fence) or Lamport's fast algorithm (3 fences). The algorithms are based on Attiya et al, where every thread in the critical section chooses its successor (if one is available). While Attiya et al use a binary tree for this purpose, it can also be done with a linear search. Surprisingly, all software-only algorithms perform equally well under maximal contention on three different computer architectures; the hardware-assisted versions perform better under minimal contention. The new algorithms are between -5\% to 50\% slower for maximal contention than the starvation-free first-come first-served hardware-assisted MCS algorithm, which uses two atomic instructions (fetch-store and CAS); they are between 10\% to 50\% slower than MCS for minimal contention.},
+  copyright = {Copyright {\copyright} 2018 John Wiley \& Sons, Ltd.},
+  langid = {english},
+  keywords = {concurrency,mutual exclusion,performance experiment,software solutions},
+  file = {/Users/estebanramos/Zotero/storage/Y52VDQXU/Buhr et al. - 2018 - High-contention mutual exclusion by elevator algorithms.pdf;/Users/estebanramos/Zotero/storage/85YFY9CG/cpe.html}
+}
+
+@article{buhrHighperformanceNthreadSoftware2015,
+  title = {High-Performance {{N-thread}} Software Solutions for Mutual Exclusion},
+  author = {Buhr, Peter A. and Dice, David and Hesselink, Wim H.},
+  year = {2015},
+  journal = {Concurrency and Computation: Practice and Experience},
+  volume = {27},
+  number = {3},
+  pages = {651--701},
+  issn = {1532-0634},
+  doi = {10.1002/cpe.3263},
+  urldate = {2025-06-18},
+  abstract = {SummarySoftware solutions for mutual exclusion developed over a 30-year period, starting with complex ad hoc algorithms and progressing to simpler formal ones. While it is easy to dismiss software solutions for mutual exclusion, as this family of algorithms is antiquated and most platforms support atomic hardware instructions, there is still a need for these algorithms in threaded, embedded systems running on low-cost processors lacking atomic instructions. While N-thread solutions are usually short (10--25 lines of code), each is ingenious with exceptionally subtle aspects, often making it difficult to prove correctness or construct an implementation. This work examines correctness and performance of the implementations. An extensive survey of existing algorithms is presented, with explanations of the intuition behind the algorithms and how they work. Several errors were found and corrections made, as well as a few small improvements, in the existing algorithms; two new high-performance algorithms were developed. Finally, a worst-case high-contention performance experiment is performed to compare the algorithms and contrast them with three common locks based on hardware atomic instructions. The results show our two new algorithms are highly competitive with an equivalent hardware lock (Mellor-Crummey and Scott) over a range of 1--32 processors. Hence, threading is a viable alternative to event-driven programming for complex embedded systems without atomic instructions. Copyright {\copyright} 2014 John Wiley \& Sons, Ltd.},
+  langid = {english},
+  keywords = {mutual exclusion,performance experiment,software solution},
+  file = {/Users/estebanramos/Zotero/storage/NYKFUMRN/Buhr et al. - 2015 - High-performance N-thread software solutions for mutual exclusion.pdf;/Users/estebanramos/Zotero/storage/A5LYA8DF/cpe.html;/Users/estebanramos/Zotero/storage/X366YRW6/cpe.html}
+}
+
+@misc{ramosEIRNfMutex_benchmark2025,
+  title = {{{EIRNf}}/Mutex\_benchmark},
+  author = {Ramos, Esteban},
+  year = {2025},
+  month = sep,
+  urldate = {2025-09-26},
+  abstract = {Benchmarking different mutex libraries and implementations}
+}
+
+
+
+@inproceedings{burnsAllertonconf,
+  title = {Allertonconf},
+  booktitle = {Proceedings of the 18th {{Annual Allerton Conference}} on {{Communications}}, {{Control}} and {{Computing}}, {{Monticello}}, {{Illinois}}, {{USA}}, 1980; 833--842.},
+  author = {Burns, {\relax JE} and Lynch, {\relax NA}},
+  urldate = {2025-09-26},
+  file = {/Users/estebanramos/Zotero/storage/TNAC8AS2/allertonconf.pdf}
+}
+
+@article{caiSurveyMixtureExperts2025,
+  title = {A {{Survey}} on {{Mixture}} of {{Experts}} in {{Large Language Models}}},
+  author = {Cai, Weilin and Jiang, Juyong and Wang, Fan and Tang, Jing and Kim, Sunghun and Huang, Jiayi},
+  year = {2025},
+  journal = {IEEE Trans. Knowl. Data Eng.},
+  eprint = {2407.06204},
+  primaryclass = {cs},
+  pages = {1--20},
+  issn = {1041-4347, 1558-2191, 2326-3865},
+  doi = {10.1109/TKDE.2025.3554028},
+  urldate = {2025-09-25},
+  abstract = {Large language models (LLMs) have garnered unprecedented advancements across diverse fields, ranging from natural language processing to computer vision and beyond. The prowess of LLMs is underpinned by their substantial model size, extensive and diverse datasets, and the vast computational power harnessed during training, all of which contribute to the emergent abilities of LLMs (e.g., in-context learning) that are not present in small models. Within this context, the mixture of experts (MoE) has emerged as an effective method for substantially scaling up model capacity with minimal computation overhead, gaining significant attention from academia and industry. Despite its growing prevalence, there lacks a systematic and comprehensive review of the literature on MoE. This survey seeks to bridge that gap, serving as an essential resource for researchers delving into the intricacies of MoE. We first briefly introduce the structure of the MoE layer, followed by proposing a new taxonomy of MoE. Next, we overview the core designs for various MoE models including both algorithmic and systemic aspects, alongside collections of available open-source implementations, hyperparameter configurations and empirical evaluations. Furthermore, we delineate the multifaceted applications of MoE in practice, and outline some potential directions for future research. To facilitate ongoing updates and the sharing of cutting-edge advances in MoE research, we have established a resource repository at https://github.com/withinmiaov/A-Survey-on-Mixture-of-Experts-in-LLMs.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/Users/estebanramos/Zotero/storage/SR7KBUMU/Cai et al. - 2025 - A Survey on Mixture of Experts in Large Language Models.pdf}
+}
+
+@inproceedings{chabbiHighPerformanceLocks2015,
+  title = {High Performance Locks for Multi-Level {{NUMA}} Systems},
+  booktitle = {Proceedings of the 20th {{ACM SIGPLAN Symposium}} on {{Principles}} and {{Practice}} of {{Parallel Programming}}},
+  author = {Chabbi, Milind and Fagan, Michael and {Mellor-Crummey}, John},
+  year = {2015},
+  month = jan,
+  series = {{{PPoPP}} 2015},
+  pages = {215--226},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/2688500.2688503},
+  urldate = {2025-09-24},
+  abstract = {Efficient locking mechanisms are critically important for high performance computers. On highly-threaded systems with a deep memory hierarchy, the throughput of traditional queueing locks, e.g., MCS locks, falls off due to NUMA effects. Two-level cohort locks perform better on NUMA systems, but fail to deliver top performance for deep NUMA hierarchies. In this paper, we describe a hierarchical variant of the MCS lock that adapts the principles of cohort locking for architectures with deep NUMA hierarchies. We describe analytical models for throughput and fairness of Cohort-MCS (C-MCS) and Hierarchical MCS (HMCS) locks that enable us to tailor these locks for high performance on any target platform without empirical tuning. Using these models, one can select parameters such that an HMCS lock will deliver better fairness than a C-MCS lock for a given throughput, or deliver better throughput for a given fairness. Our experiments show that, under high contention, a three-level HMCS lock delivers up to 7.6x higher lock throughput than a C-MCS lock on a 128-thread IBM Power 755 and a five-level HMCS lock delivers up to 72x higher lock throughput on a 4096-thread SGI UV 1000. On the K-means clustering code from the MineBench suit, a three-level HMCS lock reduces the running time by up to 55\% compared to the C-MCS lock on a IBM Power 755.},
+  isbn = {978-1-4503-3205-7},
+  file = {/Users/estebanramos/Zotero/storage/K67WFJQF/Chabbi et al. - 2015 - High performance locks for multi-level NUMA systems.pdf}
+}
+
+@misc{CodemiaNUMANew,
+  title = {Codemia {\textbar} {{NUMA Is}} the {{New Network}}: {{How Per-Socket Memory Models Are Reshaping Microservice Placement}}},
+  urldate = {2025-09-17},
+  howpublished = {https://codemia.io/blog/path/NUMA-Is-the-New-Network-How-Per-Socket-Memory-Models-Are-Reshaping-Microservice-Placement},
+  file = {/Users/estebanramos/Zotero/storage/T6AYZZ3E/NUMA-Is-the-New-Network-How-Per-Socket-Memory-Models-Are-Reshaping-Microservice-Placement.html}
+}
+
+@inproceedings{dangAdvancedThreadSynchronization2017,
+  title = {Advanced {{Thread Synchronization}} for {{Multithreaded MPI Implementations}}},
+  booktitle = {2017 17th {{IEEE}}/{{ACM International Symposium}} on {{Cluster}}, {{Cloud}} and {{Grid Computing}} ({{CCGRID}})},
+  author = {Dang, Hoang-Vu and Seo, Sangmin and Amer, Abdelhalim and Balaji, Pavan},
+  year = {2017},
+  month = may,
+  pages = {314--324},
+  publisher = {IEEE},
+  address = {Madrid, Spain},
+  doi = {10.1109/CCGRID.2017.65},
+  urldate = {2025-09-26},
+  abstract = {Concurrent multithreaded access to the Message Passing Interface (MPI) is gaining importance to support emerging hybrid MPI applications. The interoperability between threads and MPI, however, is complex and renders efficient implementations nontrivial. Prior studies showed that threads waiting for communication progress (waiting threads) often interfere with others (active threads) and degrade their progress. This situation occurs when both classes of threads compete for the same MPI resource and ownership passing to waiting threads does not guarantee communication to advance. The best-known practical solution prioritizes active threads and adapts first-infirst-out arbitration within each class. This approach, however, suffers from residual wasted resource acquisitions (waste) and ignores data locality, thus resulting in poor scalability.},
+  isbn = {978-1-5090-6611-7},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/L48G9B6G/Dang et al. - 2017 - Advanced Thread Synchronization for Multithreaded MPI Implementations.pdf}
+}
+
+@misc{diceCompactNUMAAwareLocks2019,
+  title = {Compact {{NUMA-Aware Locks}}},
+  author = {Dice, Dave and Kogan, Alex},
+  year = {2019},
+  month = mar,
+  number = {arXiv:1810.05600},
+  eprint = {1810.05600},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1810.05600},
+  urldate = {2025-09-17},
+  abstract = {Modern multi-socket architectures exhibit non-uniform memory access (NUMA) behavior, where access by a core to data cached locally on a socket is much faster than access to data cached on a remote socket. Prior work offers several efficient NUMA-aware locks that exploit this behavior by keeping the lock ownership on the same socket, thus reducing remote cache misses and inter-socket communication. Virtually all those locks, however, are hierarchical in their nature, thus requiring space proportional to the number of sockets. The increased memory cost renders NUMA-aware locks unsuitable for systems that are conscious to space requirements of their synchronization constructs, with the Linux kernel being the chief example.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Operating Systems},
+  file = {/Users/estebanramos/Zotero/storage/V2J2WLMC/Dice and Kogan - 2019 - Compact NUMA-Aware Locks.pdf}
+}
+
+@article{diceLockCohortingGeneral,
+  title = {Lock {{Cohorting}}: {{A General Technique}} for {{Designing NUMA Locks}}},
+  author = {Dice, David and Marathe, Virendra J and Shavit, Nir},
+  abstract = {Multicore machines are quickly shifting to NUMA and CC-NUMA architectures, making scalable NUMA-aware locking algorithms, ones that take into account the machines' non-uniform memory and caching hierarchy, ever more important. This paper presents lock cohorting, a general new technique for designing NUMA-aware locks that is as simple as it is powerful.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/QVQWU8P3/Dice et al. - Lock Cohorting A General Technique for Designing NUMA Locks.pdf}
+}
+
+@inproceedings{diceMalthusianLocks2017,
+  title = {Malthusian {{Locks}}},
+  booktitle = {Proceedings of the {{Twelfth European Conference}} on {{Computer Systems}}},
+  author = {Dice, Dave},
+  year = {2017},
+  month = apr,
+  pages = {314--327},
+  publisher = {ACM},
+  address = {Belgrade Serbia},
+  doi = {10.1145/3064176.3064203},
+  urldate = {2025-09-17},
+  abstract = {Applications running in modern multithreaded environments are sometimes overthreaded. The excess threads do not improve performance, and in fact may act to degrade performance via scalability collapse, which can manifest even Increasedconcurrency resulting in decreasedthroughput appears in other contexts. Brooks[7] observed that increasing the number of workers on a project could slowdelivery.},
+  isbn = {978-1-4503-4938-3},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/B3JS5GJY/Dice - 2017 - Malthusian Locks.pdf}
+}
+
+@article{dijxstraSolutionProblemConcurrent,
+  title = {Solution of a {{Problem}} in {{Concurrent Programming Control}}},
+  author = {Dijxstra, E W},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/I35QM85V/Dijxstra - Solution of a Problem in Concurrent Programming Control.pdf}
+}
+
+@incollection{dozsaEnablingConcurrentMultithreaded2010,
+  title = {Enabling {{Concurrent Multithreaded MPI Communication}} on {{Multicore Petascale Systems}}},
+  booktitle = {Recent {{Advances}} in the {{Message Passing Interface}}},
+  author = {D{\'o}zsa, G{\'a}bor and Kumar, Sameer and Balaji, Pavan and Buntinas, Darius and Goodell, David and Gropp, William and Ratterman, Joe and Thakur, Rajeev},
+  editor = {Hutchison, David and Kanade, Takeo and Kittler, Josef and Kleinberg, Jon M. and Mattern, Friedemann and Mitchell, John C. and Naor, Moni and Nierstrasz, Oscar and Pandu Rangan, C. and Steffen, Bernhard and Sudan, Madhu and Terzopoulos, Demetri and Tygar, Doug and Vardi, Moshe Y. and Weikum, Gerhard and Keller, Rainer and Gabriel, Edgar and Resch, Michael and Dongarra, Jack},
+  year = {2010},
+  volume = {6305},
+  pages = {11--20},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-642-15646-5_2},
+  urldate = {2025-09-26},
+  abstract = {With the ever-increasing numbers of cores per node on HPC systems, applications are increasingly using threads to exploit the shared memory within a node, combined with MPI across nodes. Achieving high performance when a large number of concurrent threads make MPI calls is a challenging task for an MPI implementation. We describe the design and implementation of our solution in MPICH2 to achieve highperformance multithreaded communication on the IBM Blue Gene/P. We use a combination of a multichannel-enabled network interface, finegrained locks, lock-free atomic operations, and specially designed queues to provide a high degree of concurrent access while still maintaining MPI's message-ordering semantics. We present performance results that demonstrate that our new design improves the multithreaded message rate by a factor of 3.6 compared with the existing implementation on the BG/P. Our solutions are also applicable to other high-end systems that have parallel network access capabilities.},
+  isbn = {978-3-642-15645-8 978-3-642-15646-5},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/TWTQ69EH/Dózsa et al. - 2010 - Enabling Concurrent Multithreaded MPI Communication on Multicore Petascale Systems.pdf}
+}
+
+@article{ewaisDisaggregatedMemoryDatacenter2023,
+  title = {Disaggregated {{Memory}} in the {{Datacenter}}: {{A Survey}}},
+  shorttitle = {Disaggregated {{Memory}} in the {{Datacenter}}},
+  author = {Ewais, Mohammad and Chow, Paul},
+  year = {2023},
+  journal = {IEEE Access},
+  volume = {11},
+  pages = {20688--20712},
+  issn = {2169-3536},
+  doi = {10.1109/ACCESS.2023.3250407},
+  urldate = {2025-09-14},
+  abstract = {Datacenters of today have maintained the same architecture for decades. The building block of the datacenter remains the server, which tightly couples the necessary compute resources, memory, and storage to run its tasks. However, this traditional approach suffers from under-utilization of its resources, often caused by the over-provisioning of these resources when deploying applications. Datacenter operators allocate the worst-case amount of memory required for each deployed application, which lasts for the entirety of the application's lifetime, even when not actually used. This causes servers to quickly, and falsely, run out of memory before their CPUs have been fully utilized. To address these problems, a new shift in the way datacenters are being built has been gaining more traction. Namely, memory disaggregation. Memory disaggregation can address these problems by decoupling the computational elements from the memory resources, allowing each to be provisioned and utilized separately. While the idea of memory disaggregation is not new, an increasing number of different proposals of memory disaggregation have seen the light in recent years. In this paper, we review many of these recent proposals, and study their architectures, implementations, and requirements. We also categorize them based on their features, and attempt to identify their strengths and shortcomings in an effort to highlight possible directions for future work and provide a reference for the research community.},
+  keywords = {Computer architecture,Data centers,datacenter architecture,disaggregated memory,memory disaggregation,Memory management,Proposals,Remote memory,Resource management,Servers,Virtual machine monitors},
+  file = {/Users/estebanramos/Zotero/storage/4WPKZ6JH/Ewais and Chow - 2023 - Disaggregated Memory in the Datacenter A Survey.pdf}
+}
+
+@inproceedings{fridmanCXLMemoryPersistent2023,
+  title = {{{CXL Memory}} as {{Persistent Memory}} for {{Disaggregated HPC}}: {{A Practical Approach}}},
+  shorttitle = {{{CXL Memory}} as {{Persistent Memory}} for {{Disaggregated HPC}}},
+  booktitle = {Proceedings of the {{SC}} '23 {{Workshops}} of the {{International Conference}} on {{High Performance Computing}}, {{Network}}, {{Storage}}, and {{Analysis}}},
+  author = {Fridman, Yehonatan and Mutalik Desai, Suprasad and Singh, Navneet and Willhalm, Thomas and Oren, Gal},
+  year = {2023},
+  month = nov,
+  series = {{{SC-W}} '23},
+  pages = {983--994},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3624062.3624175},
+  urldate = {2025-09-17},
+  abstract = {In the landscape of High-Performance Computing (HPC), the quest for efficient and scalable memory solutions remains paramount. The advent of Compute Express Link (CXL) introduces a promising avenue with its potential to function as a Persistent Memory (PMem) solution in the context of disaggregated HPC systems. This paper presents a comprehensive exploration of CXL memory's viability as a candidate for PMem, supported by physical experiments conducted on cutting-edge multi-NUMA nodes equipped with CXL-attached memory prototypes. Our study not only benchmarks the performance of CXL memory but also illustrates the seamless transition from traditional PMem programming models to CXL, reinforcing its practicality. To substantiate our claims, we establish a tangible CXL prototype using an FPGA card embodying CXL 1.1/2.0 compliant endpoint designs (Intel FPGA CXL IP). Performance evaluations, executed through the STREAM and STREAM-PMem benchmarks, showcase CXL memory's ability to mirror PMem characteristics in App-Direct and Memory Mode while achieving impressive bandwidth metrics with Intel 4th generation Xeon (Sapphire Rapids) processors. The results elucidate the feasibility of CXL memory as a persistent memory solution, outperforming previously established benchmarks. In contrast to published DCPMM results, our CXL-DDR4 memory module offers comparable bandwidth to local DDR4 memory configurations, albeit with a moderate decrease in performance. The modified STREAM-PMem application underscores the ease of transitioning programming models from PMem to CXL, thus underscoring the practicality of adopting CXL memory. The sources of this work are available at: https://github.com/Scientific-Computing-Lab-NRCN/STREAMer.},
+  isbn = {979-8-4007-0785-8},
+  file = {/Users/estebanramos/Zotero/storage/TK2BKRBD/Fridman et al. - 2023 - CXL Memory as Persistent Memory for Disaggregated HPC A Practical Approach.pdf}
+}
+
+@inproceedings{gangidiRDMAEthernetDistributed2024,
+  title = {{{RDMA}} over {{Ethernet}} for {{Distributed Training}} at {{Meta Scale}}},
+  booktitle = {Proceedings of the {{ACM SIGCOMM}} 2024 {{Conference}}},
+  author = {Gangidi, Adithya and Miao, Rui and Zheng, Shengbao and Bondu, Sai Jayesh and Goes, Guilherme and Morsy, Hany and Puri, Rohit and Riftadi, Mohammad and Shetty, Ashmitha Jeevaraj and Yang, Jingyi and Zhang, Shuqiang and Fernandez, Mikel Jimenez and Gandham, Shashidhar and Zeng, Hongyi},
+  year = {2024},
+  month = aug,
+  pages = {57--70},
+  publisher = {ACM},
+  address = {Sydney NSW Australia},
+  doi = {10.1145/3651890.3672233},
+  urldate = {2025-09-24},
+  abstract = {The rapid growth in both computational density and scale in AI models in recent years motivates the construction of an efficient and reliable dedicated network infrastructure. This paper presents the design, implementation, and operation of Meta's Remote Direct Memory Access over Converged Ethernet (RoCE) networks for distributed AI training.},
+  isbn = {979-8-4007-0614-1},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/YQMVRGAM/Gangidi et al. - 2024 - RDMA over Ethernet for Distributed Training at Meta Scale.pdf}
+}
+
+@inproceedings{gangidiRDMAEthernetDistributed2024a,
+  title = {{{RDMA}} over {{Ethernet}} for {{Distributed Training}} at {{Meta Scale}}},
+  booktitle = {Proceedings of the {{ACM SIGCOMM}} 2024 {{Conference}}},
+  author = {Gangidi, Adithya and Miao, Rui and Zheng, Shengbao and Bondu, Sai Jayesh and Goes, Guilherme and Morsy, Hany and Puri, Rohit and Riftadi, Mohammad and Shetty, Ashmitha Jeevaraj and Yang, Jingyi and Zhang, Shuqiang and Fernandez, Mikel Jimenez and Gandham, Shashidhar and Zeng, Hongyi},
+  year = {2024},
+  month = aug,
+  pages = {57--70},
+  publisher = {ACM},
+  address = {Sydney NSW Australia},
+  doi = {10.1145/3651890.3672233},
+  urldate = {2025-09-25},
+  abstract = {The rapid growth in both computational density and scale in AI models in recent years motivates the construction of an efficient and reliable dedicated network infrastructure. This paper presents the design, implementation, and operation of Meta's Remote Direct Memory Access over Converged Ethernet (RoCE) networks for distributed AI training.},
+  isbn = {979-8-4007-0614-1},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/H4LK9ZPE/Gangidi et al. - 2024 - RDMA over Ethernet for Distributed Training at Meta Scale.pdf}
+}
+
+@inproceedings{gangidiRDMAEthernetDistributed2024b,
+  title = {{{RDMA}} over {{Ethernet}} for {{Distributed Training}} at {{Meta Scale}}},
+  booktitle = {Proceedings of the {{ACM SIGCOMM}} 2024 {{Conference}}},
+  author = {Gangidi, Adithya and Miao, Rui and Zheng, Shengbao and Bondu, Sai Jayesh and Goes, Guilherme and Morsy, Hany and Puri, Rohit and Riftadi, Mohammad and Shetty, Ashmitha Jeevaraj and Yang, Jingyi and Zhang, Shuqiang and Fernandez, Mikel Jimenez and Gandham, Shashidhar and Zeng, Hongyi},
+  year = {2024},
+  month = aug,
+  pages = {57--70},
+  publisher = {ACM},
+  address = {Sydney NSW Australia},
+  doi = {10.1145/3651890.3672233},
+  urldate = {2025-09-25},
+  abstract = {The rapid growth in both computational density and scale in AI models in recent years motivates the construction of an efficient and reliable dedicated network infrastructure. This paper presents the design, implementation, and operation of Meta's Remote Direct Memory Access over Converged Ethernet (RoCE) networks for distributed AI training.},
+  isbn = {979-8-4007-0614-1},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/ESPI8RT7/Gangidi et al. - 2024 - RDMA over Ethernet for Distributed Training at Meta Scale.pdf}
+}
+
+@inproceedings{giannoulaSynCronEfficientSynchronization2021,
+  title = {{{SynCron}}: {{Efficient Synchronization Support}} for {{Near-Data-Processing Architectures}}},
+  shorttitle = {{{SynCron}}},
+  booktitle = {2021 {{IEEE International Symposium}} on {{High-Performance Computer Architecture}} ({{HPCA}})},
+  author = {Giannoula, Christina and Vijaykumar, Nandita and Papadopoulou, Nikela and Karakostas, Vasileios and Fernandez, Ivan and {Gomez-Luna}, Juan and Orosa, Lois and Koziris, Nectarios and Goumas, Georgios and Mutlu, Onur},
+  year = {2021},
+  month = feb,
+  pages = {263--276},
+  publisher = {IEEE},
+  address = {Seoul, Korea (South)},
+  doi = {10.1109/HPCA51647.2021.00031},
+  urldate = {2025-09-16},
+  isbn = {978-1-6654-2235-2},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/RA4TX4PU/Giannoula et al. - 2021 - SynCron Efficient Synchronization Support for Near-Data-Processing Architectures.pdf}
+}
+
+@article{goukDirectAccessHighPerformance,
+  title = {Direct {{Access}}, {{High-Performance Memory Disaggregation}} with {{DirectCXL}}},
+  author = {Gouk, Donghyun and Lee, Sangwon and Kwon, Miryeong and Jung, Myoungsoo},
+  abstract = {New cache coherent interconnects such as CXL have recently attracted great attention thanks to their excellent hardware heterogeneity management and resource disaggregation capabilities. Even though there is yet no real product or platform integrating CXL into memory disaggregation, it is expected to make memory resources practically and efficiently disaggregated much better than ever before. In this paper, we propose directly accessible memory disaggregation, DIRECTCXL that straight connects a host processor complex and remote memory resources over CXL's memory protocol (CXL.mem). To this end, we explore a practical design for CXL-based memory disaggregation and make it real. As there is no operating system that supports CXL, we also offer CXL software runtime that allows users to utilize the underlying disaggregated memory resources via sheer load/store instructions. Since DIRECTCXL does not require any data copies between the host memory and remote memory, it can expose the true performance of remote-side disaggregated memory resources to the users.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/KI5XC7Q9/Gouk et al. - Direct Access, High-Performance Memory Disaggregation with DirectCXL.pdf}
+}
+
+@article{goukDirectAccessHighPerformancea,
+  title = {Direct {{Access}}, {{High-Performance Memory Disaggregation}} with {{DirectCXL}}},
+  author = {Gouk, Donghyun and Lee, Sangwon and Kwon, Miryeong and Jung, Myoungsoo},
+  abstract = {New cache coherent interconnects such as CXL have recently attracted great attention thanks to their excellent hardware heterogeneity management and resource disaggregation capabilities. Even though there is yet no real product or platform integrating CXL into memory disaggregation, it is expected to make memory resources practically and efficiently disaggregated much better than ever before. In this paper, we propose directly accessible memory disaggregation, DIRECTCXL that straight connects a host processor complex and remote memory resources over CXL's memory protocol (CXL.mem). To this end, we explore a practical design for CXL-based memory disaggregation and make it real. As there is no operating system that supports CXL, we also offer CXL software runtime that allows users to utilize the underlying disaggregated memory resources via sheer load/store instructions. Since DIRECTCXL does not require any data copies between the host memory and remote memory, it can expose the true performance of remote-side disaggregated memory resources to the users.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/D42JLTRW/Gouk et al. - Direct Access, High-Performance Memory Disaggregation with DirectCXL.pdf}
+}
+
+@article{guirouxMulticoreLocksCase,
+  title = {Multicore {{Locks}}: {{The Case Is Not Closed Yet}}},
+  author = {Guiroux, Hugo and Lachaize, Renaud},
+  abstract = {NUMA multicore machines are pervasive and many multithreaded applications are suffering from lock contention. To mitigate this issue, application and library developers can choose from the plethora of optimized mutex lock algorithms that have been designed over the past 25 years. Unfortunately, there is currently no broad study of the behavior of these optimized lock algorithms on realistic applications. In this paper, we attempt to fill this gap. We perform a performance study of 27 state-of-theart mutex lock algorithms on 35 applications. Our study shows that the case is not yet closed regarding locking on multicore machines. Indeed, our conclusions include the following findings: (i) at its optimized contention level, no single lock is the best for more than 52\% of the studied workloads; (ii) every lock is harmful for several applications, even if the application parallelism is properly tuned; (iii) for several applications, the best lock changes when varying the number of threads. These findings call for further research on optimized lock algorithms and dynamic adaptation of contention management.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/6J5N3N6S/Guiroux and Lachaize - Multicore Locks The Case Is Not Closed Yet.pdf}
+}
+
+@misc{guPIMAllYou2025,
+  title = {{{PIM Is All You Need}}: {{A CXL-Enabled GPU-Free System}} for {{Large Language Model Inference}}},
+  shorttitle = {{{PIM Is All You Need}}},
+  author = {Gu, Yufeng and Khadem, Alireza and Umesh, Sumanth and Liang, Ning and Servot, Xavier and Mutlu, Onur and Iyer, Ravi and Das, Reetuparna},
+  year = {2025},
+  month = feb,
+  eprint = {2502.07578},
+  primaryclass = {cs},
+  doi = {10.1145/3676641.3716267},
+  urldate = {2025-02-26},
+  abstract = {Large Language Model (LLM) inference uses an autoregressive manner to generate one token at a time, which exhibits notably lower operational intensity compared to earlier Machine Learning (ML) models such as encoder-only transformers and Convolutional Neural Networks. At the same time, LLMs possess large parameter sizes and use key-value caches to store context information. Modern LLMs support context windows with up to 1 million tokens to generate versatile text, audio, and video content. A large key-value cache unique to each prompt requires a large memory capacity, limiting the inference batch size. Both low operational intensity and limited batch size necessitate a high memory bandwidth. However, contemporary hardware systems for ML model deployment, such as GPUs and TPUs, are primarily optimized for compute throughput. This mismatch challenges the efficient deployment of advanced LLMs and makes users to pay for expensive compute resources that are poorly utilized for the memory-bound LLM inference tasks. We propose CENT, a CXL-ENabled GPU-Free sysTem for LLM inference, which harnesses CXL memory expansion capabilities to accommodate substantial LLM sizes, and utilizes near-bank processing units to deliver high memory bandwidth, eliminating the need for expensive GPUs. CENT exploits a scalable CXL network to support peer-to-peer and collective communication primitives across CXL devices. We implement various parallelism strategies to distribute LLMs across these devices. Compared to GPU baselines with maximum supported batch sizes and similar average power, CENT achieves 2.3\${\textbackslash}times\$ higher throughput and consumes 2.3\${\textbackslash}times\$ less energy. CENT enhances the Total Cost of Ownership (TCO), generating 5.2\${\textbackslash}times\$ more tokens per dollar than GPUs.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Hardware Architecture},
+  file = {/Users/estebanramos/Zotero/storage/6AREBWTI/Gu et al. - 2025 - PIM Is All You Need A CXL-Enabled GPU-Free System for Large Language Model Inference.pdf}
+}
+
+@inproceedings{hazelwoodAppliedMachineLearning2018,
+  title = {Applied {{Machine Learning}} at {{Facebook}}: {{A Datacenter Infrastructure Perspective}}},
+  shorttitle = {Applied {{Machine Learning}} at {{Facebook}}},
+  booktitle = {2018 {{IEEE International Symposium}} on {{High Performance Computer Architecture}} ({{HPCA}})},
+  author = {Hazelwood, Kim and Bird, Sarah and Brooks, David and Chintala, Soumith and Diril, Utku and Dzhulgakov, Dmytro and Fawzy, Mohamed and Jia, Bill and Jia, Yangqing and Kalro, Aditya and Law, James and Lee, Kevin and Lu, Jason and Noordhuis, Pieter and Smelyanskiy, Misha and Xiong, Liang and Wang, Xiaodong},
+  year = {2018},
+  month = feb,
+  pages = {620--629},
+  issn = {2378-203X},
+  doi = {10.1109/HPCA.2018.00059},
+  urldate = {2025-09-25},
+  abstract = {Machine learning sits at the core of many essential products and services at Facebook. This paper describes the hardware and software infrastructure that supports machine learning at global scale. Facebook's machine learning workloads are extremely diverse: services require many different types of models in practice. This diversity has implications at all layers in the system stack. In addition, a sizable fraction of all data stored at Facebook flows through machine learning pipelines, presenting significant challenges in delivering data to high-performance distributed training flows. Computational requirements are also intense, leveraging both GPU and CPU platforms for training and abundant CPU capacity for real-time inference. Addressing these and other emerging challenges continues to require diverse efforts that span machine learning algorithms, software, and hardware design.},
+  keywords = {computer architecture,facebook,Facebook,Feeds,hardware software codesign,machine learning,Machine learning algorithms,Neural networks,Servers,Support vector machines,Training},
+  file = {/Users/estebanramos/Zotero/storage/2TVPNM2G/Hazelwood et al. - 2018 - Applied Machine Learning at Facebook A Datacenter Infrastructure Perspective.pdf}
+}
+
+@article{heinrichQuantitativeAnalysisPerformance1999,
+  title = {A Quantitative Analysis of the Performance and Scalability of Distributed Shared Memory Cache Coherence Protocols},
+  author = {Heinrich, M. and Soundararajan, V. and Hennessy, J. and Gupta, A.},
+  year = {1999},
+  month = feb,
+  journal = {IEEE Trans. Comput.},
+  volume = {48},
+  number = {2},
+  pages = {205--217},
+  issn = {00189340},
+  doi = {10.1109/12.752662},
+  urldate = {2025-09-16},
+  copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
+  langid = {english},
+  keywords = {Access protocols,Clocks,Coherence,Data structures,Delay,Laboratories,Large-scale systems,Performance analysis,Scalability,Time measurement},
+  file = {/Users/estebanramos/Zotero/storage/U49K5Q8L/Heinrich et al. - 1999 - A quantitative analysis of the performance and scalability of distributed shared memory cache cohere.pdf;/Users/estebanramos/Zotero/storage/STM7SC8W/752662.html}
+}
+
+@article{herlihyWaitfreeSynchronization1991,
+  title = {Wait-Free Synchronization},
+  author = {Herlihy, Maurice},
+  year = {1991},
+  month = jan,
+  journal = {ACM Trans. Program. Lang. Syst.},
+  volume = {13},
+  number = {1},
+  pages = {124--149},
+  issn = {0164-0925},
+  doi = {10.1145/114005.102808},
+  urldate = {2025-09-14},
+  abstract = {A wait-free implementation of a concurrent data object is one that guarantees that any process can complete any operation in a finite number of steps, regardless of the execution speeds of the other processes. The problem of constructing a wait-free implementation of one data object from another lies at the heart of much recent work in concurrent algorithms, concurrent data structures, and multiprocessor architectures. First, we introduce a simple and general technique, based on reduction to a concensus protocol, for proving statements of the form, ``there is no wait-free implementation of X by Y.'' We derive a hierarchy of objects such that no object at one level has a wait-free implementation in terms of objects at lower levels. In particular, we show that    atomic read/write registers, which have been the focus of much recent attention, are at the bottom of the hierarchy: thay cannot be used to construct wait-free implementations of many simple and familiar data types. Moreover, classical synchronization primitives such astest\&amp;set and fetch\&amp;add, while more powerful than read and write, are also computationally weak, as are the standard message-passing primitives. Second, nevertheless, we show that there do exist simple universal objects from which one can construct a wait-free implementation of any sequential object.},
+  file = {/Users/estebanramos/Zotero/storage/2ZR8QNQT/Herlihy - 1991 - Wait-free synchronization.pdf}
+}
+
+@article{hesselinkFastMutualExclusion2018,
+  title = {Fast Mutual Exclusion by the {{Triangle}} Algorithm},
+  author = {Hesselink, Wim H. and Buhr, Peter A. and Dice, David},
+  year = {2018},
+  journal = {Concurrency and Computation: Practice and Experience},
+  volume = {30},
+  number = {4},
+  pages = {e4183},
+  issn = {1532-0634},
+  doi = {10.1002/cpe.4183},
+  urldate = {2025-07-03},
+  abstract = {This paper presents a new starvation-free software algorithm for the N-thread mutual-exclusion problem. In the absence of contention, the algorithm requires only eight write and four read operations to enter and leave the critical section; to the best of our knowledge, this is optimal. For algorithms with starvation, five write and two read read operations are optimal. In the presence of contention, the algorithm has excellent performance comparable to the best-known software solutions using only atomic load and store and to a hardware-assisted lock (MCS) using stronger atomic primitives and used within the Linux kernel. It is rare for software-only algorithms for mutual exclusion to perform well for both minimal and maximal contention workloads, making the new algorithm largely self-tuning when exposed to swings in access patterns.},
+  langid = {english},
+  keywords = {concurrency,mutual exclusion,performance experiment,software solutions},
+  file = {/Users/estebanramos/Zotero/storage/DJV5HRN2/Hesselink et al. - 2018 - Fast mutual exclusion by the Triangle algorithm.pdf;/Users/estebanramos/Zotero/storage/YWI3LYGG/cpe.html}
+}
+
+@article{hesselinkVerifyingSimplificationMutual2013,
+  title = {Verifying a Simplification of Mutual Exclusion by {{Lycklama}}--{{Hadzilacos}}},
+  author = {Hesselink, Wim H.},
+  year = {2013},
+  month = may,
+  journal = {Acta Informatica},
+  volume = {50},
+  number = {3},
+  pages = {199--228},
+  issn = {1432-0525},
+  doi = {10.1007/s00236-013-0178-2},
+  urldate = {2025-09-12},
+  abstract = {A simplification of the mutual exclusion algorithm of Lycklama and Hadzilacos (ACM Trans Program Lang Syst 13:558--576, 1991) is presented. It uses only four nonatomic shared bits per thread to guarantee mutual exclusion with the first-come-first-served property. The algorithm is verified by assertional methods, aided by the proof assistant PVS. A variation with five bits per thread is also given. This variation may give better performance when the number of threads is large. The use of the proof assistant made it easy to transfer the proof of the main algorithm to the variation.},
+  langid = {english},
+  keywords = {Forward Step,Mutual Exclusion,Private Variable,Refinement Mapping,Shared Variable},
+  file = {/Users/estebanramos/Zotero/storage/CVAV7RX4/Hesselink - 2013 - Verifying a simplification of mutual exclusion by Lycklama–Hadzilacos.pdf}
+}
+
+@misc{hoeflerDatacenterEthernetRDMA2023,
+  title = {Datacenter {{Ethernet}} and {{RDMA}}: {{Issues}} at {{Hyperscale}}},
+  shorttitle = {Datacenter {{Ethernet}} and {{RDMA}}},
+  author = {Hoefler, Torsten and Roweth, Duncan and Underwood, Keith and Alverson, Bob and Griswold, Mark and Tabatabaee, Vahid and Kalkunte, Mohan and Anubolu, Surendra and Shen, Siyuan and Kabbani, Abdul and McLaren, Moray and Scott, Steve},
+  year = {2023},
+  month = apr,
+  number = {arXiv:2302.03337},
+  eprint = {2302.03337},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2302.03337},
+  urldate = {2025-09-24},
+  abstract = {We observe that emerging artificial intelligence, high-performance computing, and storage workloads pose new challenges for large-scale datacenter networking. RDMA over Converged Ethernet (RoCE) was an attempt to adopt modern Remote Direct Memory Access (RDMA) features into existing Ethernet installations. Now, a decade later, we revisit RoCE's design points and conclude that several of its shortcomings must be addressed to fulfill the demands of hyperscale datacenters. We predict that both the datacenter and high-performance computing markets will converge and adopt modernized Ethernet-based high-performance networking solutions that will replace TCP and RoCE within a decade.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture,Computer Science - Networking and Internet Architecture},
+  file = {/Users/estebanramos/Zotero/storage/DKBTZIBS/Hoefler et al. - 2023 - Datacenter Ethernet and RDMA Issues at Hyperscale.pdf}
+}
+
+@misc{hoeflerDatacenterEthernetRDMA2023a,
+  title = {Datacenter {{Ethernet}} and {{RDMA}}: {{Issues}} at {{Hyperscale}}},
+  shorttitle = {Datacenter {{Ethernet}} and {{RDMA}}},
+  author = {Hoefler, Torsten and Roweth, Duncan and Underwood, Keith and Alverson, Bob and Griswold, Mark and Tabatabaee, Vahid and Kalkunte, Mohan and Anubolu, Surendra and Shen, Siyuan and Kabbani, Abdul and McLaren, Moray and Scott, Steve},
+  year = {2023},
+  month = apr,
+  number = {arXiv:2302.03337},
+  eprint = {2302.03337},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2302.03337},
+  urldate = {2025-09-25},
+  abstract = {We observe that emerging artificial intelligence, high-performance computing, and storage workloads pose new challenges for large-scale datacenter networking. RDMA over Converged Ethernet (RoCE) was an attempt to adopt modern Remote Direct Memory Access (RDMA) features into existing Ethernet installations. Now, a decade later, we revisit RoCE's design points and conclude that several of its shortcomings must be addressed to fulfill the demands of hyperscale datacenters. We predict that both the datacenter and high-performance computing markets will converge and adopt modernized Ethernet-based high-performance networking solutions that will replace TCP and RoCE within a decade.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture,Computer Science - Networking and Internet Architecture},
+  file = {/Users/estebanramos/Zotero/storage/T25I4SWV/Hoefler et al. - 2023 - Datacenter Ethernet and RDMA Issues at Hyperscale.pdf}
+}
+
+@misc{hoeflerDatacenterEthernetRDMA2023b,
+  title = {Datacenter {{Ethernet}} and {{RDMA}}: {{Issues}} at {{Hyperscale}}},
+  shorttitle = {Datacenter {{Ethernet}} and {{RDMA}}},
+  author = {Hoefler, Torsten and Roweth, Duncan and Underwood, Keith and Alverson, Bob and Griswold, Mark and Tabatabaee, Vahid and Kalkunte, Mohan and Anubolu, Surendra and Shen, Siyuan and Kabbani, Abdul and McLaren, Moray and Scott, Steve},
+  year = {2023},
+  month = apr,
+  number = {arXiv:2302.03337},
+  eprint = {2302.03337},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2302.03337},
+  urldate = {2025-09-25},
+  abstract = {We observe that emerging artificial intelligence, high-performance computing, and storage workloads pose new challenges for large-scale datacenter networking. RDMA over Converged Ethernet (RoCE) was an attempt to adopt modern Remote Direct Memory Access (RDMA) features into existing Ethernet installations. Now, a decade later, we revisit RoCE's design points and conclude that several of its shortcomings must be addressed to fulfill the demands of hyperscale datacenters. We predict that both the datacenter and high-performance computing markets will converge and adopt modernized Ethernet-based high-performance networking solutions that will replace TCP and RoCE within a decade.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture,Computer Science - Networking and Internet Architecture},
+  file = {/Users/estebanramos/Zotero/storage/JHABQXNX/Hoefler et al. - 2023 - Datacenter Ethernet and RDMA Issues at Hyperscale.pdf}
+}
+
+@misc{HomepageComputeExpress2023,
+  title = {Homepage - {{Compute Express Link}}},
+  year = {2023},
+  month = sep,
+  urldate = {2025-09-16},
+  abstract = {CXL 3.2 Specification Now AvailableLearn more about the enhancements in security, compliance, and functionality of CXL Memory Device included in the specification.View the Press ReleaseUpcoming Industry EventsCXL Consortium representatives regularly support presentations and technology demonstrations during industry eventsView Upcoming Events Specifications Demos Videos Contact What's New Intel: CXL Memory Modes on Future Generation Intel Xeon},
+  howpublished = {https://computeexpresslink.org/},
+  langid = {american},
+  file = {/Users/estebanramos/Zotero/storage/73XIFFB5/computeexpresslink.org.html}
+}
+
+@misc{hongDawnDisaggregationCoherence2025,
+  title = {The {{Dawn}} of {{Disaggregation}} and the {{Coherence Conundrum}}: {{A Call}} for {{Federated Coherence}}},
+  shorttitle = {The {{Dawn}} of {{Disaggregation}} and the {{Coherence Conundrum}}},
+  author = {Hong, Jaewan and Aguilera, Marcos K. and Amaro, Emmanuel and Liu, Vincent and Panda, Aurojit and Stoica, Ion},
+  year = {2025},
+  month = apr,
+  number = {arXiv:2504.16324},
+  eprint = {2504.16324},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2504.16324},
+  urldate = {2025-07-09},
+  abstract = {Disaggregated memory is an upcoming data center technology that will allow nodes (servers) to share data efficiently. Sharing data creates a debate on the level of cache coherence the system should provide. While current proposals aim to provide coherence for all or parts of the disaggregated memory, we argue that this approach is problematic, because of scalability limitations and hardware complexity. Instead, we propose and formally define federated coherence, a model that provides coherence only within nodes, not across nodes. Federated coherence can use current intra-node coherence provided by processors without requiring expensive mechanisms for inter-node coherence. Developers can use federated coherence with a few simple programming paradigms and a synchronization library. We sketch some potential applications.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture},
+  file = {/Users/estebanramos/Zotero/storage/KTSJYYUW/Hong et al. - 2025 - The Dawn of Disaggregation and the Coherence Conundrum A Call for Federated Coherence.pdf}
+}
+
+@article{kashyapScalableNUMAawareBlocking,
+  title = {Scalable {{NUMA-aware Blocking Synchronization Primitives}}},
+  author = {Kashyap, Sanidhya and Min, Changwoo and Kim, Taesoo},
+  abstract = {Application scalability is a critical aspect to efficiently use NUMA machines with many cores. To achieve that, various techniques ranging from task placement to data sharding are used in practice. However, from the perspective of an operating system, these techniques often do not work as expected because various subsystems in the OS interact and share data structures among themselves, resulting in scalability bottlenecks. Although current OSes attempt to tackle this problem by introducing a wide range of synchronization primitives such as spinlock and mutex, the widely used synchronization mechanisms are not designed to handle both under- and over-subscribed scenarios in a scalable fashion. In particular, the current blocking synchronization primitives that are designed to address both scenarios are NUMA oblivious, meaning that they suffer from cache-line contention in an undersubscribed situation, and even worse, inherently spur long scheduler intervention, which leads to sub-optimal performance in an over-subscribed situation. In this work, we present several design choices to implement scalable blocking synchronization primitives that can address both under- and over-subscribed scenarios. Such design decisions include memory-efficient NUMAaware locks (favorable for deployment) and schedulingaware, scalable parking and wake-up strategies. To validate our design choices, we implement two new blocking synchronization primitives, which are variants of mutex and read-write semaphore in the Linux kernel. Our evaluation shows that these locks can scale real-world applications by 1.2--1.6{\texttimes} and some of the file system operations up to 4.7{\texttimes} in both under- and over-subscribed scenarios. Moreover, they use 1.5--10{\texttimes} less memory than the stateof-the-art NUMA-aware locks on a 120-core machine.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/Z66JY2L9/Kashyap et al. - Scalable NUMA-aware Blocking Synchronization Primitives.pdf}
+}
+
+@article{kashyapScalableNUMAawareBlockinga,
+  title = {Scalable {{NUMA-aware Blocking Synchronization Primitives}}},
+  author = {Kashyap, Sanidhya and Min, Changwoo and Kim, Taesoo},
+  abstract = {Application scalability is a critical aspect to efficiently use NUMA machines with many cores. To achieve that, various techniques ranging from task placement to data sharding are used in practice. However, from the perspective of an operating system, these techniques often do not work as expected because various subsystems in the OS interact and share data structures among themselves, resulting in scalability bottlenecks. Although current OSes attempt to tackle this problem by introducing a wide range of synchronization primitives such as spinlock and mutex, the widely used synchronization mechanisms are not designed to handle both under- and over-subscribed scenarios in a scalable fashion. In particular, the current blocking synchronization primitives that are designed to address both scenarios are NUMA oblivious, meaning that they suffer from cache-line contention in an undersubscribed situation, and even worse, inherently spur long scheduler intervention, which leads to sub-optimal performance in an over-subscribed situation. In this work, we present several design choices to implement scalable blocking synchronization primitives that can address both under- and over-subscribed scenarios. Such design decisions include memory-efficient NUMAaware locks (favorable for deployment) and schedulingaware, scalable parking and wake-up strategies. To validate our design choices, we implement two new blocking synchronization primitives, which are variants of mutex and read-write semaphore in the Linux kernel. Our evaluation shows that these locks can scale real-world applications by 1.2--1.6{\texttimes} and some of the file system operations up to 4.7{\texttimes} in both under- and over-subscribed scenarios. Moreover, they use 1.5--10{\texttimes} less memory than the stateof-the-art NUMA-aware locks on a 120-core machine.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/DDNI4W8X/Kashyap et al. - Scalable NUMA-aware Blocking Synchronization Primitives.pdf}
+}
+
+@inproceedings{kashyapScalablePracticalLocking2019,
+  title = {Scalable and Practical Locking with Shuffling},
+  booktitle = {Proceedings of the 27th {{ACM Symposium}} on {{Operating Systems Principles}}},
+  author = {Kashyap, Sanidhya and Calciu, Irina and Cheng, Xiaohe and Min, Changwoo and Kim, Taesoo},
+  year = {2019},
+  month = oct,
+  pages = {586--599},
+  publisher = {ACM},
+  address = {Huntsville Ontario Canada},
+  doi = {10.1145/3341301.3359629},
+  urldate = {2025-07-08},
+  abstract = {Locks are an essential building block for high-performance multicore system software. To meet performance goals, lock algorithms have evolved towards specialized solutions for architectural characteristics (e.g., NUMA). However, in practice, applications run on different server platforms and exhibit widely diverse behaviors that evolve with time (e.g., number of threads, number of locks). This creates performance and scalability problems for locks optimized for a single scenario and platform. For example, popular spinlocks suffer from excessive cache-line bouncing in NUMA systems, while scalable, NUMA-aware locks exhibit sub-par single-thread performance.},
+  copyright = {https://www.acm.org/publications/policies/copyright\_policy\#Background},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/QU68GK6U/Kashyap et al. - 2019 - Scalable and practical locking with shuffling.pdf}
+}
+
+@article{knuthAdditionalCommentsProblem1966,
+  title = {Additional Comments on a Problem in Concurrent Programming Control},
+  author = {Knuth, Donald E.},
+  year = {1966},
+  month = may,
+  journal = {Commun. ACM},
+  volume = {9},
+  number = {5},
+  pages = {321--322},
+  issn = {0001-0782},
+  doi = {10.1145/355592.365595},
+  urldate = {2025-09-24},
+  file = {/Users/estebanramos/Zotero/storage/Y426YF7S/Knuth - 1966 - Additional comments on a problem in concurrent programming control.pdf}
+}
+
+@article{korolijaFarviewDisaggregatedMemory,
+  title = {Farview: {{Disaggregated Memory}} with {{Operator Off-loading}} for {{Database Engines}}},
+  author = {Korolija, Dario},
+  abstract = {Cloud deployments disaggregate storage from compute, providing more flexibility to both the storage and compute layers. In this paper, we explore disaggregation by taking it one step further and applying it to memory (DRAM). Disaggregated memory uses network attached DRAM as a way to decouple memory from CPU. In the context of databases, such a design offers significant advantages in terms of making a larger memory capacity available as a central pool to a collection of smaller processing nodes. To explore these possibilities, we have implemented Farview, a disaggregated memory solution for databases, operating as a remote buffer cache with operator offloading capabilities. Farview is implemented as an FPGA-based smart NIC making DRAM available as a disaggregated, network attached memory pool capable of performing data processing at line rate over data streams to/from disaggregated memory. Farview supports query offloading using operators such as selection, projection, aggregation, regular expression matching and encryption. In this paper we focus on analytical queries and demonstrate the viability of the idea through an extensive experimental evaluation of Farview under different workloads. Farview is competitive with a local buffer cache solution for all the workloads and outperforms it in a number of cases, proving that a smart disaggregated memory can be a viable alternative for databases deployed in cloud environments.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/EX7CHI6N/Korolija - Farview Disaggregated Memory with Operator Off-loading for Database Engines.pdf}
+}
+
+@article{korolijaFarviewDisaggregatedMemorya,
+  title = {Farview: {{Disaggregated Memory}} with {{Operator Off-loading}} for {{Database Engines}}},
+  author = {Korolija, Dario},
+  abstract = {Cloud deployments disaggregate storage from compute, providing more flexibility to both the storage and compute layers. In this paper, we explore disaggregation by taking it one step further and applying it to memory (DRAM). Disaggregated memory uses network attached DRAM as a way to decouple memory from CPU. In the context of databases, such a design offers significant advantages in terms of making a larger memory capacity available as a central pool to a collection of smaller processing nodes. To explore these possibilities, we have implemented Farview, a disaggregated memory solution for databases, operating as a remote buffer cache with operator offloading capabilities. Farview is implemented as an FPGA-based smart NIC making DRAM available as a disaggregated, network attached memory pool capable of performing data processing at line rate over data streams to/from disaggregated memory. Farview supports query offloading using operators such as selection, projection, aggregation, regular expression matching and encryption. In this paper we focus on analytical queries and demonstrate the viability of the idea through an extensive experimental evaluation of Farview under different workloads. Farview is competitive with a local buffer cache solution for all the workloads and outperforms it in a number of cases, proving that a smart disaggregated memory can be a viable alternative for databases deployed in cloud environments.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/QG6QYD77/Korolija - Farview Disaggregated Memory with Operator Off-loading for Database Engines.pdf}
+}
+
+@article{kwonDisaggregatedMemorySystem2019,
+  title = {A {{Disaggregated Memory System}} for {{Deep Learning}}},
+  author = {Kwon, Youngeun and Rhu, Minsoo},
+  year = {2019},
+  month = sep,
+  journal = {IEEE Micro},
+  volume = {39},
+  number = {5},
+  pages = {82--90},
+  issn = {1937-4143},
+  doi = {10.1109/MM.2019.2929165},
+  urldate = {2025-09-16},
+  abstract = {As the complexity of deep learning (DL) models scales up, computer architects are faced with a memory ``capacity'' wall, where the limited physical memory inside the accelerator device constrains the algorithm that can be trained and deployed. This article summarizes our recent work on designing an accelerator-centric, disaggregated memory system for DL.},
+  keywords = {Bandwidth,Computer architecture,Deep learning,disaggregated memory,graphics processing unit (GPU),Graphics processing units,machine learning,Machine learning,Memory management,neural network,neural processing unit (NPU),Performance evaluation,system architecture,Training data},
+  file = {/Users/estebanramos/Zotero/storage/9AR7UQ24/Kwon and Rhu - 2019 - A Disaggregated Memory System for Deep Learning.pdf;/Users/estebanramos/Zotero/storage/WHNYYJDE/8765406.html}
+}
+
+@article{kwonDisaggregatedMemorySystem2019a,
+  title = {A {{Disaggregated Memory System}} for {{Deep Learning}}},
+  author = {Kwon, Youngeun and Rhu, Minsoo},
+  year = {2019},
+  month = sep,
+  journal = {IEEE Micro},
+  volume = {39},
+  number = {5},
+  pages = {82--90},
+  issn = {1937-4143},
+  doi = {10.1109/MM.2019.2929165},
+  urldate = {2025-09-24},
+  abstract = {As the complexity of deep learning (DL) models scales up, computer architects are faced with a memory ``capacity'' wall, where the limited physical memory inside the accelerator device constrains the algorithm that can be trained and deployed. This article summarizes our recent work on designing an accelerator-centric, disaggregated memory system for DL.},
+  keywords = {Bandwidth,Computer architecture,Deep learning,disaggregated memory,graphics processing unit (GPU),Graphics processing units,machine learning,Machine learning,Memory management,neural network,neural processing unit (NPU),Performance evaluation,system architecture,Training data},
+  file = {/Users/estebanramos/Zotero/storage/GUGB58L9/Kwon and Rhu - 2019 - A Disaggregated Memory System for Deep Learning.pdf}
+}
+
+@article{kwonDisaggregatedMemorySystem2019b,
+  title = {A {{Disaggregated Memory System}} for {{Deep Learning}}},
+  author = {Kwon, Youngeun and Rhu, Minsoo},
+  year = {2019},
+  month = sep,
+  journal = {IEEE Micro},
+  volume = {39},
+  number = {5},
+  pages = {82--90},
+  issn = {1937-4143},
+  doi = {10.1109/MM.2019.2929165},
+  urldate = {2025-09-25},
+  abstract = {As the complexity of deep learning (DL) models scales up, computer architects are faced with a memory ``capacity'' wall, where the limited physical memory inside the accelerator device constrains the algorithm that can be trained and deployed. This article summarizes our recent work on designing an accelerator-centric, disaggregated memory system for DL.},
+  keywords = {Bandwidth,Computer architecture,Deep learning,disaggregated memory,graphics processing unit (GPU),Graphics processing units,machine learning,Machine learning,Memory management,neural network,neural processing unit (NPU),Performance evaluation,system architecture,Training data},
+  file = {/Users/estebanramos/Zotero/storage/VYKX8QSG/Kwon and Rhu - 2019 - A Disaggregated Memory System for Deep Learning.pdf}
+}
+
+@misc{KyotoCabinetStraightforward,
+  title = {Kyoto {{Cabinet}}: A Straightforward Implementation of {{DBM}}},
+  urldate = {2025-09-17},
+  howpublished = {https://dbmx.net/kyotocabinet/},
+  file = {/Users/estebanramos/Zotero/storage/2R4543P6/kyotocabinet.html}
+}
+
+@article{lamportFastMutualExclusion1987,
+  title = {A Fast Mutual Exclusion Algorithm},
+  author = {Lamport, Leslie},
+  year = {1987},
+  month = jan,
+  journal = {ACM Trans. Comput. Syst.},
+  volume = {5},
+  number = {1},
+  pages = {1--11},
+  issn = {0734-2071, 1557-7333},
+  doi = {10.1145/7351.7352},
+  urldate = {2025-01-15},
+  abstract = {A new solution to the mutual exclusion problem is presented that, in the absence of contention, requires only seven memory accesses. It assumes atomic reads and atomic writes to shared registers.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/TXGRMYQ2/Lamport - 1987 - A fast mutual exclusion algorithm.pdf}
+}
+
+@article{lamportMutualExclusionProblem,
+  title = {The {{Mutual Exclusion Problem Part I}}: {{A Theory}} of {{Interprocess Communication}}},
+  author = {Lamport, L},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/QD5Z2HM8/Lamport - The Mutual Exclusion Problem Part I A Theory of Interprocess Communication.pdf}
+}
+
+@article{lamportMutualExclusionProblema,
+  title = {The {{Mutual Exclusion Problem Part II}}: {{Statement}} and {{Solutions}}},
+  author = {Lamport, L},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/BPGSNB84/Lamport - The Mutual Exclusion Problem Part II Statement and Solutions.pdf}
+}
+
+@article{lamportNewSolutionDijkstras1974,
+  title = {A {{New Solution}} of {{Dijkstra}}'s {{Concurrent Programming Problem}}},
+  author = {Lamport, Leslie},
+  year = {1974},
+  volume = {17},
+  number = {8},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/6IB569JR/Lamport - 1974 - A New Solution of Dijkstra's Concurrent Programming Problem.pdf}
+}
+
+@inproceedings{liPondCXLBasedMemory2023,
+  title = {Pond: {{CXL-Based Memory Pooling Systems}} for {{Cloud Platforms}}},
+  shorttitle = {Pond},
+  booktitle = {Proceedings of the 28th {{ACM International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}, {{Volume}} 2},
+  author = {Li, Huaicheng and Berger, Daniel S. and Hsu, Lisa and Ernst, Daniel and Zardoshti, Pantea and Novakovic, Stanko and Shah, Monish and Rajadnya, Samir and Lee, Scott and Agarwal, Ishwar and Hill, Mark D. and Fontoura, Marcus and Bianchini, Ricardo},
+  year = {2023},
+  month = jan,
+  pages = {574--587},
+  publisher = {ACM},
+  address = {Vancouver BC Canada},
+  doi = {10.1145/3575693.3578835},
+  urldate = {2025-09-14},
+  abstract = {Public cloud providers seek to meet stringent performance requirements and low hardware cost. A key driver of performance and cost is main memory. Memory pooling promises to improve DRAM utilization and thereby reduce costs. However, pooling is challenging under cloud performance requirements. This paper proposes Pond, the first memory pooling system that both meets cloud performance goals and significantly reduces DRAM cost. Pond builds on the Compute Express Link (CXL) standard for load/store access to pool memory and two key insights. First, our analysis of cloud production traces shows that pooling across 8-16 sockets is enough to achieve most of the benefits. This enables a small-pool design with low access latency. Second, it is possible to create machine learning models that can accurately predict how much local and pool memory to allocate to a virtual machine (VM) to resemble same-NUMA-node memory performance. Our evaluation with 158 workloads shows that Pond reduces DRAM costs by 7\% with performance within 1-5\% of same-NUMA-node VM allocations.},
+  isbn = {978-1-4503-9916-6},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/8V9JM8UB/Li et al. - 2023 - Pond CXL-Based Memory Pooling Systems for Cloud Platforms.pdf}
+}
+
+@inproceedings{liuSystematicCXLMemory2025,
+  title = {Systematic {{CXL Memory Characterization}} and {{Performance Analysis}} at {{Scale}}},
+  booktitle = {Proceedings of the 30th {{ACM International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}, {{Volume}} 2},
+  author = {Liu, Jinshu and Hadian, Hamid and Wang, Yuyue and Berger, Daniel S. and Nguyen, Marie and Jian, Xun and Noh, Sam H. and Li, Huaicheng},
+  year = {2025},
+  month = mar,
+  series = {{{ASPLOS}} '25},
+  pages = {1203--1217},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3676641.3715987},
+  urldate = {2025-05-01},
+  abstract = {Compute Express Link (CXL) has emerged as a pivotal interconnect for memory expansion. Despite its potential, the performance implications of CXL across devices, latency regimes, processors, and workloads remain underexplored. We present Melody, a framework for systematic characterization and analysis of CXL memory performance. Melody builds on an extensive evaluation spanning 265 workloads, 4 real CXL devices, 7 latency levels, and 5 CPU platforms. Melody yields many insights: workload sensitivity to sub-{$\mu$}s CXL latencies (140-410ns), the first disclosure of CXL tail latencies, CPU tolerance to CXL latencies, a novel approach (SPA) for pinpointing CXL bottlenecks, and CPU prefetcher inefficiencies under CXL.},
+  isbn = {979-8-4007-1079-7},
+  file = {/Users/estebanramos/Zotero/storage/HX9SGRFB/Liu et al. - 2025 - Systematic CXL Memory Characterization and Performance Analysis at Scale.pdf}
+}
+
+@incollection{luchangcoHierarchicalCLHQueue2006,
+  title = {A {{Hierarchical CLH Queue Lock}}},
+  booktitle = {Euro-{{Par}} 2006 {{Parallel Processing}}},
+  author = {Luchangco, Victor and Nussbaum, Dan and Shavit, Nir},
+  editor = {Hutchison, David and Kanade, Takeo and Kittler, Josef and Kleinberg, Jon M. and Mattern, Friedemann and Mitchell, John C. and Naor, Moni and Nierstrasz, Oscar and Pandu Rangan, C. and Steffen, Bernhard and Sudan, Madhu and Terzopoulos, Demetri and Tygar, Dough and Vardi, Moshe Y. and Weikum, Gerhard and Nagel, Wolfgang E. and Walter, Wolfgang V. and Lehner, Wolfgang},
+  year = {2006},
+  volume = {4128},
+  pages = {801--810},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/11823285_84},
+  urldate = {2025-09-17},
+  abstract = {Modern multiprocessor architectures such as CC-NUMA machines or CMPs have nonuniform communication architectures that render programs sensitive to memory access locality. A recent paper by Radovic{\textasciiacute} and Hagersten shows that performance gains can be obtained by developing general-purpose mutual-exclusion locks that encourage threads with high mutual memory locality to acquire the lock consecutively, thus reducing the overall cost due to cache misses. Radovic{\textasciiacute} and Hagersten present the first such hierarchical locks. Unfortunately, their locks are backoff locks, which are known to incur higher cache miss rates than queue-based locks, suffer from various fundamental fairness issues, and are hard to tune so as to maximize locality of lock accesses.},
+  isbn = {978-3-540-37783-2 978-3-540-37784-9},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/7HU6WRUV/Luchangco et al. - 2006 - A Hierarchical CLH Queue Lock.pdf}
+}
+
+@incollection{luchangcoHierarchicalCLHQueue2006a,
+  title = {A {{Hierarchical CLH Queue Lock}}},
+  booktitle = {Euro-{{Par}} 2006 {{Parallel Processing}}},
+  author = {Luchangco, Victor and Nussbaum, Dan and Shavit, Nir},
+  editor = {Hutchison, David and Kanade, Takeo and Kittler, Josef and Kleinberg, Jon M. and Mattern, Friedemann and Mitchell, John C. and Naor, Moni and Nierstrasz, Oscar and Pandu Rangan, C. and Steffen, Bernhard and Sudan, Madhu and Terzopoulos, Demetri and Tygar, Dough and Vardi, Moshe Y. and Weikum, Gerhard and Nagel, Wolfgang E. and Walter, Wolfgang V. and Lehner, Wolfgang},
+  year = {2006},
+  volume = {4128},
+  pages = {801--810},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/11823285_84},
+  urldate = {2025-09-24},
+  abstract = {Modern multiprocessor architectures such as CC-NUMA machines or CMPs have nonuniform communication architectures that render programs sensitive to memory access locality. A recent paper by Radovic{\textasciiacute} and Hagersten shows that performance gains can be obtained by developing general-purpose mutual-exclusion locks that encourage threads with high mutual memory locality to acquire the lock consecutively, thus reducing the overall cost due to cache misses. Radovic{\textasciiacute} and Hagersten present the first such hierarchical locks. Unfortunately, their locks are backoff locks, which are known to incur higher cache miss rates than queue-based locks, suffer from various fundamental fairness issues, and are hard to tune so as to maximize locality of lock accesses.},
+  isbn = {978-3-540-37783-2 978-3-540-37784-9},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/DUU7P5DR/Luchangco et al. - 2006 - A Hierarchical CLH Queue Lock.pdf}
+}
+
+@inproceedings{magnussonQueueLocksCache1994,
+  title = {Queue Locks on Cache Coherent Multiprocessors},
+  booktitle = {Proceedings of 8th {{International Parallel Processing Symposium}}},
+  author = {Magnusson, P. and Landin, A. and Hagersten, E.},
+  year = {1994},
+  month = apr,
+  pages = {165--171},
+  doi = {10.1109/IPPS.1994.288305},
+  urldate = {2025-09-15},
+  abstract = {Large-scale shared-memory multiprocessors typically have long latencies for remote data accesses. A key issue for execution performance of many common applications is the synchronization cost. The communication scalability of synchronization has been improved by the introduction of queue-based spin-locks instead of Test\&(Test\&Set). For architectures with long access latencies for global data, attention should also be paid to the number of global accesses that are involved in synchronization. We present a method to characterize the performance of proposed queue lock algorithms, and apply it to previously published algorithms. We also present two new queue locks, the LH lock and the M lock. We compare the locks in terms of performance, memory requirements, code size and required hardware support. The LH lock is the simplest of all the locks, yet requires only an atomic swap operation. The M lock is superior in terms of global accesses needed to perform synchronization and still competitive in all other criteria. We conclude that the M lock is the best overall queue lock for the class of architectures studied.{$<>$}},
+  keywords = {Algorithm design and analysis,Computer science,Costs,Delay,Hardware,Performance analysis,Queueing analysis,Scalability,Silicon carbide,Testing},
+  file = {/Users/estebanramos/Zotero/storage/7T4U4EV6/Magnusson et al. - 1994 - Queue locks on cache coherent multiprocessors.pdf}
+}
+
+@misc{maharTelepathicDatacentersFast2024,
+  title = {Telepathic {{Datacenters}}: {{Fast RPCs}} Using {{Shared CXL Memory}}},
+  shorttitle = {Telepathic {{Datacenters}}},
+  author = {Mahar, Suyash and Hajyjasini, Ehsan and Lee, Seungjin and Zhang, Zifeng and Shen, Mingyao and Swanson, Steven},
+  year = {2024},
+  month = aug,
+  number = {arXiv:2408.11325},
+  eprint = {2408.11325},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2408.11325},
+  urldate = {2025-03-31},
+  abstract = {Datacenter applications often rely on remote procedure calls (RPCs) for fast, efficient, and secure communication. However, RPCs are slow, inefficient, and hard to use as they require expensive serialization and compression to communicate over a packetized serial network link. Compute Express Link 3.0 (CXL) offers an alternative solution, allowing applications to share data using a cache-coherent, shared-memory interface across clusters of machines. RPCool is a new framework that exploits CXL's shared memory capabilities. RPCool avoids serialization by passing pointers to data structures in shared memory. While avoiding serialization is useful, directly sharing pointer-rich data eliminates the isolation that copying data over traditional networks provides, leaving the receiver vulnerable to invalid pointers and concurrent updates to shared data by the sender. RPCool restores this safety with careful and efficient management of memory permissions. Another significant challenge with CXL shared memory capabilities is that they are unlikely to scale to an entire datacenter. RPCool addresses this by falling back to RDMA-based communication. Overall, RPCool reduces the round-trip latency by 1.93{\texttimes} and 7.2{\texttimes} compared to state-of-the-art RDMA and CXL-based RPC mechanisms, respectively. Moreover, RPCool performs either comparably or better than other RPC mechanisms across a range of workloads.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Operating Systems},
+  file = {/Users/estebanramos/Zotero/storage/HEM9GCLX/Mahar et al. - 2024 - Telepathic Datacenters Fast RPCs using Shared CXL Memory.pdf}
+}
+
+@article{maHydraRPCRPCCXL,
+  title = {{{HydraRPC}}: {{RPC}} in the {{CXL Era}}},
+  author = {Ma, Teng and Wei, Chengkun and Li, Haoyu and Zhang, Mingxing},
+  abstract = {In this paper, we present HydraRPC, which utilizes CXL HDM for data transmission. By leveraging CXL, HydraRPC can benefit from memory sharing, memory semantics, and high scalability. As a result, expensive network rounds, memory copying, and serialization/deserialization are eliminated. Since CXL.cache protocols are not fully supported, we employ non-cachable sharing to bypass the CPU cache and design a busy-polling free notification mechanism. This ensures efficient data transmission without the need for constant polling. We conducted evaluations of HydraRPC on real CXL hardware, which showcased the potential efficiency of utilizing CXL HDM to build RPC systems.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/CBTQJ74H/Ma et al. - HydraRPC RPC in the CXL Era.pdf}
+}
+
+@article{mellor-crummeyAlgorithmsScalableSynchronization1991,
+  title = {Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors},
+  author = {{Mellor-Crummey}, John M. and Scott, Michael L.},
+  year = {1991},
+  month = feb,
+  journal = {ACM Trans. Comput. Syst.},
+  volume = {9},
+  number = {1},
+  pages = {21--65},
+  issn = {0734-2071, 1557-7333},
+  doi = {10.1145/103727.103729},
+  urldate = {2025-06-25},
+  abstract = {Busy-wait techniques are heavily used for mutual exclusion and barrier synchronization in shared-memory parallel programs. Unfortunately, typical implementations of busy-waiting tend to produce large amounts of memory and interconnect contention, introducing performance bottlenecks that become markedly more pronounced as applications scale. We argue that this problem is not fundamental, and that one can in fact construct busy-wait synchronization algorithms that induce no memory or interconnect contention. The key to these algorithms is for every processor to spin on separate               locally-accessible               flag variables, and for some other processor to terminate the spin with a single remote write operation at an appropriate time. Flag variables may be locally-accessible as a result of coherent caching, or by virtue of allocation in the local portion of physically distributed shared memory.                          We present a new scalable algorithm for spin locks that generates 0(1) remote references per lock acquisition, independent of the number of processors attempting to acquire the lock. Our algorithm provides reasonable latency in the absence of contention, requires only a constant amount of space per lock, and requires no hardware support other than a swap-with-memory instruction. We also present a new scalable barrier algorithm that generates 0(1) remote references per processor reaching the barrier, and observe that two previously-known barriers can likewise be cast in a form that spins only on locally-accessible flag variables. None of these barrier algorithms requires hardware support beyond the usual atomicity of memory reads and writes.                            We compare the performance of our scalable algorithms with other software approaches to busy-wait synchronization on both a Sequent Symmetry and a BBN Butterfly. Our principal conclusion is that               contention due to synchronization need not be a problem in large-scale shared-memory multiprocessors.               The existence of scalable algorithms greatly weakens the case for costly special-purpose hardware support for synchronization, and provides a case against so-called ``dance hall'' architectures, in which shared memory locations are equally far from all processors. ---               From the Authors' Abstract},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/HFV3X89Q/Mellor-Crummey and Scott - 1991 - Algorithms for scalable synchronization on shared-memory multiprocessors.pdf}
+}
+
+@article{mellor-crummeySynchronizationContention,
+  title = {Synchronization without Contention},
+  author = {{Mellor-Crummey}, John M and Scottt, L},
+  abstract = {Conventional wisdom holds that contention due to busy-wait synchronization is a major obstacle to scalability and acceptable performance in large shared-memory multiprocessors. We argue the contrary, and present fast, simple algorithms for cent ent ion-free mutual exclusion, reader-writer cent rol, and barrier synchronization. These algorithms, based on widely available fetch.and.rf? instructions, exploit local access to shared memory to avoid contention. We compare our algorithms to previous approaches in both qualitative and quantitative terms, presenting their performance on the Sequent Symmetry and BBN Butterfly multiprocessors. Our results highlight the importance of local access to shared memory, provide a case against the construction of so-called ``dance hall'' machines, and suggest that special-purpose hardware support for synchronization is unlikely to be cost effective on machines with sequentially consistent memory.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/LVQP4XLH/Mellor-Crummey and Scottt - Synchronization without contention.pdf}
+}
+
+@inbook{mosesHoodBakeryAlgorithm2015,
+  title = {Under the {{Hood}} of the {{Bakery Algorithm}}: {{Mutual Exclusion}} as a {{Matter}} of {{Priority}}},
+  shorttitle = {Under the {{Hood}} of the {{Bakery Algorithm}}},
+  booktitle = {Lecture {{Notes}} in {{Computer Science}}},
+  year = {2015},
+  pages = {399--413},
+  publisher = {Springer International Publishing},
+  address = {Cham},
+  issn = {0302-9743, 1611-3349},
+  doi = {10.1007/978-3-319-25258-2_28},
+  urldate = {2025-07-07},
+  abstract = {A new approach to the study and analysis of Mutual Exclusion (ME) algorithms is presented, based on identifying the priority relation that the ME algorithm constructs. It is argued that by analyzing how a process detects that it has priority over all other processes, ME algorithms can be better understood and improved. The approach is illustrated by applying it to Lamport's celebrated Bakery algorithm in the safe register SWMR model. By analyzing how Bakery established and detects priority, cases in which the Bakery algorithm causes processes to block unnecessarily are identified. Namely, a process that already knows that it has priority over another process is made to perform reads and wait on registers of the other process. An optimized version of the Bakery algorithm, called Boulangerie, is proposed, and is shown to be free of any unnecessary blocking. A second contribution of the approach is obtaining a clear explanation for how the Bakery algorithm uses reads from safe registers to detect that a process has priority. Our analysis provides more insight into the workings of the Bakery algorithm than is obtained by other proofs of its correctness.},
+  collaborator = {Moses, Yoram and Patkin, Katia},
+  copyright = {http://www.springer.com/tdm},
+  isbn = {978-3-319-25257-5 978-3-319-25258-2},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/KEX9INQT/2015 - Under the Hood of the Bakery Algorithm Mutual Exclusion as a Matter of Priority.pdf}
+}
+
+@misc{naumovDeepLearningTraining2020,
+  title = {Deep {{Learning Training}} in {{Facebook Data Centers}}: {{Design}} of {{Scale-up}} and {{Scale-out Systems}}},
+  shorttitle = {Deep {{Learning Training}} in {{Facebook Data Centers}}},
+  author = {Naumov, Maxim and Kim, John and Mudigere, Dheevatsa and Sridharan, Srinivas and Wang, Xiaodong and Zhao, Whitney and Yilmaz, Serhat and Kim, Changkyu and Yuen, Hector and Ozdal, Mustafa and Nair, Krishnakumar and Gao, Isabel and Su, Bor-Yiing and Yang, Jiyan and Smelyanskiy, Mikhail},
+  year = {2020},
+  month = aug,
+  number = {arXiv:2003.09518},
+  eprint = {2003.09518},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2003.09518},
+  urldate = {2025-09-24},
+  abstract = {Large-scale training is important to ensure high performance and accuracy of machine-learning models. At Facebook we use many different models, including computer vision, video and language models. However, in this paper we focus on the deep learning recommendation models (DLRMs), which are responsible for more than 50\% of the training demand in our data centers. Recommendation models present unique challenges in training because they exercise not only compute but also memory capacity as well as memory and network bandwidth. As model size and complexity increase, efficiently scaling training becomes a challenge. To address it we design Zion Facebooks next-generation large-memory training platform that consists of both CPUs and accelerators. Also, we discuss the design requirements of future scale-out training systems.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing},
+  file = {/Users/estebanramos/Zotero/storage/TEBLGLTA/Naumov et al. - 2020 - Deep Learning Training in Facebook Data Centers Design of Scale-up and Scale-out Systems.pdf}
+}
+
+@misc{naumovDeepLearningTraining2020a,
+  title = {Deep {{Learning Training}} in {{Facebook Data Centers}}: {{Design}} of {{Scale-up}} and {{Scale-out Systems}}},
+  shorttitle = {Deep {{Learning Training}} in {{Facebook Data Centers}}},
+  author = {Naumov, Maxim and Kim, John and Mudigere, Dheevatsa and Sridharan, Srinivas and Wang, Xiaodong and Zhao, Whitney and Yilmaz, Serhat and Kim, Changkyu and Yuen, Hector and Ozdal, Mustafa and Nair, Krishnakumar and Gao, Isabel and Su, Bor-Yiing and Yang, Jiyan and Smelyanskiy, Mikhail},
+  year = {2020},
+  month = aug,
+  number = {arXiv:2003.09518},
+  eprint = {2003.09518},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2003.09518},
+  urldate = {2025-09-25},
+  abstract = {Large-scale training is important to ensure high performance and accuracy of machine-learning models. At Facebook we use many different models, including computer vision, video and language models. However, in this paper we focus on the deep learning recommendation models (DLRMs), which are responsible for more than 50\% of the training demand in our data centers. Recommendation models present unique challenges in training because they exercise not only compute but also memory capacity as well as memory and network bandwidth. As model size and complexity increase, efficiently scaling training becomes a challenge. To address it we design Zion Facebooks next-generation large-memory training platform that consists of both CPUs and accelerators. Also, we discuss the design requirements of future scale-out training systems.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing},
+  file = {/Users/estebanramos/Zotero/storage/R8VI4V88/Naumov et al. - 2020 - Deep Learning Training in Facebook Data Centers Design of Scale-up and Scale-out Systems.pdf}
+}
+
+@misc{patelSplitwiseEfficientGenerative2024a,
+  title = {Splitwise: {{Efficient}} Generative {{LLM}} Inference Using Phase Splitting},
+  shorttitle = {Splitwise},
+  author = {Patel, Pratyush and Choukse, Esha and Zhang, Chaojie and Shah, Aashaka and Goiri, {\'I}{\~n}igo and Maleki, Saeed and Bianchini, Ricardo},
+  year = {2024},
+  month = may,
+  number = {arXiv:2311.18677},
+  eprint = {2311.18677},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2311.18677},
+  urldate = {2025-09-25},
+  abstract = {Generative large language model (LLM) applications are growing rapidly, leading to large-scale deployments of expensive and power-hungry GPUs. Our characterization of LLM inference shows that each inference request undergoes two phases: a compute-intensive prompt computation phase and a memoryintensive token generation phase, each with distinct latency, throughput, memory, and power characteristics. Despite stateof-the-art batching and scheduling, the token generation phase underutilizes compute resources. Unlike prompt computation, token generation does not need the compute capability of the latest GPUs and can be run with lower power and cost. Based on these insights, we propose Splitwise, a model deployment and scheduling technique that splits the two phases of LLM inference requests on to separate machines. Splitwise enables phase-specific resource management using hardware that is well suited for each phase. Request state is transferred efficiently between machines using optimized network libraries on the fast back-plane interconnects available in today's GPU clusters. Using Splitwise, we design homogeneous and heterogeneous LLM inference clusters optimized for throughput, cost, and power. Compared to current designs, Splitwise clusters achieve up to 1.4{\texttimes} higher throughput at 20\% lower cost. Alternatively, they can deliver 2.35{\texttimes} more throughput under the same power and cost budgets.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture},
+  file = {/Users/estebanramos/Zotero/storage/9828RLME/Patel et al. - 2024 - Splitwise Efficient generative LLM inference using phase splitting.pdf}
+}
+
+@article{petersonMythsMutualExclusion1981,
+  title = {Myths about the Mutual Exclusion Problem},
+  author = {Peterson, G. L.},
+  year = {1981},
+  month = jun,
+  journal = {Information Processing Letters},
+  volume = {12},
+  number = {3},
+  pages = {115--116},
+  issn = {0020-0190},
+  doi = {10.1016/0020-0190(81)90106-X},
+  urldate = {2025-09-24},
+  keywords = {mutual exclusion,Parallelism},
+  file = {/Users/estebanramos/Zotero/storage/KEKG6KSD/Peterson - 1981 - Myths about the mutual exclusion problem.pdf;/Users/estebanramos/Zotero/storage/E9Q7L8JE/002001908190106X.html}
+}
+
+@article{richinsAITaxHidden2019,
+  title = {{{AI Tax}}: {{The Hidden Cost}} of {{AI Data Center Applications}}},
+  shorttitle = {{{AI Tax}}},
+  author = {Richins, Daniel and Doshi, Dharmisha and Blackmore, Matthew and Nair, Aswathy Thulaseedharan and Pathapati, Neha and Patel, Ankit and Daguman, Brainard and Dobrijalowski, Daniel and Illikkal, Ramesh and Long, Kevin and Zimmerman, David and Reddi, Vijay Janapa},
+  year = {2019},
+  month = nov,
+  journal = {ACM Trans. Comput. Syst.},
+  volume = {37},
+  number = {1-4},
+  pages = {1--32},
+  issn = {0734-2071, 1557-7333},
+  doi = {10.1145/3440689},
+  urldate = {2025-09-24},
+  abstract = {Artificial intelligence and machine learning are experiencing widespread adoption in industry and academia. This has been driven by rapid advances in the applications and accuracy of AI through increasingly complex algorithms and models; this, in turn, has spurred research into specialized hardware AI accelerators. Given the rapid pace of advances, it is easy to forget that they are often developed and evaluated in a vacuum without considering the full application environment. This article emphasizes the need for a holistic, end-to-end analysis of artificial intelligence (AI) workloads and reveals the ``AI tax.'' We deploy and characterize               Face Recognition               in an edge data center. The application is an AI-centric edge video analytics application built using popular open source infrastructure and machine learning (ML) tools. Despite using state-of-the-art AI and ML algorithms, the application relies heavily on pre- and post-processing code. As AI-centric applications benefit from the acceleration promised by accelerators, we find they impose stresses on the hardware and software infrastructure: storage and network bandwidth become major bottlenecks with increasing AI acceleration. By specializing for AI applications, we show that a purpose-built edge data center can be designed for the stresses of accelerated AI at 15\% lower TCO than one derived from homogeneous servers and infrastructure.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/TWX7UIJ5/Richins et al. - 2019 - AI Tax The Hidden Cost of AI Data Center Applications.pdf}
+}
+
+@article{richinsAITaxHidden2019a,
+  title = {{{AI Tax}}: {{The Hidden Cost}} of {{AI Data Center Applications}}},
+  shorttitle = {{{AI Tax}}},
+  author = {Richins, Daniel and Doshi, Dharmisha and Blackmore, Matthew and Nair, Aswathy Thulaseedharan and Pathapati, Neha and Patel, Ankit and Daguman, Brainard and Dobrijalowski, Daniel and Illikkal, Ramesh and Long, Kevin and Zimmerman, David and Reddi, Vijay Janapa},
+  year = {2019},
+  month = nov,
+  journal = {ACM Trans. Comput. Syst.},
+  volume = {37},
+  number = {1-4},
+  pages = {1--32},
+  issn = {0734-2071, 1557-7333},
+  doi = {10.1145/3440689},
+  urldate = {2025-09-25},
+  abstract = {Artificial intelligence and machine learning are experiencing widespread adoption in industry and academia. This has been driven by rapid advances in the applications and accuracy of AI through increasingly complex algorithms and models; this, in turn, has spurred research into specialized hardware AI accelerators. Given the rapid pace of advances, it is easy to forget that they are often developed and evaluated in a vacuum without considering the full application environment. This article emphasizes the need for a holistic, end-to-end analysis of artificial intelligence (AI) workloads and reveals the ``AI tax.'' We deploy and characterize               Face Recognition               in an edge data center. The application is an AI-centric edge video analytics application built using popular open source infrastructure and machine learning (ML) tools. Despite using state-of-the-art AI and ML algorithms, the application relies heavily on pre- and post-processing code. As AI-centric applications benefit from the acceleration promised by accelerators, we find they impose stresses on the hardware and software infrastructure: storage and network bandwidth become major bottlenecks with increasing AI acceleration. By specializing for AI applications, we show that a purpose-built edge data center can be designed for the stresses of accelerated AI at 15\% lower TCO than one derived from homogeneous servers and infrastructure.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/42YMDGL2/Richins et al. - 2019 - AI Tax The Hidden Cost of AI Data Center Applications.pdf}
+}
+
+@misc{schweizerEvaluatingCostAtomic2020,
+  title = {Evaluating the {{Cost}} of {{Atomic Operations}} on {{Modern Architectures}}},
+  author = {Schweizer, Hermann and Besta, Maciej and Hoefler, Torsten},
+  year = {2020},
+  month = oct,
+  number = {arXiv:2010.09852},
+  eprint = {2010.09852},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2010.09852},
+  urldate = {2025-08-06},
+  abstract = {Atomic operations (atomics) such as Compare-and-Swap (CAS) or Fetch-and-Add (FAA) are ubiquitous in parallel programming. Yet, performance tradeoffs between these operations and various characteristics of such systems, such as the structure of caches, are unclear and have not been thoroughly analyzed. In this paper we establish an evaluation methodology, develop a performance model, and present a set of detailed benchmarks for latency and bandwidth of different atomics. We consider various state-of-the-art x86 architectures: Intel Haswell, Xeon Phi, Ivy Bridge, and AMD Bulldozer. The results unveil surprising performance relationships between the considered atomics and architectural properties such as the coherence state of the accessed cache lines. One key finding is that all the tested atomics have comparable latency and bandwidth even if they are characterized by different consensus numbers. Another insight is that the hardware implementation of atomics prevents any instruction-level parallelism even if there are no dependencies between the issued operations. Finally, we discuss solutions to the discovered performance issues in the analyzed architectures. Our analysis enables simpler and more effective parallel programming and accelerates data processing on various architectures deployed in both off-the-shelf machines and large compute systems.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Data Structures and Algorithms,Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Hardware Architecture,Computer Science - Performance},
+  file = {/Users/estebanramos/Zotero/storage/SDK24ICY/Schweizer et al. - 2020 - Evaluating the Cost of Atomic Operations on Modern Architectures.pdf}
+}
+
+@article{sharmaIntroductionComputeExpress,
+  title = {An {{Introduction}} to the {{Compute Express LinkTM}} ({{CXLTM}}) {{Interconnect}}},
+  author = {Sharma, Debendra Das},
+  abstract = {The Compute Express Link (CXL) is an open industry-standard interconnect between processors and devices such as accelerators, memory buffers, smart network interfaces, persistent memory, and solid-state drives. CXL offers coherency and memory semantics with bandwidth that scales with PCIe bandwidth while achieving significantly lower latency than PCIe. All major CPU vendors, device vendors, and datacenter operators have adopted CXL as a common standard. This enables an inter-operable ecosystem that supports key computing use cases including highly efficient accelerators, server memory bandwidth and capacity expansion, multi-server resource pooling and sharing, and efficient peer-to-peer communication. This survey provides an introduction to CXL covering the standards CXL 1.0, CXL 2.0, and CXL 3.0. We further survey CXL implementations, discuss CXL's impact on the datacenter landscape, and future directions.},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/RI5PEANC/Sharma - An Introduction to the Compute Express LinkTM (CXLTM) Interconnect.pdf}
+}
+
+@misc{stuartEfficientSynchronizationPrimitives2011,
+  title = {Efficient {{Synchronization Primitives}} for {{GPUs}}},
+  author = {Stuart, Jeff A. and Owens, John D.},
+  year = {2011},
+  month = oct,
+  number = {arXiv:1110.4623},
+  eprint = {1110.4623},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.1110.4623},
+  urldate = {2025-07-10},
+  abstract = {In this paper, we revisit the design of synchronization primitives---specifically barriers, mutexes, and semaphores---and how they apply to the GPU. Previous implementations are insufficient due to the discrepancies in hardware and programming model of the GPU and CPU. We create new implementations in CUDA and analyze the performance of spinning on the GPU, as well as a method of sleeping on the GPU, by running a set of memory-system benchmarks on two of the most common GPUs in use, the Tesla- and Fermi-class GPUs from NVIDIA. From our results we define higherlevel principles that are valid for generic many-core processors, the most important of which is to limit the number of atomic accesses required for a synchronization operation because atomic accesses are slower than regular memory accesses. We use the results of the benchmarks to critique existing synchronization algorithms and guide our new implementations, and then define an abstraction of GPUs to classify any GPU based on the behavior of the memory system. We use this abstraction to create suitable implementations of the primitives specifically targeting the GPU, and analyze the performance of these algorithms on Tesla and Fermi. We then predict performance on future GPUs based on characteristics of the abstraction. We also examine the roles of spin waiting and sleep waiting in each primitive and how their performance varies based on the machine abstraction, then give a set of guidelines for when each strategy is useful based on the characteristics of the GPU and expected contention.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Data Structures and Algorithms,Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Graphics,Computer Science - Operating Systems},
+  file = {/Users/estebanramos/Zotero/storage/37H4LXE4/Stuart and Owens - 2011 - Efficient Synchronization Primitives for GPUs.pdf}
+}
+
+@inproceedings{suetterleinSynchronizationCXLBased2024,
+  title = {Synchronization for {{CXL Based Memory}}},
+  booktitle = {Proceedings of the {{International Symposium}} on {{Memory Systems}}},
+  author = {Suetterlein, Joshua and Manzano, Joseph and Marquez, Andres},
+  year = {2024},
+  month = sep,
+  pages = {178--185},
+  publisher = {ACM},
+  address = {Washington DC USA},
+  doi = {10.1145/3695794.3695810},
+  urldate = {2025-08-04},
+  abstract = {Compute Express Link (CXL) is an important emerging standard for disaggregated memory. While this standard provisions coherency across numerous hosts and devices, implementing hardware support for type three devices is challenging. In this work, we look at the overhead of software synchronization and using softwarebased coherency. Moreover, we discuss the limits of software-based coherency in fully expressing modern synchronization techniques for a CXL-based disaggregate memory system. We demonstrate our approach using a CXL hardware prototype and running a version of the famous Peterson Lock (enhanced to run with more than two threads). We analyze its performance and share how more advanced synchronization techniques might interact with software-based coherence CXL hardware and program execution models.},
+  isbn = {979-8-4007-1091-9},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/BF7S8AA7/Suetterlein et al. - 2024 - Synchronization for CXL Based Memory.pdf}
+}
+
+@inproceedings{tanFormalisingCXLCache2025,
+  title = {Formalising {{CXL Cache Coherence}}},
+  booktitle = {Proceedings of the 30th {{ACM International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}, {{Volume}} 2},
+  author = {Tan, Chengsong and Donaldson, Alastair F. and Wickerson, John},
+  year = {2025},
+  month = mar,
+  series = {{{ASPLOS}} '25},
+  pages = {437--450},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/3676641.3715999},
+  urldate = {2025-05-01},
+  abstract = {We report our experience formally modelling and verifying CXL.cache, the inter-device cache coherence protocol of the Compute Express Link standard. We have used the Isabelle proof assistant to create a formal model for CXL.cache based on the English prose specification. This led to us identifying and proposing fixes to several parts of the specification that were unclear, ambiguous or inaccurate. Nearly all our issues and proposed fixes have been confirmed and tentatively accepted by the CXL consortium for adoption, save for one which is still under discussion. To validate the faithfulness of our model we performed scenario verification of essential restrictions such as ''Snoop-pushes-GO'', and used the Isabelle proof assistant to produce a fully mechanised proof of a coherence property of the model. The considerable size of this proof, comprising tens of thousands of lemmas, prompted us to develop new proof automation tools, which we have made available for other Isabelle users working with similarly cumbersome proofs.},
+  isbn = {979-8-4007-1079-7},
+  file = {/Users/estebanramos/Zotero/storage/TPA7JW4V/Tan et al. - 2025 - Formalising CXL Cache Coherence.pdf}
+}
+
+@inproceedings{tangYggdrasilReducingNetwork2024,
+  title = {Yggdrasil: {{Reducing Network I}}/{{O Tax}} with ({{CXL-Based}}) {{Distributed Shared Memory}}},
+  shorttitle = {Yggdrasil},
+  booktitle = {Proceedings of the 53rd {{International Conference}} on {{Parallel Processing}}},
+  author = {Tang, Wenda and Han, Ying and Ai, Tianxiang and Li, Guanghui and Yu, Bin and Yang, Xin},
+  year = {2024},
+  month = aug,
+  pages = {597--606},
+  publisher = {ACM},
+  address = {Gotland Sweden},
+  doi = {10.1145/3673038.3673138},
+  urldate = {2025-09-17},
+  abstract = {In communication-intensive applications that run on hosts with high-speed network hardware, a common challenge arises from the significant burden placed on the native socket system within the OS. Researchers have devoted considerable effort to optimizing the kernel networking stack and moving the TCP/IP stack to user-space. In this paper, we describe a novel socket replacement solution, Yggdrasil, a CXL-based user-space high-performance socket system. Yggdrasil is fully compatible with Linux socket, making it a drop-in replacement for existing applications without the need for code modifications. In order to optimize performance, Yggdrasil employs CXL-based distributed shared memory (DSM) for interhost communication whenever it is available. In cases where DSM is not accessible, Yggdrasil transparently switches back to Linux socket for communication. A key element in achieving isolation in Yggdrasil involves a trusted user-space monitoring daemon responsible for managing control plane operations like connection setup and access control. Within the data plane of Yggdrasil, a peerto-peer model is adopted for communication between processes. To bridge the semantic gap between socket and DSM, we exploit several techniques to ensure compatibility and performance, including (1) transparent dynamic fast/slow data path navigation, (2) decentralized CXL memory management, (3) lock-free queue based QoS-aware dynamic data polling, and (4) semantics-aware memory page migration. By evaluating Yggdrasil on both emulated and real CXL hardware, we show that Yggdrasil outperforms Linux socket in Memcached throughput by 8.2{\texttimes} and reduces latency by 24{$\sim$}320{\texttimes} in a micro benchmark across different message sizes.},
+  isbn = {979-8-4007-1793-2},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/6CXBR4GN/Tang et al. - 2024 - Yggdrasil Reducing Network IO Tax with (CXL-Based) Distributed Shared Memory.pdf}
+}
+
+@inproceedings{tauroTrackFMFaroutCompiler2024,
+  title = {{{TrackFM}}: {{Far-out Compiler Support}} for a {{Far Memory World}}},
+  shorttitle = {{{TrackFM}}},
+  booktitle = {Proceedings of the 29th {{ACM International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}, {{Volume}} 1},
+  author = {Tauro, Brian R. and Suchy, Brian and Campanoni, Simone and Dinda, Peter and Hale, Kyle C.},
+  year = {2024},
+  month = apr,
+  pages = {401--419},
+  publisher = {ACM},
+  address = {La Jolla CA USA},
+  doi = {10.1145/3617232.3624856},
+  urldate = {2025-09-14},
+  abstract = {Large memory workloads with favorable locality of reference can benefit by extending the memory hierarchy across machines. Systems that enable such far memory configurations can improve application performance and overall memory utilization in a cluster. There are two current alternatives for software-based far memory: kernel-based and librarybased. Kernel-based approaches sacrifice performance to achieve programmer transparency, while library-based approaches sacrifice programmer transparency to achieve performance. We argue for a novel third approach, the compilerbased approach, which sacrifices neither performance nor programmer transparency. Modern compiler analysis and transformation techniques, combined with a suitable tightlycoupled runtime system, enable this approach. We describe the design, implementation, and evaluation of TrackFM, a new compiler-based far memory system. Through extensive benchmarking, we demonstrate that TrackFM outperforms kernel-based approaches by up to 2{\texttimes} while retaining their programmer transparency, and that TrackFM can perform similarly to a state-of-the-art library-based system (within 10\%). The application is merely recompiled to reap these benefits.},
+  isbn = {979-8-4007-0372-0},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/TNCT8MHF/Tauro et al. - 2024 - TrackFM Far-out Compiler Support for a Far Memory World.pdf}
+}
+
+@misc{tithiScalingIntelligenceDesigning2025,
+  title = {Scaling {{Intelligence}}: {{Designing Data Centers}} for {{Next-Gen Language Models}}},
+  shorttitle = {Scaling {{Intelligence}}},
+  author = {Tithi, Jesmin Jahan and Wu, Hanjiang and Abuhatzera, Avishaii and Petrini, Fabrizio},
+  year = {2025},
+  month = sep,
+  number = {arXiv:2506.15006},
+  eprint = {2506.15006},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.15006},
+  urldate = {2025-09-24},
+  abstract = {The explosive growth of Large Language Models (LLMs)---such as GPT-4 with 1.8 trillion parameters---demands a fundamental rethinking of data center architecture to ensure scalability, efficiency, and cost-effectiveness. Our work provides a comprehensive co-design framework that jointly explores FLOPS, HBM bandwidth and capacity, multiple network topologies (two-tier vs. FullFlat optical), the size of scale-out domain, and popular parallelism/optimization strategies used in LLMs. We introduce and evaluate Fullflat network architectures, which provide uniform high-bandwidth, low-latency connectivity between all nodes, and demonstrate their transformative impact on performance and scalability. Through detailed sensitivity analyses, we quantify the benefits of overlapping compute and communication, leveraging hardware-accelerated collectives, widening the scale-out domain, and larger memory capacity. Our study spans both sparse (mixture of experts) and dense transformerbased LLMs, revealing how system design choices affect Model FLOPS Utilization (MFU = Model flops per token {\texttimes} Observed tokens per sec/Peak flops of the hardware) and overall throughput. For the co-design study, we utilized an analytical performance modeling tool capable of predicting LLM runtime within 10\% of real-world measurements. Our findings offer actionable insights and a practical roadmap for designing AI data centers that can efficiently support trillion-parameter models, reduce optimization complexity, and sustain the rapid evolution of AI capabilities.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Emerging Technologies,Computer Science - Hardware Architecture,Computer Science - Performance},
+  file = {/Users/estebanramos/Zotero/storage/ETKDYNM4/Tithi et al. - 2025 - Scaling Intelligence Designing Data Centers for Next-Gen Language Models.pdf}
+}
+
+@misc{tithiScalingIntelligenceDesigning2025a,
+  title = {Scaling {{Intelligence}}: {{Designing Data Centers}} for {{Next-Gen Language Models}}},
+  shorttitle = {Scaling {{Intelligence}}},
+  author = {Tithi, Jesmin Jahan and Wu, Hanjiang and Abuhatzera, Avishaii and Petrini, Fabrizio},
+  year = {2025},
+  month = sep,
+  number = {arXiv:2506.15006},
+  eprint = {2506.15006},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.15006},
+  urldate = {2025-09-25},
+  abstract = {The explosive growth of Large Language Models (LLMs)---such as GPT-4 with 1.8 trillion parameters---demands a fundamental rethinking of data center architecture to ensure scalability, efficiency, and cost-effectiveness. Our work provides a comprehensive co-design framework that jointly explores FLOPS, HBM bandwidth and capacity, multiple network topologies (two-tier vs. FullFlat optical), the size of scale-out domain, and popular parallelism/optimization strategies used in LLMs. We introduce and evaluate Fullflat network architectures, which provide uniform high-bandwidth, low-latency connectivity between all nodes, and demonstrate their transformative impact on performance and scalability. Through detailed sensitivity analyses, we quantify the benefits of overlapping compute and communication, leveraging hardware-accelerated collectives, widening the scale-out domain, and larger memory capacity. Our study spans both sparse (mixture of experts) and dense transformerbased LLMs, revealing how system design choices affect Model FLOPS Utilization (MFU = Model flops per token {\texttimes} Observed tokens per sec/Peak flops of the hardware) and overall throughput. For the co-design study, we utilized an analytical performance modeling tool capable of predicting LLM runtime within 10\% of real-world measurements. Our findings offer actionable insights and a practical roadmap for designing AI data centers that can efficiently support trillion-parameter models, reduce optimization complexity, and sustain the rapid evolution of AI capabilities.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Distributed Parallel and Cluster Computing,Computer Science - Emerging Technologies,Computer Science - Hardware Architecture,Computer Science - Performance},
+  file = {/Users/estebanramos/Zotero/storage/2I5I3JEC/Tithi et al. - 2025 - Scaling Intelligence Designing Data Centers for Next-Gen Language Models.pdf}
+}
+
+@inproceedings{10.1145/3678015.3680494,
+author = {Alvaro, Peter and Adiletta, Matthew and Cheng, David and Cockroft, Adrian and Hady, Frank and Illikkal, Ramesh and Ramos, Esteban and Soul\'{e}, Robert},
+title = {NotNets: Accelerating Microservices by Bypassing the Network},
+year = {2024},
+isbn = {9798400711053},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3678015.3680494},
+doi = {10.1145/3678015.3680494},
+abstract = {Remote procedure calls are the workhorse of distributed systems. However, as software engineering trends, such as micro-services and serverless computing, push applications towards ever finer-grained decompositions, the overhead of RPC-based communication is becoming too great to bear. In this paper, we argue that point solutions that attempt to optimize one aspect of RPC logic are unlikely to mitigate these ballooning communication costs. Rather, we need a dramatic reappraisal of how we provide communication. Towards this end, we propose to emulate message-passing RPCs by sharing message payloads and metadata on CXL 3.0-backed far memory. We provide initial evidence of feasibility and analyze the expected benefits.},
+booktitle = {Proceedings of the 15th ACM SIGOPS Asia-Pacific Workshop on Systems},
+pages = {67–73},
+numpages = {7},
+keywords = {CXL, Microservices, Remote Procedure Call, Shared Memory},
+location = {Kyoto, Japan},
+series = {APSys '24}
+}
+
+@misc{yang2025cxlmemsimpuresoftwaresimulated,
+      title={CXLMemSim: A pure software simulated CXL.mem for performance characterization}, 
+      author={Yiwei Yang and Brian Zhao and Yusheng Zheng and Pooneh Safayenikoo and Tanvir Ahmed Khan and Andi Quinn},
+      year={2025},
+      eprint={2303.06153},
+      archivePrefix={arXiv},
+      primaryClass={cs.PF},
+      url={https://arxiv.org/abs/2303.06153}, 
+}
+
+@misc{ultrascale_playbook,
+      title={The Ultra-Scale Playbook: Training LLMs on GPU Clusters},
+      author={Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf},
+      year={2025},
+}
+@misc{wangEnablingEfficientTransaction2025,
+  title = {Enabling {{Efficient Transaction Processing}} on {{CXL-Based Memory Sharing}}},
+  author = {Wang, Zhao and Chen, Yiqi and Li, Cong and Niu, Dimin and Guan, Tianchan and Du, Zhaoyang and Wei, Xingda and Sun, Guangyu},
+  year = {2025},
+  month = feb,
+  number = {arXiv:2502.11046},
+  eprint = {2502.11046},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2502.11046},
+  urldate = {2025-03-31},
+  abstract = {Transaction processing systems are the crux for modern data-center applications, yet current multi-node systems are slow due to network overheads. This paper advocates for Compute Express Link (CXL) as a network alternative, which enables low-latency and cache-coherent shared memory accesses. However, directly adopting standard CXL primitives leads to performance degradation due to the high cost of maintaining cross-node cache coherence. To address the CXL challenges, this paper introduces CtXnL, a softwarehardware co-designed system that implements a novel hybrid coherence primitive tailored to the loosely coherent nature of transactional data. The core innovation of CtXnL is empowering transaction system developers with the ability to selectively achieve data coherence. Our evaluations on OLTP workloads demonstrate that CtXnL enhances performance, outperforming current network-based systems and achieves with up to 2.08x greater throughput than vanilla CXL memory sharing architectures across universal transaction processing policies.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Hardware Architecture},
+  file = {/Users/estebanramos/Zotero/storage/39NTMRCB/Wang et al. - 2025 - Enabling Efficient Transaction Processing on CXL-Based Memory Sharing.pdf}
+}
+
+@inproceedings{wangFastFineGrainedGlobal2019,
+  title = {Fast {{Fine-Grained Global Synchronization}} on {{GPUs}}},
+  booktitle = {Proceedings of the {{Twenty-Fourth International Conference}} on {{Architectural Support}} for {{Programming Languages}} and {{Operating Systems}}},
+  author = {Wang, Kai and Fussell, Don and Lin, Calvin},
+  year = {2019},
+  month = apr,
+  pages = {793--806},
+  publisher = {ACM},
+  address = {Providence RI USA},
+  doi = {10.1145/3297858.3304055},
+  urldate = {2025-07-10},
+  abstract = {This paper extends the reach of General Purpose GPU programming by presenting a software architecture that supports efficient fine-grained synchronization over global memory. The key idea is to transform global synchronization into global communication so that conflicts are serialized at the thread block level. With this structure, the threads within each thread block can synchronize using low latency, high-bandwidth local scratchpad memory. To enable this architecture, we implement a scalable and efficient message passing library.},
+  copyright = {https://www.acm.org/publications/policies/copyright\_policy\#Background},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/FIUWZ3X4/Wang et al. - 2019 - Fast Fine-Grained Global Synchronization on GPUs.pdf}
+}
+
+@inproceedings{wangIntelligentMultiPortMemory2008,
+  title = {An {{Intelligent Multi-Port Memory}}},
+  booktitle = {2008 {{International Symposium}} on {{Intelligent Information Technology Application Workshops}}},
+  author = {Wang, Zuo and Zuo, Qi and Li, Jiaxing},
+  year = {2008},
+  month = dec,
+  pages = {251--254},
+  doi = {10.1109/IITA.Workshops.2008.231},
+  urldate = {2025-09-12},
+  abstract = {Multi-processors systems provide excellent computing ability for varied AI applications. Because processors may issue simultaneous accesses to the shared memory system, multi-port memory are widely used current multi-processor systems. This paper proposes an intelligent multi-port memory. With the help of port-priority and r/w-priority, our multi-port memory can resolve both write-write conflict and read-write conflict. When write-write conflict occurs, the port with the highest priority can execute its write operation; when read-write conflict occurs, the multi-port memory intelligently chooses read-then-write or write-then-read according to r/w-priority. Besides, direct data-switch paths between ports are implemented by utilizing the read-write conflict. We verify our design on Xilinx Virtex-E FPGA. Experiment results show that our design works well. Experiment results also show that, as the port number N increases, the cell cost increases significantly. This restricts the reasonable port number to rather small values in practice.},
+  keywords = {Application software,Artificial intelligence,Communication system control,Computer science,conflict,Costs,Field programmable gate arrays,Information technology,multi-port memory,Multiprocessing systems,port number,priority,Read-write memory,Signal resolution},
+  file = {/Users/estebanramos/Zotero/storage/GDKP77JB/Wang et al. - 2008 - An Intelligent Multi-Port Memory.pdf}
+}
+
+@inproceedings{wangReferenceRPCIts2021,
+  title = {In Reference to {{RPC}}: It's Time to Add Distributed Memory},
+  shorttitle = {In Reference to {{RPC}}},
+  booktitle = {Proceedings of the {{Workshop}} on {{Hot Topics}} in {{Operating Systems}}},
+  author = {Wang, Stephanie and Hindman, Benjamin and Stoica, Ion},
+  year = {2021},
+  month = jun,
+  pages = {191--198},
+  publisher = {ACM},
+  address = {Ann Arbor Michigan},
+  doi = {10.1145/3458336.3465302},
+  urldate = {2023-04-28},
+  isbn = {978-1-4503-8438-4},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/3H24SABT/Wang et al. - 2021 - In reference to RPC it's time to add distributed .pdf;/Users/estebanramos/Zotero/storage/8HLU8IR8/Wang et al. - 2021 - In reference to RPC it's time to add distributed memory.pdf}
+}
+
+@inproceedings{wuOptimizationStrategiesInterthread2015,
+  title = {Optimization Strategies for Inter-Thread Synchronization Overhead on {{NUMA}} Machine},
+  booktitle = {2015 {{IEEE}} 34th {{International Performance Computing}} and {{Communications Conference}} ({{IPCCC}})},
+  author = {Wu, Song and Zhang, Jun and Peng, Yaqiong and Jin, Hai and Jiang, Wenbin},
+  year = {2015},
+  month = dec,
+  pages = {1--8},
+  issn = {2374-9628},
+  doi = {10.1109/PCCC.2015.7410330},
+  urldate = {2025-09-17},
+  abstract = {Overhead caused by data consistence issue in inter-thread synchronization probably degrades the performance of parallel applications. Non-Uniform Memory Access (NUMA), as the mainstream architecture in today's multicore processor, further exacerbates this issue due to the significant overhead incurred by Remote Memory Reference (RMR). Therefore, to reduce synchronization overhead, it is important to solve the data consistence issue. In this paper, we classify the overhead into two kinds: (1) overhead incurred by algorithms themselves, and (2) overhead incurred by critical sections. To reduce two kinds of overhead on NUMA machine, we present two optimization strategies called search and backtrace (SAB) and reorder critical section and non-critical section (RCAN), respectively. In SAB, a server thread tries to search a thread coming from master NUMA node, and designates it as the new server thread. In this way, most of the time, shared data resides in the cache of master NUMA node, resulting in lower overhead caused by data consistence issue in critical section. In RCAN, each thread consecutively posts synchronization requests, followed by consecutively executing non-critical section. In this way, server threads could serve enough requests, resulting in better data locality. We design an algorithm named R-Synch based on SAB, while designing an algorithm named H-STA based on RCAN. Our evaluation with representative synchronization algorithms demonstrates the effectiveness of R-Synch and H-STA.},
+  keywords = {algorithm,data consistence,Instruction sets,Multicore processing,NUMA,Servers,synchronization},
+  file = {/Users/estebanramos/Zotero/storage/3L6YIHJI/Wu et al. - 2015 - Optimization strategies for inter-thread synchronization overhead on NUMA machine.pdf}
+}
+
+@misc{xuCXLSharedMemory2024,
+  title = {{{CXL Shared Memory Programming}}: {{Barely Distributed}} and {{Almost Persistent}}},
+  shorttitle = {{{CXL Shared Memory Programming}}},
+  author = {Xu, Yi and Mahar, Suyash and Liu, Ziheng and Shen, Mingyao and Swanson, Steven},
+  year = {2024},
+  month = jul,
+  number = {arXiv:2405.19626},
+  eprint = {2405.19626},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2405.19626},
+  urldate = {2025-09-17},
+  abstract = {While Compute Express Link (CXL) enables support for cache-coherent shared memory among multiple nodes, it also introduces new types of failures---processes can fail before data does, or data might fail before a process does. The lack of a failure model for CXL-based shared memory makes it challenging to understand and mitigate these failures.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing},
+  file = {/Users/estebanramos/Zotero/storage/PSG7XGB4/Xu et al. - 2024 - CXL Shared Memory Programming Barely Distributed and Almost Persistent.pdf}
+}
+
+@misc{xuPositionCXLShared2024,
+  title = {Position: {{CXL Shared Memory Programming}}: {{Barely Distributed}} and {{Almost Persistent}}},
+  shorttitle = {Position},
+  author = {Xu, Yi and Mahar, Suyash and Liu, Ziheng and Shen, Mingyao and Swanson, Steven},
+  year = {2024},
+  month = may,
+  number = {arXiv:2405.19626},
+  eprint = {2405.19626},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  urldate = {2024-06-03},
+  abstract = {While Compute Express Link (CXL) enables support for cache-coherent shared memory among multiple nodes, it also introduces new types of failures--processes can fail before data does, or data might fail before a process does. The lack of a failure model for CXL-based shared memory makes it challenging to understand and mitigate these failures. To solve these challenges, in this paper, we describe a model categorizing and handling the CXL-based shared memory's failures: data and process failures. Data failures in CXL-based shared memory render data inaccessible or inconsistent for a currently running application. We argue that such failures are unlike data failures in distributed storage systems and require CXL-specific handling. To address this, we look into traditional data failure mitigation techniques like erasure coding and replication and propose new solutions to better handle data failures in CXL-based shared memory systems. Next, we look into process failures and compare the failures and potential solutions with PMEM's failure model and programming solutions. We argue that although PMEM shares some of CXL's characteristics, it does not fully address CXL's volatile nature and low access latencies. Finally, taking inspiration from PMEM programming solutions, we propose techniques to handle these new failures. Thus, this paper is the first work to define the CXL-based shared memory failure model and propose tailored solutions that address challenges specific to CXL-based systems.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Distributed Parallel and Cluster Computing},
+  file = {/Users/estebanramos/Zotero/storage/K3JLNRHN/Xu et al. - 2024 - Position CXL Shared Memory Programming Barely Di.pdf}
+}
+
+@inproceedings{zhangPartialFailureResilient2023,
+  title = {Partial {{Failure Resilient Memory Management System}} for ({{CXL-based}}) {{Distributed Shared Memory}}},
+  booktitle = {Proceedings of the 29th {{Symposium}} on {{Operating Systems Principles}}},
+  author = {Zhang, Mingxing and Ma, Teng and Hua, Jinqi and Liu, Zheng and Chen, Kang and Ding, Ning and Du, Fan and Jiang, Jinlei and Ma, Tao and Wu, Yongwei},
+  year = {2023},
+  month = oct,
+  pages = {658--674},
+  publisher = {ACM},
+  address = {Koblenz Germany},
+  doi = {10.1145/3600006.3613135},
+  urldate = {2025-09-16},
+  abstract = {The efficiency of distributed shared memory (DSM) has been greatly improved by recent hardware technologies. But, the difficulty of distributed memory management can still be a major obstacle to the democratization of DSM, especially when a partial failure of the participating clients (e.g., due to crashed processes or machines) should be tolerated.},
+  isbn = {979-8-4007-0229-7},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/LCHCH3HS/Zhang et al. - 2023 - Partial Failure Resilient Memory Management System for (CXL-based) Distributed Shared Memory.pdf;/Users/estebanramos/Zotero/storage/Z2L57UUG/Zhang et al. - 2023 - Partial Failure Resilient Memory Management System for (CXL-based) Distributed Shared Memory.pdf}
+}
+
+@inproceedings{zhongMyCXLPool2025,
+  title = {My {{CXL Pool Obviates Your PCIe Switch}}},
+  booktitle = {Proceedings of the {{Workshop}} on {{Hot Topics}} in {{Operating Systems}}},
+  author = {Zhong, Yuhong and Berger, Daniel S. and Zardoshti, Pantea and Saurez, Enrique and Nelson, Jacob and Psistakis, Antonis and Fried, Joshua and Cidon, Asaf},
+  year = {2025},
+  month = may,
+  pages = {58--66},
+  publisher = {ACM},
+  address = {Banff AB Canada},
+  doi = {10.1145/3713082.3730393},
+  urldate = {2025-09-11},
+  abstract = {Pooling PCIe devices across multiple hosts offers a promising solution to mitigate stranded I/O resources, enhance device utilization, address device failures, and reduce total cost of ownership. The only viable option today are PCIe switches, which decouple PCIe devices from hosts by connecting them through a hardware switch. However, the high cost and limited flexibility of PCIe switches hinder their widespread adoption beyond specialized datacenter use cases.},
+  isbn = {979-8-4007-1475-7},
+  langid = {english},
+  file = {/Users/estebanramos/Zotero/storage/LV3RUBL9/Zhong et al. - 2025 - My CXL Pool Obviates Your PCIe Switch.pdf}
+}

@@ -32,26 +32,33 @@ public:
 
     bool trylock(size_t thread_id) override {
         in_contention[thread_id] = true;
+        FLUSH(&in_contention[thread_id]);
         std::atomic_thread_fence(std::memory_order_seq_cst);
         for (size_t higher_priority_thread = 0; higher_priority_thread < thread_id; higher_priority_thread++) {
+            INVALIDATE(&in_contention[higher_priority_thread]);
             if (in_contention[higher_priority_thread]) {
                 in_contention[thread_id] = false;
+                FLUSH(&in_contention[thread_id]);
                 return false;
             }
         }
         for (size_t lower_priority_thread = thread_id + 1; lower_priority_thread < num_threads; lower_priority_thread++) {
             while (in_contention[lower_priority_thread]) {
+                INVALIDATE(&in_contention[lower_priority_thread]);
                 // Busy wait for lower-priority thread to give up.
             }
         }
         bool leader;
-        if (!*fast) { 
-            *fast = true; 
-            leader = true; 
+        INVALIDATE(fast);
+        if (!*fast) {
+            *fast = true;
+            FLUSH(fast);
+            leader = true;
         } else {
             leader = false;
         }
         in_contention[thread_id] = false;
+        FLUSH(&in_contention[thread_id]);
         return leader;
     }
 
@@ -64,6 +71,7 @@ public:
     void unlock(size_t thread_id) override {
         (void)thread_id; // This parameter is not used
         *fast = false;
+        FLUSH(fast);
     }
 
     void destroy() override {

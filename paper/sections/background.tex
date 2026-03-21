@@ -1,0 +1,140 @@
+\section{Background}
+
+This section provides an overview of why shared FAM addresses datacenter challenges, the coherence models and memory access modes that CXL supports, and the mutex implementations that exploit them.
+
+\subsection{CXL Fabric-Attached Memory for AI Workloads}
+
+Distributed AI training is straining existing datacenter networks.
+Large-scale systems struggle to fully utilize compute due to network overheads and bandwidth limitations in two-tier architectures where GPU clusters communicate over high-bandwidth NVLink while inter-node traffic traverses lower-bandwidth Ethernet~\cite{richinsAITaxHidden2019,tithiScalingIntelligenceDesigning2025,ultrascale_playbook,gangidiRDMAEthernetDistributed2024}.
+This bandwidth asymmetry is an obstacle for emerging hybrid training-inference workloads~\cite{patelSplitwiseEfficientGenerative2024a}.
+
+CXL fabric-attached memory offers a shared-memory programming model that reduces data movement overhead.
+Multiple hosts transparently address the same memory pool without serialization or data copies, enabling collaborative processing at scale~\cite{tangYggdrasilReducingNetwork2024}.
+Memory disaggregation via CXL addresses both memory underutilization through reduced overprovisioning and supports working sets that exceed single-server capacity~\cite{zhongMyCXLPool2025,liPondCXLBasedMemory2023,goukDirectAccessHighPerformance,kwonDisaggregatedMemorySystem2019,ewaisDisaggregatedMemoryDatacenter2023}.
+
+Enabling this shared-memory model requires efficient inter-host synchronization.
+Parallel communication primitives (AllReduce, AllGather, etc.) require thread-safe shared data structures, which in turn depend on scalable locks~\cite{dangAdvancedThreadSynchronization2017,balajiEfficientSupportMultithreaded2008,dozsaEnablingConcurrentMultithreaded2010}.
+Non-scalable locks can cause dramatic performance collapse~\cite{boyd-wickizerNonscalableLocksAre}, making the choice of synchronization mechanism---and the coherence model it requires---a first-order architectural decision.
+
+\subsection{Coherence Models in CXL}
+
+CXL supports cache coherence from its earliest specification.
+CXL.cache provides host-device coherence for Type~1 devices; Type~2 devices add CXL.mem with host-managed device memory and device-managed coherence (HDM-DB), introducing the back-invalidation snoop (BISnp) protocol~\cite{sharmaIntroductionComputeExpress}.
+Type~3 devices with Multi-Logical Devices (MLDs) enable shared FAM by exposing memory to multiple hosts over port-based routing.
+
+For multi-host shared FAM, the CXL 3.X specification defines two coherence models:
+
+\paragraph{Hardware-managed coherence.}
+Extends BISnp across hosts, maintaining an inclusive snoop filter that tracks cache-line ownership per host.
+When a host requests a cache line already held by another host, the device issues a back-invalidation (BI) message to the current owner, forcing it to writeback and relinquish the line before granting ownership to the requester.
+This protocol enables RMW atomic operations: the device grants exclusive cache-line ownership to a requesting host, which then executes the atomic locally within its cache hierarchy.
+The cost is threefold: (1)~device-side snoop filter storage proportional to the number of tracked cache lines and hosts, (2)~cross-host invalidation round-trips that add latency to every ownership transition, and (3)~protocol complexity that scales with host count~\cite{goukDirectAccessHighPerformance}.
+For synchronization, this cost manifests directly: every contested lock acquisition requires at least one ownership transition, incurring the full BI round-trip latency.
+
+\paragraph{Software-managed coherence.}
+Avoids hardware coherence entirely; the software layer manages shared state through explicit loads, stores, and fences.
+This eliminates coherence infrastructure but restricts synchronization to software locks.
+A key concern is that CXL 3.X's support for atomic loads/stores under software-managed coherence is ambiguous~\cite{lamportMutualExclusionProblem,lamportMutualExclusionProblema}: simultaneous multiport read/write operations can cause flickered reads or scrambled writes, a risk that grows as devices support up to 16 ports.
+Support for atomic loads/stores does not fundamentally require full cache coherence, as conflict resolution schemes exist~\cite{wangIntelligentMultiPortMemory2008}, but whether CXL 3.X devices will implement such schemes remains unknown.
+
+\subsection{Memory Access Modes for CXL}
+\label{sec:access-modes}
+
+Beyond the coherence model, the \emph{memory access mode} determines how the host CPU interacts with CXL-attached memory.
+These access modes are configured via page table attributes (specifically the PAT, PCD, and PWT bits on x86-64) and are orthogonal to the device-side coherence model.
+We identify four modes relevant to synchronization:
+
+\paragraph{Cached with hardware coherence (Cached-HC).}
+The default mode when hardware coherence is available.
+Loads and stores go through the host cache hierarchy; the BISnp protocol ensures cross-host consistency.
+RMW atomics are supported.
+This mode benefits from cache locality---repeated reads to the same lock variable hit L1/L2 when no other host has written---but incurs coherence traffic proportional to the number of sharing hosts.
+The performance of synchronization under this mode is bounded by the coherence protocol's ownership-transition latency.
+
+\paragraph{Cached with software coherence (Cached-SC).}
+Used when the device provides only software-managed coherence.
+Host caches are active, but consistency is the software's responsibility via explicit fences and flushes.
+No RMW atomics are available across hosts; only software locks are viable.
+The challenge is ensuring that stores to lock variables become visible to other hosts promptly; this requires \texttt{clflush} or \texttt{clwb} instructions after stores, followed by \texttt{sfence} to order the flush.
+The cost of these explicit consistency operations partially offsets the benefit of cached access.
+
+\paragraph{Uncached (UC).}
+The host page table marks CXL memory as uncacheable (PAT entry set to UC).
+Every load and store traverses the CXL link directly, bypassing the host cache hierarchy entirely.
+This eliminates all coherence traffic---no snoop filter entries, no invalidation messages---at the cost of losing cache-line spatial and temporal locality.
+Each memory access pays the full CXL round-trip latency.
+On x86-64, UC accesses are strongly ordered: no additional fences are needed, as the processor guarantees that UC loads and stores are not reordered.
+For synchronization, this means that polling a lock variable incurs a CXL round-trip on every iteration, but there is zero coherence overhead, no risk of stale cached copies, and no need for explicit flush instructions.
+
+\paragraph{Non-temporal (NT).}
+Uses streaming instructions (\texttt{movntdq} for 128-bit stores, \texttt{movntdqa} for 128-bit loads on SSE4.1+ platforms) that bypass the cache hierarchy.
+NT stores exploit write-combining (WC) buffers: the processor coalesces multiple stores to the same WC buffer entry (typically 64 bytes, matching a cache line) into a single bus transaction.
+This reduces CXL link utilization for write-heavy paths by up to $8\times$ when a full cache line of stores can be combined.
+NT loads avoid cache pollution but do not benefit from write-combining.
+For lock implementations, NT access is most beneficial on the unlock path where a single store must be globally visible, as the write-combining buffer can merge the store with any adjacent metadata updates.
+A key constraint is that NT stores require an \texttt{sfence} to ensure global visibility, adding a serialization point after each store.
+
+\paragraph{Why access modes matter for synchronization.}
+Prior work on CXL synchronization~\cite{suetterleinSynchronizationCXLBased2024} implicitly assumes cached access, leaving uncached and non-temporal modes entirely unexplored.
+Yet these modes represent the simplest deployment options: UC access requires no coherence support at all, and NT access further optimizes write traffic.
+If mutex performance under UC or NT access is ``good enough'' for a given workload, the deployment can avoid the cost and complexity of hardware coherence infrastructure entirely.
+This is a significant practical consideration: hardware coherence requires snoop filter SRAM on the device (scaling linearly with tracked cache lines), additional protocol state machines, and validation against the CXL specification's coherence requirements.
+Quantifying ``good enough'' is a central goal of this paper.
+
+
+\subsection{Mutual Exclusion}
+
+Mutual exclusion synchronizes concurrent threads by ensuring only one thread enters a critical section at a time.
+Mutex performance depends on two factors specific to CXL FAM: the availability of RMW atomics (which require hardware coherence) and the notification mechanism (limited to polling, as no centralized kernel monitor exists across hosts).
+
+\subsubsection{Polling as Notification Mechanism}
+
+In modern multiprocessor systems, the operating system kernel monitors lock state and enables sleep/wake patterns for threads acquiring locks.
+This notification mechanism is fundamentally inaccessible in a CXL FAM environment: there is no centralized monitor that can identify lock state across hosts and wake waiting threads.
+
+We are therefore limited to polling: each thread repeatedly reads a memory location to detect value changes.
+Both software and hardware mutexes rely on polling to learn whether they have acquired the lock.
+This presents a notable performance challenge, as polling saturates both CPU resources and the CXL interconnect with read operations.
+The impact of polling depends critically on the access mode:
+under Cached-HC, repeated polls to an unmodified variable hit the local cache (zero CXL traffic);
+under Cached-SC, polls hit the cache but require periodic flushes to detect remote writes;
+under UC, every poll generates a CXL round-trip;
+under NT, polls use streaming loads that bypass the cache.
+When applicable, we implement exponential back-off to reduce redundant polling traffic across all access modes.
+
+\subsubsection{Software Locks}
+
+Software locks rely on assignment and control structures rather than RMW atomics.
+Following Lamport's classification~\cite{lamportMutualExclusionProblem,lamportMutualExclusionProblema}, they are either \emph{RW-safe} (correct without atomic loads/stores) or \emph{RW-unsafe} (requiring atomic loads/stores).
+This distinction matters for CXL software-managed coherence where atomic load/store support is ambiguous.
+
+Previous work~\cite{suetterleinSynchronizationCXLBased2024} addressed this with a Tournament Peterson lock that constrains shared variables to binary values, mitigating flicker/scramble risks.
+We evaluate both RW-safe and RW-unsafe locks (Table~\ref{tab:Locks}) to characterize this trade-off.
+
+Software locks must also contend with instruction reordering by compilers and hardware.
+We instrument each implementation with the minimum fences required for correctness.
+A notable constraint of software locks is their storage overhead: each lock requires $O(N)$ to $O(N \log N)$ bytes where $N$ is the maximum thread count, as each thread needs dedicated state variables (e.g., choosing/number arrays in Bakery, flags in Peterson).
+This contrasts with hardware locks that require $O(1)$ storage for the lock word itself.
+
+\subsubsection{Hardware Locks}
+
+Hardware locks leverage RMW atomic instructions (test-and-set, fetch-and-add, compare-and-swap) to establish mutual exclusion.
+These atomics require hardware cache coherence to grant exclusive cache-line ownership.
+
+The performance of hardware locks in CXL environments is fundamentally constrained by two factors: (1)~the latency of the coherence protocol to acquire exclusive ownership, and (2)~cache-line contention when multiple hosts poll a shared variable.
+We hypothesize that these costs, not the relative performance of different atomic instructions, dominate lock performance in FAM environments.
+
+Not all atomic instructions are equivalent: Herlihy's consensus hierarchy~\cite{herlihyWaitfreeSynchronization1991} ranks them by solving consensus for different numbers of processes, and their performance varies by hardware implementation~\cite{schweizerEvaluatingCostAtomic2020}.
+We do not explore equivalent implementations of the same lock with different atomics, as we focus on the coherence protocol overhead rather than instruction-level differences.
+
+\subsubsection{Interaction of Access Modes and Lock Types}
+
+Not all combinations of access modes and lock types are meaningful.
+Hardware locks \emph{require} cached access with hardware coherence, as RMW atomics need exclusive cache-line ownership.
+Software locks can operate under any access mode, since they rely only on loads and stores:
+\begin{itemize}
+    \item Under \textbf{Cached-SC}, software locks benefit from cache locality but must manage consistency via fences and explicit flushes (\texttt{clflush}/\texttt{clwb} + \texttt{sfence}).
+    \item Under \textbf{UC}, every poll traverses the CXL link, eliminating coherence overhead but increasing per-access latency. The strong ordering guarantees of UC access on x86-64 eliminate the need for most fences.
+    \item Under \textbf{NT}, write-combining can reduce the cost of lock release (store to a shared variable), while reads still pay full CXL latency. An \texttt{sfence} is required after NT stores.
+\end{itemize}
+This interaction is a key dimension of our evaluation: we measure whether the elimination of coherence traffic under UC/NT access compensates for the loss of cache locality.

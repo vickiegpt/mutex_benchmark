@@ -27,39 +27,46 @@ public:
         // Get "bakery number"
         ThreadData *td = get(thread_id);
         td->choosing = true;
+        FLUSH(&td->choosing);
         Fence();
         size_t my_bakery_number = 1;
         ThreadData *other_thread;
         for (size_t i = 0; i < num_threads; i++) {
             other_thread = get(i);
+            INVALIDATE(&other_thread->number);
             if (other_thread->number + 1 > my_bakery_number) {
                 my_bakery_number = other_thread->number + 1;
             }
         }
-        
+
         td->number = my_bakery_number;
+        FLUSH(&td->number);
         Fence();
         td->choosing = false;
+        FLUSH(&td->choosing);
         Fence();
 
         // Lock waiting part
         for (size_t j = 0; j < num_threads; j++) {
             other_thread = get(j);
             while (other_thread->choosing != 0) {
+                INVALIDATE(&other_thread->choosing);
                 // Wait for that thread to be done choosing a number.
                 // nanosleep(&nanosleep_timespec, &remaining);
             }
-            while ((other_thread->number != 0 && other_thread->number < td->number) 
+            while ((other_thread->number != 0 && other_thread->number < td->number)
                 || (other_thread->number == td->number && j < thread_id)) {
+                INVALIDATE(&other_thread->number);
                 // Stall until our bakery number is the lowest..
                 // nanosleep(&nanosleep_timespec, &remaining);
             }
         }
-        
+
         Fence();
     }
     void unlock(size_t thread_id) override {
         get(thread_id)->number = 0;
+        FLUSH(&get(thread_id)->number);
     }
 
     void destroy() override {

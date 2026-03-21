@@ -104,23 +104,30 @@ public:
         // TODO set all nodes?
         for (size_t node = leaf(thread_id); node > 1; node = parent(node)) {
             val[node] = thread_id;
+            FLUSH(&val[node]);
         }
         // Contention loop
         if (designated_waker_lock.trylock(thread_id)) {
             // Fence included in algorithm. TODO test
             FENCE();
             while (flag[thread_id] == false && flag[num_threads] == false) {
+                INVALIDATE(&flag[thread_id]);
+                INVALIDATE(&flag[num_threads]);
                 // spin_delay_exponential(); // Wait (TODO test spin_delay_exp here)
             }
             flag[num_threads] = false;
+            FLUSH(&flag[num_threads]);
             designated_waker_lock.unlock(thread_id);
         } else {
             while (flag[thread_id] == false) {
+                INVALIDATE(&flag[thread_id]);
                 // spin_delay_exponential(); // Wait (TODO test spin_delay_exp here)
             }
         }
         val[leaf(thread_id)] = num_threads;
+        FLUSH(&val[leaf(thread_id)]);
         flag[thread_id] = false;
+        FLUSH(&flag[thread_id]);
     }
 
     void unlock(size_t thread_id) override {
@@ -128,16 +135,22 @@ public:
         // Exclude root because we're enqueueing only siblings and the root does not have a sibling.
         size_t node = leaf(thread_id);
         for (size_t j = leaf_depth; j != -1; j--) { // doesn't have to be "signed" i think
+            INVALIDATE(&val[sibling(path_climbing(node, j))]);
             size_t k = val[sibling(path_climbing(node, j))];
+            INVALIDATE(&val[leaf(k)]);
             if (val[leaf(k)] < num_threads) {
                 val[leaf(k)] = num_threads;
+                FLUSH(&val[leaf(k)]);
                 enqueue(k);
             }
         }
         if (!queue_empty()) {
-            flag[dequeue()] = true;
+            size_t next = dequeue();
+            flag[next] = true;
+            FLUSH(&flag[next]);
         } else {
-            flag[num_threads] = true;            
+            flag[num_threads] = true;
+            FLUSH(&flag[num_threads]);
 
             std::atomic_thread_fence(std::memory_order_seq_cst);
         }

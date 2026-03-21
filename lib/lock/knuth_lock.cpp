@@ -30,11 +30,14 @@ public:
         ssize_t thread_id = thread_id_;
     beginning:
         control[thread_id] = LOOPING;
+        FLUSH(&control[thread_id]);
     restart_loop:
+        INVALIDATE(k);
         for (ssize_t j = *k; j >= 0; j--) {
             if (j == thread_id) {
                 goto end_of_loop;
             }
+            INVALIDATE(&control[j]);
             if (control[j] != NOT_IN_CONTENTION) {
                 goto restart_loop;
             }
@@ -43,18 +46,24 @@ public:
             if (j == thread_id) {
                 goto end_of_loop;
             }
+            INVALIDATE(&control[j]);
             if (control[j] != NOT_IN_CONTENTION) {
                 goto restart_loop;
             }
         }
     end_of_loop:
         control[thread_id] = HAS_LOCK;
+        FLUSH(&control[thread_id]);
         for (ssize_t j = num_threads - 1; j >= 0; j--) {
-            if (j != thread_id && control[j] == HAS_LOCK) {
-                goto beginning;
+            if (j != thread_id) {
+                INVALIDATE(&control[j]);
+                if (control[j] == HAS_LOCK) {
+                    goto beginning;
+                }
             }
         }
         *k = thread_id;
+        FLUSH(k);
     }
 
     void unlock(size_t thread_id) override {
@@ -63,7 +72,9 @@ public:
         } else {
             *k = thread_id - 1;
         }
+        FLUSH(k);
         control[thread_id] = NOT_IN_CONTENTION;
+        FLUSH(&control[thread_id]);
     }
 
     void destroy() override {

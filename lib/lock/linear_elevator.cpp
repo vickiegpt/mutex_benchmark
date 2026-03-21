@@ -39,22 +39,28 @@ public:
     void lock(size_t thread_id) override {
         volatile bool *given_lock = get_thread_n_given_lock(thread_id);
         thread_n_is_waiting[thread_id] = true;
+        FLUSH(&thread_n_is_waiting[thread_id]);
         if (designated_waker_lock.trylock(thread_id)) {
             // This thread will wake if
             // a) the unlocker makes a mistake and doesn't realize anyone is waiting or
             // b) (more likely) if this thread is the first to get to the lock
             volatile bool *designated_waker_given_lock = get_thread_n_given_lock(num_threads);
             while (*given_lock == false && *designated_waker_given_lock == false) {
+                INVALIDATE(given_lock);
+                INVALIDATE(designated_waker_given_lock);
                 // Busy wait
             }
             *designated_waker_given_lock = false;
+            FLUSH(designated_waker_given_lock);
             designated_waker_lock.unlock(thread_id);
         } else {
             while (*given_lock == false) {
+                INVALIDATE(given_lock);
                 // Busy wait
             }
         }
         *given_lock = false;
+        FLUSH(given_lock);
     }
 
     void unlock(size_t thread_id) override {
@@ -62,15 +68,19 @@ public:
         // Start at 1 because we don't loop back to ourself.
         for (size_t offset = 1; offset < num_threads; offset++) {
             size_t next_successor_index = (thread_id + offset) % num_threads;
+            INVALIDATE(&thread_n_is_waiting[next_successor_index]);
             if (thread_n_is_waiting[next_successor_index]) {
                 thread_n_is_waiting[thread_id] = false;
+                FLUSH(&thread_n_is_waiting[thread_id]);
                 Fence();
                 *get_thread_n_given_lock(next_successor_index) = true;
+                FLUSH(get_thread_n_given_lock(next_successor_index));
                 return; // Successfully passed off to successor
             }
         }
         // No successor found.
         *get_thread_n_given_lock(num_threads) = true;
+        FLUSH(get_thread_n_given_lock(num_threads));
     }
 
     void destroy() override {

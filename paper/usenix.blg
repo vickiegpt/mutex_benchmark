@@ -1,0 +1,83 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: usenix.aux
+The style file: plain.bst
+Database file #1: MutexBenchmarks.bib
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1049 of file plain.bst
+Warning--to sort, need author, editor, or key in mosesHoodBakeryAlgorithm2015
+Warning--empty author and editor in mosesHoodBakeryAlgorithm2015
+Warning--empty journal in boyd-wickizerNonscalableLocksAre
+Warning--empty year in boyd-wickizerNonscalableLocksAre
+Warning--empty year in burnsAllertonconf
+Warning--empty journal in diceLockCohortingGeneral
+Warning--empty year in diceLockCohortingGeneral
+Warning--empty journal in goukDirectAccessHighPerformance
+Warning--empty year in goukDirectAccessHighPerformance
+Warning--empty journal in guirouxMulticoreLocksCase
+Warning--empty year in guirouxMulticoreLocksCase
+Warning--empty journal in lamportMutualExclusionProblem
+Warning--empty year in lamportMutualExclusionProblem
+Warning--empty journal in lamportMutualExclusionProblema
+Warning--empty year in lamportMutualExclusionProblema
+Warning--empty journal in lamportNewSolutionDijkstras1974
+Warning--empty journal in maHydraRPCRPCCXL
+Warning--empty year in maHydraRPCRPCCXL
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1090 of file plain.bst
+Too many commas in name 1 of "Nouamane Tazi, Ferdinand Mom, Haojun Zhao, Phuc Nguyen, Mohamed Mekkouri, Leandro Werra, Thomas Wolf" for entry ultrascale_playbook
+while executing---line 1090 of file plain.bst
+Warning--empty journal in sharmaIntroductionComputeExpress
+Warning--empty year in sharmaIntroductionComputeExpress
+You've used 45 entries,
+            2118 wiz_defined-function locations,
+            781 strings with 15720 characters,
+and the built_in function-call counts, 17637 in all, are:
+= -- 1629
+> -- 1072
+< -- 17
++ -- 427
+- -- 370
+* -- 1348
+:= -- 2891
+add.period$ -- 130
+call.type$ -- 45
+change.case$ -- 297
+chr.to.int$ -- 0
+cite$ -- 65
+duplicate$ -- 639
+empty$ -- 1249
+format.name$ -- 370
+if$ -- 3657
+int.to.chr$ -- 0
+int.to.str$ -- 45
+missing$ -- 38
+newline$ -- 212
+num.names$ -- 94
+pop$ -- 387
+preamble$ -- 1
+purify$ -- 253
+quote$ -- 0
+skip$ -- 481
+stack$ -- 0
+substring$ -- 873
+swap$ -- 169
+text.length$ -- 17
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 178
+warning$ -- 20
+while$ -- 152
+width$ -- 47
+write$ -- 464
+(There were 8 error messages)

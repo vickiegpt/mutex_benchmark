@@ -36,21 +36,27 @@ public:
 
     void lock(size_t thread_id) override {
         thread_n_is_waiting[thread_id] = true;
+        FLUSH(&thread_n_is_waiting[thread_id]);
         if (designated_waker_lock.trylock(thread_id)) {
-            // This thread is the designated waker if 
+            // This thread is the designated waker if
             // a) the unlocker fucks up and doesn't realize anyone is waiting or
             // b) (more likely) if this thread is the first to get to the lock
             while (thread_n_given_lock[thread_id] == false && thread_n_given_lock[num_threads] == false) {
+                INVALIDATE(&thread_n_given_lock[thread_id]);
+                INVALIDATE(&thread_n_given_lock[num_threads]);
                 // Busy wait
             }
             thread_n_given_lock[num_threads] = false;
+            FLUSH(&thread_n_given_lock[num_threads]);
             designated_waker_lock.unlock(thread_id);
         } else {
             while (thread_n_given_lock[thread_id] == false) {
+                INVALIDATE(&thread_n_given_lock[thread_id]);
                 // Busy wait
             }
         }
         thread_n_given_lock[thread_id] = false;
+        FLUSH(&thread_n_given_lock[thread_id]);
     }
 
     void unlock(size_t thread_id) override {
@@ -58,15 +64,19 @@ public:
         // Start at 1 because we don't loop back to ourself.
         for (size_t offset = 1; offset < num_threads; offset++) {
             size_t next_successor_index = (thread_id + offset) % num_threads;
+            INVALIDATE(&thread_n_is_waiting[next_successor_index]);
             if (thread_n_is_waiting[next_successor_index]) {
                 thread_n_is_waiting[thread_id] = false;
+                FLUSH(&thread_n_is_waiting[thread_id]);
                 Fence();
                 thread_n_given_lock[next_successor_index] = true;
+                FLUSH(&thread_n_given_lock[next_successor_index]);
                 return; // Successfully passed off to successor
             }
         }
         // No successor found.
         thread_n_given_lock[num_threads] = true;
+        FLUSH(&thread_n_given_lock[num_threads]);
     }
 
     void destroy() override {

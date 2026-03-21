@@ -47,26 +47,34 @@ public:
     start:
         volatile bool *my_b = get_b(thread_id);
         *my_b = true; //trying to grab the lock
+        FLUSH(my_b);
         *x = thread_id+1; //first confirmation
+        FLUSH(x);
         Fence();
 
+        INVALIDATE(y);
         if (*y!=0){
             *my_b = false; //no longer going for the lock
-            while (*y!=0){} //wait for whoever was trying to get it to get it
+            FLUSH(my_b);
+            while (*y!=0){ INVALIDATE(y); } //wait for whoever was trying to get it to get it
             goto start; //restart
         }
 
         *y = thread_id + 1; //second confirmation
+        FLUSH(y);
         Fence();
 
+        INVALIDATE(x);
         if (*x!=thread_id+1){ //someone started going for the lock
             *my_b = false; //not longer going for the lock
+            FLUSH(my_b);
 
-            for (int j=0; j<(int)num_threads; j++){while(*get_b(j)){}} //wait for contention to go down
+            for (int j=0; j<(int)num_threads; j++){while(*get_b(j)){ INVALIDATE(get_b(j)); }} //wait for contention to go down
             Fence();
 
+            INVALIDATE(y);
             if (*y!=thread_id+1){ //while waiting, someone messed with second confirmation
-                while(*y!=0){} //wait for the person to unlock
+                while(*y!=0){ INVALIDATE(y); } //wait for the person to unlock
                 goto start;
             }
         }
@@ -75,41 +83,55 @@ public:
     bool trylock(size_t thread_id){
         volatile bool *my_b = get_b(thread_id);
         *x = thread_id+1; //first confirmation
+        FLUSH(x);
         Fence();
 
+        INVALIDATE(y);
         if (*y!=0){
             *my_b = false; //no longer going for the lock
+            FLUSH(my_b);
             return false; //wait for whoever was trying to get it to get it
         }
 
         *y = thread_id + 1; //second confirmation
+        FLUSH(y);
         Fence();
 
+        INVALIDATE(x);
         if (*x!=thread_id+1){ //someone started going for the lock
             *my_b = false; //not longer going for the lock
+            FLUSH(my_b);
             Fence();
-            for (int j=0; j<(int)num_threads; j++){while(*get_b(j)){}} //wait for contention to go down
+            for (int j=0; j<(int)num_threads; j++){while(*get_b(j)){ INVALIDATE(get_b(j)); }} //wait for contention to go down
 
 
+            INVALIDATE(y);
             if (*y!=thread_id+1){ //while waiting, someone messed with second confirmation
                 return false; //wait for the person to unlock
             }
         }
         bool leader = false;
+        INVALIDATE(fast);
         if (!*fast){
             leader=true;
             *fast=leader;
+            FLUSH(fast);
         }
         *y=0;
+        FLUSH(y);
         *my_b=false;
+        FLUSH(my_b);
         return leader;
     }
 
     void unlock(size_t thread_id) override {
         *y=0;
+        FLUSH(y);
         Fence();
         *get_b(thread_id) = false;
+        FLUSH(get_b(thread_id));
         *fast=false;
+        FLUSH(fast);
     }
 
     void destroy() override {

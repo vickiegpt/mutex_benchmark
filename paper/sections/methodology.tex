@@ -1,0 +1,114 @@
+\section{Methodology}
+
+\begin{table*}
+    \centering
+    \begin{tabular}{clcccc}
+        \toprule
+         Lock Name & Coherence & Access Modes & Starve-Free & Fair & RW-Safe \\
+        \midrule
+         Bakery Algorithm\cite{lamportNewSolutionDijkstras1974} & Software & Cached-SC, UC, NT & Yes & Yes & Yes\\
+         Boulangerie\cite{mosesHoodBakeryAlgorithm2015} & Software & Cached-SC, UC, NT & Yes & Yes & Yes\\
+         Lamport Fast\cite{lamportFastMutualExclusion1987} & Software & Cached-SC, UC, NT & No & No & No\\
+         Elevator-LF-Array\cite{buhrHighcontentionMutualExclusion2018} & Software & Cached-SC, UC, NT & Yes & Yes & No\\
+         Elevator-BL-Array\cite{buhrHighcontentionMutualExclusion2018} & Software & Cached-SC, UC, NT & Yes & Yes & Yes\\
+         Elevator-LF-Tree\cite{buhrHighcontentionMutualExclusion2018} & Software & Cached-SC, UC, NT & Yes & Yes & No\\
+         Elevator-BL-Tree\cite{buhrHighcontentionMutualExclusion2018} & Software & Cached-SC, UC, NT & Yes & Yes & Yes\\
+         Peterson\cite{petersonMythsMutualExclusion1981} & Software & Cached-SC, UC, NT & No & Yes & No\\
+         Knuth\cite{knuthAdditionalCommentsProblem1966} & Software & Cached-SC, UC, NT & No & Yes & No\\
+         Spin\cite{andersonPerformanceSpinLock1990} & Hardware & Cached-HC & No & No & No\\
+         Exp Spin\cite{andersonPerformanceSpinLock1990} & Hardware & Cached-HC & No & No & No\\
+         Ticket\cite{mellor-crummeyAlgorithmsScalableSynchronization1991} & Hardware & Cached-HC & Yes & Yes & No\\
+         MCS\cite{mellor-crummeyAlgorithmsScalableSynchronization1991} & Hardware & Cached-HC & Yes & Yes & No\\
+         \bottomrule
+    \end{tabular}
+    \caption{Lock implementations and their applicable access modes. Hardware locks require cached access with hardware coherence (Cached-HC) for RMW atomics. Software locks are evaluated under cached software coherence (Cached-SC), uncached (UC), and non-temporal (NT) access modes.}
+    \label{tab:Locks}
+\end{table*}
+
+\subsection{Benchmark Design}
+
+We evaluate synchronization performance using microbenchmarks that measure lock throughput (successful acquisitions per second) under controlled contention.
+We design three benchmark configurations to capture different contention regimes:
+
+\paragraph{Max contention.}
+All $N$ threads simultaneously compete to acquire the lock for a fixed time window.
+When a thread acquires the lock, it executes a critical section and releases.
+This represents the worst-case scenario for cache-line contention.
+
+\paragraph{Moderate contention.}
+$N$ threads each alternate between a non-critical computation phase (calibrated to 1\,$\mu$s) and a lock acquisition attempt.
+This produces a mix of contended and uncontended acquisitions, representative of workloads where threads perform meaningful work between synchronization points.
+
+\paragraph{Min contention.}
+A single thread acquires and releases the lock repeatedly, measuring the inherent per-acquisition overhead as the lock is scaled to support $N$ threads.
+This isolates the cost of lock metadata management (relevant for software locks with $O(N \log N)$ storage).
+
+\paragraph{Critical section design.}
+For max and moderate benchmarks, we evaluate two critical section sizes:
+\begin{itemize}
+    \item \textbf{Empty:} Increment a shared counter only. Isolates synchronization overhead.
+    \item \textbf{Indexed:} Perform a hash-table lookup and update (64-byte key, 256-byte value) in CXL memory. Represents a realistic shared data structure operation where both the lock and the protected data reside in FAM.
+\end{itemize}
+
+\paragraph{Parameters.}
+Thread count ranges from 1 to 64 in increments of 4.
+Each configuration runs for 20 seconds (max/moderate) or 1 second (min), with a 1-second warmup.
+Thread IDs are randomized between runs to mitigate bias from ID-dependent tie-breaking in some algorithms.
+Each experiment is repeated 5 times; we report median throughput with error bars showing min/max.
+
+\paragraph{Access mode configuration.}
+For each lock and contention level, we measure performance under all applicable access modes (Table~\ref{tab:Locks}).
+Cached-SC interposes explicit flush and invalidate operations around shared lock variable accesses.
+After every store, we insert \texttt{clflushopt} followed by \texttt{sfence} to flush the modified cache line and order the writeback; before reads in polling loops, we insert \texttt{clflush} followed by \texttt{lfence} to invalidate the line and ensure the next load fetches from CXL memory.
+These operations are implemented as compile-time macros (\texttt{FLUSH}/\texttt{INVALIDATE}) enabled via the \texttt{cached\_sc} build flag, producing zero overhead when disabled.
+UC maps CXL memory uncacheable by opening the device file (e.g., \texttt{/dev/dax}) and calling \texttt{mmap(MAP\_SHARED)}; the kernel/driver configures the page table's PAT entry as UC.
+Every load and store bypasses the host cache, so no explicit flushes or fences are needed on x86-64 (UC access is strongly ordered).
+Cached-HC uses a standard writeback (WB) mapping with BISnp-managed coherence; RMW atomics are available.
+NT access uses \texttt{movntdq}/\texttt{movntdqa} intrinsics for lock variable stores/loads, with an \texttt{sfence} after each store to flush the write-combining buffer; critical section data uses standard cached access.
+
+\subsection{Mutex Implementations}
+
+We select 13 mutex implementations spanning a range of design strategies (Table~\ref{tab:Locks}).
+
+\paragraph{Why these locks?}
+Our selection is guided by two criteria: (1)~covering the design space of contention management strategies (scanning, queueing, contention-avoidance), and (2)~including locks with different RW-safety properties relevant to CXL's ambiguous atomic load/store support.
+
+\paragraph{Software locks.}
+The \textbf{Bakery Algorithm}~\cite{lamportNewSolutionDijkstras1974} is Lamport's classical fair lock.
+Each thread draws a ``ticket number'' by reading all other threads' numbers and choosing one larger than the maximum.
+Threads enter the critical section in ticket order.
+The algorithm is RW-safe: it tolerates non-atomic reads and writes by using a ``choosing'' flag to indicate when a thread is in the process of selecting its ticket.
+This makes it directly applicable to CXL software-managed coherence without relying on atomic load/store guarantees.
+\textbf{Boulangerie}~\cite{mosesHoodBakeryAlgorithm2015} optimizes Bakery by eliminating redundant reads of the choosing array when a thread can determine that no other thread is currently choosing.
+\textbf{Lamport Fast}~\cite{lamportFastMutualExclusion1987} achieves the theoretical minimum of 5 memory operations in the uncontended fast path (2 stores, 3 loads) but is RW-unsafe and neither fair nor starvation-free.
+\textbf{Peterson}~\cite{petersonMythsMutualExclusion1981} and \textbf{Knuth}~\cite{knuthAdditionalCommentsProblem1966} represent classical designs with extensive thread-state scanning.
+Peterson's $N$-thread generalization uses $N-1$ levels of two-thread tournaments; Knuth's algorithm uses a circular scan of thread flags.
+Both require reading $O(N)$ variables per acquisition attempt.
+
+The \textbf{Elevator} series~\cite{buhrHighcontentionMutualExclusion2018} (LF-Array, BL-Array, LF-Tree, BL-Tree) are modern contention-avoiding designs.
+Unlike classical software locks where all threads race to detect when the lock is free, Elevator locks have the unlock path explicitly wake the successor.
+The successor search is performed either by a linear array scan (Array variants) or a binary tree traversal (Tree variants).
+Each variant uses either Lamport-Fast (LF) or Burns-Lamport~\cite{burnsAllertonconf,hesselinkVerifyingSimplificationMutual2013} (BL) as the underlying mutex primitive for the initial lock acquisition.
+The BL variants are RW-safe; the LF variants trade RW-safety for fewer memory operations.
+
+\paragraph{Hardware locks.}
+\textbf{Spin lock}~\cite{andersonPerformanceSpinLock1990} uses test-and-set (\texttt{lock xchg} on x86) with continuous polling on a single shared variable.
+Every failed acquisition generates a RMW atomic on the contested cache line.
+\textbf{Exp Spin} adds exponential back-off: after each failed test-and-set, the thread waits for an exponentially increasing number of cycles before retrying, reducing coherence traffic at the cost of increased acquisition latency.
+\textbf{Ticket lock}~\cite{mellor-crummeyAlgorithmsScalableSynchronization1991} uses fetch-and-add (\texttt{lock xadd}) for fair ordering.
+On acquire, a thread atomically increments the ``next ticket'' counter; it then polls the ``now serving'' counter with simple loads until its ticket is called.
+This separates the RMW operation (one per acquisition) from the polling path (simple loads), reducing coherence traffic relative to spin locks.
+\textbf{MCS lock}~\cite{mellor-crummeyAlgorithmsScalableSynchronization1991} queues per-thread lock objects using compare-and-swap (\texttt{lock cmpxchg}).
+Each thread polls its own per-thread flag, so polling traffic is entirely local---no cache-line contention from concurrent pollers.
+The predecessor sets the successor's flag during unlock, achieving $O(1)$ coherence traffic per acquisition regardless of thread count.
+
+\paragraph{Memory ordering.}
+All implementations use the minimum fences required for correctness under the x86-64 TSO memory model.
+On x86-64, stores are not reordered with older stores, and loads are not reordered with older loads; thus most fence requirements reduce to \texttt{mfence} or \texttt{sfence} at store-release points.
+We document fence placement for each lock implementation in our open-source benchmark~\cite{ramosEIRNfMutex_benchmark2025}.
+
+\paragraph{Storage overhead.}
+Software locks require $O(N)$ to $O(N \log N)$ storage where $N$ is the maximum thread count, as each thread needs dedicated state variables.
+Hardware locks require $O(1)$ storage (a single cache line for spin/ticket, one cache line per thread for MCS).
+At 64 threads, the largest software lock (Elevator-BL-Tree) requires 4.2\,KB; hardware locks require at most 4.1\,KB (MCS with 64-byte per-thread nodes).
+This overhead is negligible relative to the protected data in any realistic application.

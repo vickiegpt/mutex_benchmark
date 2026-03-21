@@ -25,25 +25,39 @@ public:
     void lock(size_t thread_id) override {
         // TODO refactor and remove goto
         unlocking[thread_id+1] = false;
+        FLUSH(&unlocking[thread_id+1]);
     try_again:
         c[thread_id+1] = true;
+        FLUSH(&c[thread_id+1]);
+        INVALIDATE(k);
         if (*k != thread_id+1) {
-            while (!unlocking[*k]) {}
+            while (!unlocking[*k]) {
+                INVALIDATE(k);
+                INVALIDATE(&unlocking[*k]);
+            }
             *k = thread_id+1;
+            FLUSH(k);
             goto try_again;
-        } 
+        }
         c[thread_id+1] = false;
+        FLUSH(&c[thread_id+1]);
         for (size_t j = 1; j <= num_threads; j++) {
-            if (j != thread_id+1 && !c[j]) {
-                goto try_again;
+            if (j != thread_id+1) {
+                INVALIDATE(&c[j]);
+                if (!c[j]) {
+                    goto try_again;
+                }
             }
         }
     }
 
     void unlock(size_t thread_id) override {
         *k=0;
+        FLUSH(k);
         unlocking[thread_id+1] = true;
+        FLUSH(&unlocking[thread_id+1]);
         c[thread_id+1] = true;
+        FLUSH(&c[thread_id+1]);
     }
 
     void destroy() override {

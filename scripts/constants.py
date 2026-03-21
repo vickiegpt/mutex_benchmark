@@ -188,6 +188,8 @@ class Constants:
     rusage: bool
     software_cxl: bool
     hardware_cxl: bool
+    uc_cxl: bool = False
+    cached_sc: bool = False
     skip_plotting: bool
     averages: bool
     iter_variable_name: str

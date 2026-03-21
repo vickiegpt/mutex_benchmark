@@ -1,0 +1,10 @@
+\section{Conclusion}
+
+This paper answers a concrete architectural question: when deploying synchronization over CXL fabric-attached memory, is hardware cache coherence worth its cost?
+
+Through systematic evaluation of 13 mutex implementations across four CXL memory access modes---hardware-coherent cached, software-coherent cached, uncached, and non-temporal---we provide quantitative evidence for this decision.
+Hardware coherence enables the highest-performing locks (MCS) at DRAM-local latencies, but coherence protocol overhead erodes this advantage as CXL fabric latency increases: at 400\,ns, MCS loses up to 47\% throughput; at 2\,$\mu$s, the best software lock under uncached access achieves within 12\% of coherent MCS.
+Non-temporal access further improves software lock throughput by 8--15\% through write-combining on lock release paths.
+
+We identify precise crossover points---in thread count, contention level, and fabric latency---where uncached or non-temporal access with software locks becomes the cost-effective choice, eliminating the need for hardware coherence infrastructure.
+These findings provide system architects with a quantitative basis for matching synchronization strategy to deployment parameters, and demonstrate that the full spectrum of CXL access modes---not just the cached extremes---deserves consideration in disaggregated memory system design.
