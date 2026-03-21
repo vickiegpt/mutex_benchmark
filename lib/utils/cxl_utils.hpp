@@ -46,7 +46,7 @@
             return nullptr;
         }
 
-        unsigned long nodemask = 1UL; /* indicates physical memory node, might change */
+        unsigned long nodemask = 1UL << 2; /* indicates physical memory node, might change */
         int mode = MPOL_BIND;
         unsigned long maxnode = sizeof(nodemask) * 8;
         // printf("mbind(%p, %ld, 0x%X, &0x%X, %ld, 0)\n", mapped, region_size, mode, nodemask, maxnode);
