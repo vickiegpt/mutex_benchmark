@@ -1,20 +1,10 @@
 \section{Background}
 
-This section provides an overview of why shared FAM addresses datacenter challenges, the coherence models and memory access modes that CXL supports, and the mutex implementations that exploit them.
+\subsection{CXL Fabric-Attached Memory}
 
-\subsection{CXL Fabric-Attached Memory for AI Workloads}
-
-Distributed AI training is straining existing datacenter networks.
-Large-scale systems struggle to fully utilize compute due to network overheads and bandwidth limitations in two-tier architectures where GPU clusters communicate over high-bandwidth NVLink while inter-node traffic traverses lower-bandwidth Ethernet~\cite{richinsAITaxHidden2019,tithiScalingIntelligenceDesigning2025,ultrascale_playbook,gangidiRDMAEthernetDistributed2024}.
-This bandwidth asymmetry is an obstacle for emerging hybrid training-inference workloads~\cite{patelSplitwiseEfficientGenerative2024a}.
-
-CXL fabric-attached memory offers a shared-memory programming model that reduces data movement overhead.
-Multiple hosts transparently address the same memory pool without serialization or data copies, enabling collaborative processing at scale~\cite{tangYggdrasilReducingNetwork2024}.
-Memory disaggregation via CXL addresses both memory underutilization through reduced overprovisioning and supports working sets that exceed single-server capacity~\cite{zhongMyCXLPool2025,liPondCXLBasedMemory2023,goukDirectAccessHighPerformance,kwonDisaggregatedMemorySystem2019,ewaisDisaggregatedMemoryDatacenter2023}.
-
-Enabling this shared-memory model requires efficient inter-host synchronization.
-Parallel communication primitives (AllReduce, AllGather, etc.) require thread-safe shared data structures, which in turn depend on scalable locks~\cite{dangAdvancedThreadSynchronization2017,balajiEfficientSupportMultithreaded2008,dozsaEnablingConcurrentMultithreaded2010}.
-Non-scalable locks can cause dramatic performance collapse~\cite{boyd-wickizerNonscalableLocksAre}, making the choice of synchronization mechanism---and the coherence model it requires---a first-order architectural decision.
+CXL fabric-attached memory (FAM) enables multiple hosts to transparently share a common memory pool, reducing data movement overhead for AI training, inference serving, and data analytics~\cite{tangYggdrasilReducingNetwork2024,zhongMyCXLPool2025,liPondCXLBasedMemory2023,goukDirectAccessHighPerformance}.
+Sharing memory demands synchronization: parallel communication primitives (AllReduce, AllGather) require scalable locks~\cite{dangAdvancedThreadSynchronization2017}, and non-scalable locks can cause dramatic performance collapse~\cite{boyd-wickizerNonscalableLocksAre}.
+The choice of synchronization mechanism---and the coherence model it requires---is a first-order architectural decision.
 
 \subsection{Coherence Models in CXL}
 
@@ -89,18 +79,12 @@ Mutex performance depends on two factors specific to CXL FAM: the availability o
 
 \subsubsection{Polling as Notification Mechanism}
 
-In modern multiprocessor systems, the operating system kernel monitors lock state and enables sleep/wake patterns for threads acquiring locks.
-This notification mechanism is fundamentally inaccessible in a CXL FAM environment: there is no centralized monitor that can identify lock state across hosts and wake waiting threads.
-
-We are therefore limited to polling: each thread repeatedly reads a memory location to detect value changes.
-Both software and hardware mutexes rely on polling to learn whether they have acquired the lock.
-This presents a notable performance challenge, as polling saturates both CPU resources and the CXL interconnect with read operations.
-The impact of polling depends critically on the access mode:
-under Cached-HC, repeated polls to an unmodified variable hit the local cache (zero CXL traffic);
+In CXL FAM, no centralized kernel monitor can identify lock state across hosts, so all locks must rely on polling.
+The cost of polling depends on the access mode:
+under Cached-HC, repeated polls hit the local cache (zero CXL traffic);
 under Cached-SC, polls hit the cache but require periodic flushes to detect remote writes;
 under UC, every poll generates a CXL round-trip;
 under NT, polls use streaming loads that bypass the cache.
-When applicable, we implement exponential back-off to reduce redundant polling traffic across all access modes.
 
 \subsubsection{Software Locks}
 

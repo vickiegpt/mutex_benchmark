@@ -2,53 +2,65 @@
 
 \begin{figure*}[htb]
      \centering
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
-         \includegraphics[width=\linewidth]{figures/max_dram_20250925194616_64_20.0_5-iter_local0.png}
-         \caption{Max Bench: DRAM Baseline}
+         \includegraphics[width=\linewidth]{figures/max_dram.png}
+         \caption{Max: DRAM}
          \label{fig-max_dram}
      \end{subfigure}\hfil
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figures/max_low_lat_20250925194828_64_20.0_5-iter_hcxl0.png}
-         \caption{Max Bench: CXL 400ns}
+         \caption{Max: CXL 400ns}
          \label{fig-max_low}
      \end{subfigure}\hfil
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figures/max_highlat_20250925233001_64_20.0_3-iter_hcxl0.png}
-         \caption{Max Bench: CXL 2$\mu$s}
+         \caption{Max: CXL 2$\mu$s}
          \label{fig-max_high}
+     \end{subfigure}\hfil
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/max_10us.png}
+         \caption{Max: CXL 10$\mu$s}
+         \label{fig-max_10us}
      \end{subfigure}
     \medskip
       \centering
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
-         \includegraphics[width=\linewidth]{figures/min_dram_20250924010700_64_0.5_5-iter_local0.png}
-         \caption{Min Bench: DRAM Baseline}
+         \includegraphics[width=\linewidth]{figures/min_dram.png}
+         \caption{Min: DRAM}
          \label{fig-min_dram}
      \end{subfigure}\hfil
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figures/min_low_lat_20250924010748_64_0.5_5-iter_hcxl0.png}
-         \caption{Min Bench: CXL 400ns}
+         \caption{Min: CXL 400ns}
          \label{fig-min_low}
      \end{subfigure}\hfil
-     \begin{subfigure}{0.28\textwidth}
+     \begin{subfigure}{0.23\textwidth}
          \centering
          \includegraphics[width=\linewidth]{figures/min_high_lat20250924010812_64_0.5_5-iter_hcxl0.png}
-         \caption{Min Bench: CXL 2$\mu$s}
+         \caption{Min: CXL 2$\mu$s}
          \label{fig-min_high}
+     \end{subfigure}\hfil
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/min_10us.png}
+         \caption{Min: CXL 10$\mu$s}
+         \label{fig-min_10us}
      \end{subfigure}
-     \caption{Lock throughput (acquisitions/second) across DRAM baseline and CXL latency configurations under max contention (top) and min contention (bottom) with cached access (Cached-HC for hardware locks, Cached-SC for software locks). Thread count ranges from 1 to 64.}
+     \caption{Lock throughput (total iterations) across DRAM baseline and CXL latency configurations under max contention (top) and min contention (bottom) with cached access (Cached-HC for hardware locks, Cached-SC for software locks). Thread count ranges from 1 to 64.}
      \label{fig-cached-results}
 \end{figure*}
 
 \subsection{Experimental Setup}
 
 Our platform is described in Section~\ref{sec:platform}.
-We evaluate each of the 13 locks under the applicable access modes at three latency points (DRAM, 400\,ns, 2\,$\mu$s) across three contention levels (max, moderate, min).
-This yields a total of $13 \times \{1\text{--}4\} \times 3 \times 3 = $ over 400 unique configurations, each repeated 5 times.
+We evaluate each of the 13 locks under the applicable access modes at four latency points (DRAM, 400\,ns, 2\,$\mu$s, 10\,$\mu$s) across three contention levels (max, moderate, min).
+This yields a total of $13 \times \{1\text{--}4\} \times 4 \times 3 = $ over 500 unique configurations, each repeated 5 times.
 
 \paragraph{Single-host setup.}
 Our evaluation uses a single host with multiple threads accessing CXL-attached memory.
@@ -87,6 +99,12 @@ Performance ratios remain similar to 400\,ns, with all locks scaled down proport
 The Elevator-BL advantage over MCS persists and slightly increases, confirming that the crossover is driven by coherence protocol overhead (which is a per-transition cost, largely independent of base memory latency) rather than raw memory access latency.
 This finding has practical significance: as CXL fabric distances grow, the case for avoiding hardware coherence strengthens.
 
+\paragraph{CXL 10\,$\mu$s (Figure~\ref{fig-max_10us}).}
+At the highest tested latency, per-access costs dominate and algorithmic efficiency becomes the primary differentiator.
+The relative ordering is preserved from lower latencies, but the absolute gap between lock families widens.
+Elevator-BL-Array's $O(\log N)$ polling path limits the multiplicative cost of 10\,$\mu$s per access, while Peterson's $O(N^2)$ polling becomes prohibitive---its throughput drops to approximately 50K iterations at 32 threads.
+Hardware locks (MCS, Ticket) retain reasonable performance because their polling paths hit local cache; the coherence overhead per CAS, while large in absolute terms, is amortized over many local polls.
+
 \subsubsection{Min Contention}
 
 Figures~\ref{fig-min_dram},~\ref{fig-min_low}, and~\ref{fig-min_high} show min-contention results.
@@ -112,28 +130,35 @@ Under UC access, unfairness in software locks \emph{decreases}: since all thread
 \subsection{Uncached and Non-Temporal Access Results}
 \label{sec:uc-nt-results}
 
-% Figures will be generated from experimental data using run_experiments.sh
-% \begin{figure*}[htb]
-%      \centering
-%      \begin{subfigure}{0.28\textwidth}
-%          \centering
-%          \includegraphics[width=\linewidth]{figures/max_uc_400ns.png}
-%          \caption{Max Bench: UC 400ns}
-%          \label{fig-max_uc}
-%      \end{subfigure}\hfil
-%      \begin{subfigure}{0.28\textwidth}
-%          \centering
-%          \includegraphics[width=\linewidth]{figures/max_nt_400ns.png}
-%          \caption{Max Bench: NT 400ns}
-%          \label{fig-max_nt}
-%      \end{subfigure}\hfil
-%      \begin{subfigure}{0.28\textwidth}
-%          \centering
-%          \includegraphics[width=\linewidth]{figures/max_cached_sc_400ns.png}
-%          \caption{Max Bench: Cached-SC 400ns}
-%          \label{fig-max_sc}
-%      \end{subfigure}
-% \end{figure*}
+\begin{figure*}[htb]
+     \centering
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/max_dram_cachedsc.png}
+         \caption{Max: DRAM Cached-SC}
+         \label{fig-max_dram_sc}
+     \end{subfigure}\hfil
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/max_10us_cachedsc.png}
+         \caption{Max: CXL 10$\mu$s Cached-SC}
+         \label{fig-max_10us_sc}
+     \end{subfigure}\hfil
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/min_dram_cachedsc.png}
+         \caption{Min: DRAM Cached-SC}
+         \label{fig-min_dram_sc}
+     \end{subfigure}\hfil
+     \begin{subfigure}{0.23\textwidth}
+         \centering
+         \includegraphics[width=\linewidth]{figures/min_10us_cachedsc.png}
+         \caption{Min: CXL 10$\mu$s Cached-SC}
+         \label{fig-min_10us_sc}
+     \end{subfigure}
+     \caption{Software lock throughput under Cached-SC access mode (with \texttt{clflushopt}/\texttt{sfence} after stores and \texttt{clflush}/\texttt{lfence} in polling loops) on DRAM and CXL 10\,$\mu$s. Compared to Figure~\ref{fig-cached-results}, flush overhead reduces throughput by 4--43$\times$ on DRAM, with contention-avoiding locks (Elevator-BL) least affected.}
+     \label{fig-cachedsc-results}
+\end{figure*}
 
 We now present the key contribution of this work: comparing software lock performance across the three non-hardware-coherent access modes (Cached-SC, UC, NT) and quantifying how they compare against hardware-coherent locks.
 
@@ -225,30 +250,16 @@ The implication is that UC access---which eliminates flushes entirely---becomes 
 
 \subsection{Moderate Contention and Indexed Critical Section}
 
-\paragraph{Moderate contention.}
-Under moderate contention (1\,$\mu$s computation between lock acquisitions), all locks show improved absolute throughput compared to max contention, as expected: threads spend most of their time in computation rather than contending for the lock.
-The relative ordering between locks is preserved, but crossover points shift toward higher thread counts: MCS retains its advantage over software locks longer because reduced contention means fewer coherence invalidations per unit time.
-At 400\,ns with 32 threads, MCS under Cached-HC outperforms Elevator-BL under UC by 28\% (vs.\ 9\% under max contention), indicating that hardware coherence is more beneficial when contention is intermittent.
-
-This result has practical significance: most real applications have moderate contention (threads perform meaningful work between synchronization points).
-The implication is that hardware coherence provides a wider advantage window for typical workloads compared to our max-contention stress tests.
-
-\paragraph{Indexed critical section.}
-With a hash-table critical section (64-byte key lookup, 256-byte value update in CXL memory), absolute throughput decreases for all locks due to the added work inside the critical section.
-The relative performance differences between access modes \emph{narrow}: the critical section dominates total acquisition time, making the lock overhead less significant.
-At 400\,ns with 32 threads, the gap between MCS (Cached-HC) and Elevator-BL (UC) shrinks from 9\% to 4\%, suggesting that for applications with non-trivial critical sections, the access mode choice has diminishing impact on end-to-end performance.
-
-Interestingly, under UC access the hash-table critical section also pays the full CXL round-trip for each data access, making the total cost more uniform across lock implementations.
-Under Cached-HC, the critical section data benefits from caching, but the lock's coherence overhead remains---a mixed regime that further complicates the access mode decision in practice.
+Under moderate contention (1\,$\mu$s computation between acquisitions), the relative ordering is preserved but crossover points shift toward higher thread counts: at 400\,ns with 32 threads, MCS outperforms Elevator-BL (UC) by 28\% (vs.\ 9\% under max contention), as reduced contention decreases coherence invalidation frequency.
+With a hash-table critical section (64-byte key, 256-byte value update), the access mode gap narrows further---from 9\% to 4\%---as critical section work dominates lock overhead.
 
 \subsection{Discussion}
 \label{sec:discussion}
 
 \paragraph{Single-host vs.\ multi-host.}
-Our single-host evaluation measures coherence protocol overhead as seen by the CXL device (snoop filter operations, ownership transitions) but does not capture cross-host effects such as switch-hop latency, inter-host snoop forwarding, or NUMA-like topology effects.
-In a true multi-host deployment, we expect hardware coherence overhead to \emph{increase} for two reasons: (1)~the snoop filter must track ownership per host, increasing lookup and invalidation costs, and (2)~back-invalidation messages must traverse the CXL switch, adding network latency to each ownership transition.
-Our single-host results therefore represent a conservative lower bound on the advantage of avoiding hardware coherence.
-Conversely, UC access performance would be largely unaffected by multi-host deployment, as each access already pays the full CXL round-trip without relying on coherence.
+Our single-host evaluation isolates coherence protocol overhead but does not capture cross-host effects (switch latency, inter-host snooping).
+In multi-host deployments, we expect hardware coherence overhead to \emph{increase} as snoop filters must track ownership per host and back-invalidations must traverse the CXL switch.
+Our results therefore represent a conservative lower bound on the advantage of avoiding hardware coherence; UC access would be largely unaffected.
 
 \paragraph{Practical deployment guidance.}
 The quantitative crossover points we identify translate to concrete recommendations:
@@ -260,12 +271,7 @@ The quantitative crossover points we identify translate to concrete recommendati
 \end{itemize}
 
 \paragraph{Coherence overhead decomposition.}
-The throughput loss of hardware locks at CXL latencies stems from two sources: (1)~the round-trip latency for cache-line ownership acquisition (a fixed per-CAS cost), and (2)~invalidation traffic from concurrent polling on shared variables (proportional to thread count and polling frequency).
-MCS mitigates source~(2) by having each thread poll its own variable, which is why it degrades less than spin/ticket locks.
-However, MCS cannot avoid source~(1): every compare-and-swap on the queue tail requires exclusive ownership.
-Software locks under UC access avoid both sources entirely, paying only the fixed CXL round-trip per memory access.
-This decomposition explains why the crossover thread count is lower for spin/ticket locks (which suffer from both sources) than for MCS (which suffers only from source~1).
-
-\paragraph{Space overhead.}
-Software locks require $O(N \log N)$ storage vs.\ $O(1)$ for spin/ticket locks ($O(N)$ for MCS).
-At 64 threads, the largest software lock requires 4.2\,KB---negligible for most applications, but relevant for systems with thousands of fine-grained locks in capacity-constrained FAM pools.
+Hardware lock throughput loss stems from (1)~per-CAS ownership round-trips and (2)~invalidation traffic from concurrent polling.
+MCS mitigates source~(2) via per-thread polling but cannot avoid source~(1).
+Software locks under UC avoid both, paying only the fixed CXL round-trip per access---explaining why the crossover thread count is lower for spin/ticket locks (both sources) than MCS (source~1 only).
+Software locks require $O(N \log N)$ storage vs.\ $O(1)$ for spin/ticket, but at 64 threads the largest lock requires only 4.2\,KB.
