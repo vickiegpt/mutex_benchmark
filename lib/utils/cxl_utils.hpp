@@ -39,6 +39,7 @@
     #include <atomic>
     #include <cstring>
     #include <numaif.h>
+    #include <cstdlib>
     inline void *_cxl_region_init(size_t region_size) {
         void* mapped = mmap(nullptr, region_size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
         if (mapped == MAP_FAILED) {
@@ -46,10 +47,17 @@
             return nullptr;
         }
 
-        unsigned long nodemask = 1UL << 2; /* indicates physical memory node, might change */
+        // Allow CXL NUMA node to be overridden via environment variable
+        int cxl_node = 2;  /* default physical memory node */
+        const char* env = std::getenv("CXL_NUMA_NODE");
+        if (env != nullptr) {
+            cxl_node = std::atoi(env);
+        }
+
+        unsigned long nodemask = 1UL << cxl_node;
         int mode = MPOL_BIND;
         unsigned long maxnode = sizeof(nodemask) * 8;
-        // printf("mbind(%p, %ld, 0x%X, &0x%X, %ld, 0)\n", mapped, region_size, mode, nodemask, maxnode);
+        // printf("mbind(%p, %ld, MPOL_BIND, node=%d, maxnode=%ld)\n", mapped, region_size, cxl_node, maxnode);
         if (mbind(mapped, region_size, mode, &nodemask, maxnode, 0) != 0) {
             perror("mbind");
         }
