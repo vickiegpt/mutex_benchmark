@@ -44,6 +44,7 @@
 #include "../lock/linear_elevator_nca.cpp"
 #include "../lock/tree_elevator_nca.cpp"
 #include "../lock/burns_lamport_lock.hpp"
+#include "../lock/cxl_ticket_lock.hpp"
 // #include "../lock/futex_mutex.cpp"
 #include "../lock/elevator_mutex.hpp"
 #include "../lock/szymanski.cpp"
@@ -212,6 +213,7 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "boulangerie") == 0)                 lock = new Boulangerie();
     else if (strcmp(mutex_name, "szymanski") == 0)                   lock = new SzymanskiLock();
     else if (strcmp(mutex_name, "ticket") == 0)                      lock = new TicketMutex();
+    else if (strcmp(mutex_name, "cxl_ticket") == 0)                  lock = new CXLTicketLock();
     else if (strcmp(mutex_name, "threadlocal_ticket") == 0)          lock = new ThreadlocalTicketMutex();
     else if (strcmp(mutex_name, "ring_ticket") == 0)                 lock = new RingTicketMutex();
     else if (strcmp(mutex_name, "null") == 0)                        lock = new NullMutex();
