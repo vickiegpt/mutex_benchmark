@@ -13,6 +13,7 @@
 
 #include "../../lib/lock/lock.hpp"
 #include "../../lib/utils/cxl_utils.hpp"
+#include "../../lib/utils/cxl_type2_sysfs.hpp"
 #include "cxl_gpu_lock.hpp"
 
 #ifdef CUDA_GPU
@@ -54,6 +55,8 @@ struct TestResults {
 // Global test configuration
 struct Config {
     bool use_cuda;
+    bool use_type2;           // Use Type-2 CXL device instead of generic CXL
+    int type2_device_id;      // 0 = cache0, 1 = cache1
     int cpu_threads;
     int gpu_threads;
     uint64_t iterations;
@@ -61,7 +64,28 @@ struct Config {
     bool test_order;
     bool test_dekker;
     bool test_mutex;
-} g_config = {true, 4, 4, 10000, false, true, true, true};
+    bool show_type2_info;     // Print Type-2 device info and exit
+} g_config = {true, false, 0, 4, 4, 10000, false, true, true, true, false};
+
+// ============================================================================
+// Allocation helpers for Type-2 or generic CXL memory
+// ============================================================================
+
+static void* alloc_cxl_memory(size_t size) {
+    if (g_config.use_type2) {
+        return type2_sysfs_allocate(size, g_config.type2_device_id);
+    } else {
+        return ALLOCATE(size);
+    }
+}
+
+static void free_cxl_memory(void* ptr, size_t size) {
+    if (g_config.use_type2) {
+        type2_sysfs_free(ptr, size);
+    } else {
+        FREE(ptr, size);
+    }
+}
 
 // ============================================================================
 // Test 1: FetchAdd Total Order Test
@@ -71,7 +95,7 @@ TestResults test_fetchadd_order() {
     TestResults result = {"FetchAdd Order", true, 0, 0, 0.0};
 
     // Allocate shared counter and result arrays
-    unsigned long long* cxl_counter = (unsigned long long*)ALLOCATE(sizeof(unsigned long long));
+    unsigned long long* cxl_counter = (unsigned long long*)alloc_cxl_memory(sizeof(unsigned long long));
     *cxl_counter = 0;
 
     uint64_t total_threads = g_config.cpu_threads + g_config.gpu_threads;
@@ -182,7 +206,7 @@ TestResults test_fetchadd_order() {
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
     result.throughput_ops_per_sec = (result.total_ops * 1e6) / duration_us;
 
-    FREE(cxl_counter, sizeof(unsigned long long));
+    free_cxl_memory(cxl_counter, sizeof(unsigned long long));
     free(all_values);
 
     return result;
@@ -196,8 +220,8 @@ TestResults test_dekker_ordering() {
     TestResults result = {"Dekker Order", true, 0, 0, 0.0};
 
     // Allocate x and y
-    unsigned long long* x = (unsigned long long*)ALLOCATE(sizeof(unsigned long long));
-    unsigned long long* y = (unsigned long long*)ALLOCATE(sizeof(unsigned long long));
+    unsigned long long* x = (unsigned long long*)alloc_cxl_memory(sizeof(unsigned long long));
+    unsigned long long* y = (unsigned long long*)alloc_cxl_memory(sizeof(unsigned long long));
 
     uint64_t cpu_violations = 0;
 
@@ -296,8 +320,8 @@ TestResults test_dekker_ordering() {
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
     result.throughput_ops_per_sec = (result.total_ops * 1e6) / duration_us;
 
-    FREE(x, sizeof(unsigned long long));
-    FREE(y, sizeof(unsigned long long));
+    free_cxl_memory(x, sizeof(unsigned long long));
+    free_cxl_memory(y, sizeof(unsigned long long));
 
     return result;
 }
@@ -311,11 +335,11 @@ TestResults test_mutex_contention() {
 
     // Allocate shared lock state and counter
     size_t lock_size = sizeof(std::atomic_uint64_t) * 2;
-    unsigned long long* cxl_lock = (unsigned long long*)ALLOCATE(lock_size);
+    unsigned long long* cxl_lock = (unsigned long long*)alloc_cxl_memory(lock_size);
     std::atomic_uint64_t* now_serving = (std::atomic_uint64_t*)&cxl_lock[0];
     std::atomic_uint64_t* next_ticket = (std::atomic_uint64_t*)&cxl_lock[8];
 
-    unsigned long long* counter = (unsigned long long*)ALLOCATE(sizeof(unsigned long long));
+    unsigned long long* counter = (unsigned long long*)alloc_cxl_memory(sizeof(unsigned long long));
     *counter = 0;
     now_serving->store(0, std::memory_order_relaxed);
     next_ticket->store(0, std::memory_order_relaxed);
@@ -407,8 +431,8 @@ TestResults test_mutex_contention() {
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
     result.throughput_ops_per_sec = (result.total_ops * 1e6) / duration_us;
 
-    FREE(cxl_lock, lock_size);
-    FREE(counter, sizeof(unsigned long long));
+    free_cxl_memory(cxl_lock, lock_size);
+    free_cxl_memory(counter, sizeof(unsigned long long));
 
     return result;
 }
@@ -418,13 +442,19 @@ TestResults test_mutex_contention() {
 // ============================================================================
 
 void print_usage(const char* prog_name) {
-    printf("Usage: %s [--no-cuda] [--test=order|dekker|mutex|all] [--cpu-threads N] [--gpu-threads N] [--iterations K] [--csv]\n", prog_name);
-    printf("  --no-cuda:          Force CPU simulation mode (ignore GPU)\n");
-    printf("  --test=order|...    Run specific test (default: all)\n");
-    printf("  --cpu-threads N     Number of CPU threads (default: 4)\n");
-    printf("  --gpu-threads N     Number of GPU threads (default: 4)\n");
-    printf("  --iterations K      Iterations per thread (default: 10000)\n");
-    printf("  --csv              CSV output format\n");
+    printf("Usage: %s [options]\n", prog_name);
+    printf("Options:\n");
+    printf("  --no-cuda              Force CPU simulation mode (ignore GPU)\n");
+    printf("  --type2-info           Show detected Type-2 CXL devices and exit\n");
+    printf("  --use-type2            Use Type-2 CXL device (cache0 by default)\n");
+    printf("  --type2-device N       Select Type-2 device (0=cache0, 1=cache1)\n");
+    printf("  --disable-type2-cache  Disable Type-2 DCOH cache (test UC semantics)\n");
+    printf("  --test=order|...       Run specific test (order, dekker, mutex, all) (default: all)\n");
+    printf("  --cpu-threads N        Number of CPU threads (default: 4)\n");
+    printf("  --gpu-threads N        Number of GPU threads (default: 4)\n");
+    printf("  --iterations K         Iterations per thread (default: 10000)\n");
+    printf("  --csv                  CSV output format\n");
+    printf("  --help, -h             Show this message\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -432,6 +462,17 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--no-cuda") == 0) {
             g_config.use_cuda = false;
+        } else if (strcmp(argv[i], "--type2-info") == 0) {
+            g_config.show_type2_info = true;
+        } else if (strcmp(argv[i], "--use-type2") == 0) {
+            g_config.use_type2 = true;
+        } else if (strncmp(argv[i], "--type2-device=", 15) == 0) {
+            g_config.use_type2 = true;
+            g_config.type2_device_id = atoi(&argv[i][15]);
+        } else if (strcmp(argv[i], "--disable-type2-cache") == 0) {
+            if (g_config.type2_device_id >= 0 && g_config.type2_device_id < 2) {
+                type2_sysfs_disable_cache(g_config.type2_device_id);
+            }
         } else if (strncmp(argv[i], "--cpu-threads=", 14) == 0) {
             g_config.cpu_threads = atoi(&argv[i][14]);
         } else if (strncmp(argv[i], "--gpu-threads=", 14) == 0) {
@@ -451,6 +492,16 @@ int main(int argc, char* argv[]) {
             }
         } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             print_usage(argv[0]);
+            return 0;
+        }
+    }
+
+    // Initialize Type-2 devices if needed
+    if (g_config.show_type2_info || g_config.use_type2) {
+        type2_sysfs_init();
+
+        if (g_config.show_type2_info) {
+            type2_sysfs_list_devices();
             return 0;
         }
     }
@@ -476,6 +527,18 @@ int main(int argc, char* argv[]) {
     if (!g_config.csv_output) {
         printf("=== CPU-GPU CXL Memory Access Test Suite ===\n");
         printf("Mode: %s\n", g_config.use_cuda ? "CUDA GPU" : "CPU Simulation");
+        if (g_config.use_type2) {
+            Type2DeviceInfo* dev = type2_sysfs_get_device(g_config.type2_device_id);
+            if (dev && dev->cache_size > 0) {
+                printf("Memory: Type-2 CXL cache%d (%.0f MiB, NUMA node %d, DCOH %s)\n",
+                       g_config.type2_device_id,
+                       dev->cache_size / (1024.0 * 1024.0),
+                       dev->numa_node,
+                       "enabled");
+            }
+        } else {
+            printf("Memory: Generic CXL or DRAM\n");
+        }
         printf("CPU threads: %d, GPU threads: %d, Iterations: %lu\n\n", g_config.cpu_threads, g_config.gpu_threads, g_config.iterations);
     }
 
