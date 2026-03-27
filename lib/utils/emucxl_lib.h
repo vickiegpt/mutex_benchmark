@@ -7,9 +7,13 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <sys/types.h>
+#ifdef __linux__
 #include "emucxl_kernel.h"
+#endif
 
+#ifndef PAGE_SIZE
 #define PAGE_SIZE 4096
+#endif
 
 extern const char* dev_file;
 

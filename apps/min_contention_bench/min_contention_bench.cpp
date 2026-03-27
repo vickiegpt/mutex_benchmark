@@ -9,8 +9,10 @@
 #include <atomic>
 #include <memory>
 
+#ifdef __linux__
 #include <numa.h>
 #include <numaif.h>
+#endif
 
 
 #include "min_contention_bench.hpp"
@@ -108,9 +110,12 @@ int min_contention_bench(
     lock->destroy();
     free((void*)counter);
 
+#ifdef __linux__
     if (numa){
         numa_delete(lock);
-    } else {
+    } else
+#endif
+    {
         // delete lock;//TODO WHY
     }
 

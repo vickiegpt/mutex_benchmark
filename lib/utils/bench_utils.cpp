@@ -7,8 +7,10 @@
 #include <vector>
 #include <string>
 #include <string.h>
+#ifdef __linux__
 #include <numa.h>
 #include <numaif.h>
+#endif
 #include <new>
 #include <sys/mman.h>
 #include <errno.h>
@@ -51,6 +53,7 @@
 #include "../lock/burns_lamport_lock.hpp"
 // #include "../lock/futex_mutex.cpp"
 #include "../lock/elevator_mutex.hpp"
+#include "../lock/net_elevator_lock.hpp"
 #include "../lock/szymanski.cpp"
 #include "../lock/broken_lock.cpp"
 #include "../lock/yang_lock.cpp"
@@ -188,6 +191,7 @@ void busy_sleep(size_t iterations) {
 // Global variable to track mutex size for deallocation
 static size_t g_mutex_alloc_size = 0;
 
+#ifdef __linux__
 // NUMA-aware delete for mutex objects
 void numa_delete(SoftwareMutex* ptr) {
     if (ptr == nullptr) return;
@@ -242,6 +246,7 @@ T* numa_new() {
     // Use placement new to construct the object
     return new(mem) T();
 }
+#endif // __linux__
 
 
 #ifdef hardware_cxl
@@ -301,6 +306,7 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
 
     else if (strcmp(mutex_name, "burns_lamport") == 0)               lock = numa_new<BurnsLamportMutex>();
     else if (strcmp(mutex_name, "elevator") == 0)                    lock = numa_new<ElevatorMutex>();
+    else if (strcmp(mutex_name, "net_elevator") == 0)                lock = numa_new<NetElevatorMutex>();
     else if (strcmp(mutex_name, "yang") == 0)                        lock = numa_new<YangMutex>();
     else if (strcmp(mutex_name, "yang_sleeper") == 0)                lock = numa_new<YangSleeperMutex>();
     else if (strcmp(mutex_name, "cohortMCS") == 0)                   lock = numa_new<CMCSLock>();
@@ -387,6 +393,7 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
 
     else if (strcmp(mutex_name, "burns_lamport") == 0)               lock =new BurnsLamportMutex() ;
     else if (strcmp(mutex_name, "elevator") == 0)                    lock =new ElevatorMutex() ;
+    else if (strcmp(mutex_name, "net_elevator") == 0)                lock =new NetElevatorMutex() ;
     else if (strcmp(mutex_name, "yang") == 0)                        lock =new YangMutex() ;
     else if (strcmp(mutex_name, "yang_sleeper") == 0)                lock =new YangSleeperMutex() ;
     else if (strcmp(mutex_name, "cohortMCS") == 0)                   lock =new CMCSLock() ;

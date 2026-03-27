@@ -5,6 +5,7 @@
 #include <fcntl.h> // for open
 #include <unistd.h> // for close
 
+#ifdef __linux__
 #include "emucxl_lib.h"
 int fd;
 const char* dev_file = "/dev/emucxl";
@@ -403,3 +404,4 @@ size_t emucxl_stats(int numa_node)
 	}
 	return size;
 }
+#endif // __linux__

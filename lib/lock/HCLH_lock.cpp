@@ -11,7 +11,12 @@
 #include <cassert>
 #include <set>
 #include <unistd.h>
+#ifdef __linux__
 #include <numa.h>
+#else
+static inline int numa_available() { return -1; }
+static inline int numa_max_node() { return 0; }
+#endif
 
 //syscall only on linux
 #ifdef __linux__

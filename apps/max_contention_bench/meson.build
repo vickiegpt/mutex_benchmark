@@ -8,7 +8,7 @@ include_directories = [
   utils_includes,
 ]
 
-numa_dep = dependency('numa', required : true)
+numa_dep = dependency('numa', required : false)
 
 max_contention_bench = executable(
   'max_contention_bench',

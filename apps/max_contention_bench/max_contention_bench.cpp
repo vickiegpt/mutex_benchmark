@@ -9,8 +9,10 @@
 #include <atomic>
 #include <memory>
 #include <string>
+#ifdef __linux__
 #include <numa.h>
 #include <numaif.h>
+#endif
 #include <errno.h>
 #include <sys/mman.h>
 #include <string.h>
@@ -42,6 +44,7 @@ int max_contention_bench(
 #endif
 
     // Set process-wide memory policy to node 2 to prevent any allocations on nodes 0 and 1
+#ifdef __linux__
     if (numa) {
         unsigned long nodemask[16] = {0};
         nodemask[0] = 1UL << 2;  // Node 2
@@ -54,6 +57,7 @@ int max_contention_bench(
             fprintf(stderr, "Successfully set process memory policy to node 2\n");
         }
     }
+#endif
 
     // Create run args structure to hold thread arguments
     // struct run_args args;
@@ -67,6 +71,7 @@ int max_contention_bench(
     // Initialize the lock
 
     // Get current memory policy
+#ifdef __linux__
     int mode;
     unsigned long nodemask[16] = {0};
     unsigned long maxnode = sizeof(nodemask) * 8;
@@ -154,6 +159,7 @@ int max_contention_bench(
             }
         }
     }
+#endif
 
 
     lock->init(num_threads);
@@ -164,13 +170,16 @@ int max_contention_bench(
     volatile int* total_unfair;
 
     // Force allocate control variables on node 2
+#ifdef __linux__
     if (numa) {
         fprintf(stderr, "DEBUG: Allocating control variables on node 2\n");
         counter = (volatile int*)numa_alloc_onnode(sizeof(int), 2);
         last = (volatile int*)numa_alloc_onnode(sizeof(int), 2);
         total_unfair = (volatile int*)numa_alloc_onnode(sizeof(int), 2);
         fprintf(stderr, "DEBUG: Allocated counter=%p, last=%p, total_unfair=%p\n", counter, last, total_unfair);
-    } else {
+    } else
+#endif
+    {
         fprintf(stderr, "DEBUG: NUMA not available, using regular allocation\n");
         counter = new int;
         last = new int;
@@ -185,24 +194,34 @@ int max_contention_bench(
     std::atomic<bool>* start_flag_raw = nullptr;
     std::atomic<bool>* end_flag_raw = nullptr;
 
+#ifdef __linux__
     if (numa) {
         start_flag_raw = (std::atomic<bool>*)numa_alloc_onnode(sizeof(std::atomic<bool>), 2);
         end_flag_raw = (std::atomic<bool>*)numa_alloc_onnode(sizeof(std::atomic<bool>), 2);
         new (start_flag_raw) std::atomic<bool>(false);
         new (end_flag_raw) std::atomic<bool>(false);
-    } else {
+    } else
+#endif
+    {
         start_flag_raw = new std::atomic<bool>(false);
         end_flag_raw = new std::atomic<bool>(false);
     }
 
-    auto start_flag = std::shared_ptr<std::atomic<bool>>(start_flag_raw, [](std::atomic<bool>* p) {
+#ifdef __linux__
+    auto start_flag = std::shared_ptr<std::atomic<bool>>(start_flag_raw, [numa](std::atomic<bool>* p) {
         p->~atomic();
-        numa_free(p, sizeof(std::atomic<bool>));
+        if (numa) numa_free(p, sizeof(std::atomic<bool>));
+        else delete p;
     });
-    auto end_flag = std::shared_ptr<std::atomic<bool>>(end_flag_raw, [](std::atomic<bool>* p) {
+    auto end_flag = std::shared_ptr<std::atomic<bool>>(end_flag_raw, [numa](std::atomic<bool>* p) {
         p->~atomic();
-        numa_free(p, sizeof(std::atomic<bool>));
+        if (numa) numa_free(p, sizeof(std::atomic<bool>));
+        else delete p;
     });
+#else
+    auto start_flag = std::shared_ptr<std::atomic<bool>>(start_flag_raw);
+    auto end_flag = std::shared_ptr<std::atomic<bool>>(end_flag_raw);
+#endif
 
     std::vector<per_thread_args> thread_args(num_threads);
     for (int i = 0; i < num_threads; ++i) {
@@ -320,13 +339,16 @@ int max_contention_bench(
     lock->destroy();
 
     // Free NUMA-allocated memory properly
+#ifdef __linux__
     if (numa) {
         numa_free((void*)counter, sizeof(int));
         numa_free((void*)last, sizeof(int));
         numa_free((void*)total_unfair, sizeof(int));
          // Use NUMA-aware delete for the lock object
         numa_delete(lock);
-    } else {
+    } else
+#endif
+    {
         delete counter;
         delete last;
         delete total_unfair;

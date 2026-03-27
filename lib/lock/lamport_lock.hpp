@@ -43,6 +43,7 @@ public:
         this->num_threads = num_threads;
     }
 
+
     void lock(size_t thread_id) override {
     start:
         volatile bool *my_b = get_b(thread_id);
@@ -71,7 +72,6 @@ public:
             }
         }
     }
-    
     bool trylock(size_t thread_id){
         volatile bool *my_b = get_b(thread_id);
         *my_b=true; //going for the lock
