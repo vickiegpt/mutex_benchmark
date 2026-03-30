@@ -23,26 +23,29 @@ hardware requirements.
 | `tree_bl_elevator` | O(log n) | O(log n) | **0** | O(n·CL) | Yes | Tree-order |
 | `tree_lamport_elevator` | O(log n) | O(log n) | **0** | O(n·CL) | Yes | Tree-order |
 | `net_elevator` | O(log²W) | O(n) | log²W × fetch\_xor | O(W²log²W + n·CL) | Yes | Elevator |
-| `cn_ticket_bl` | O(n·log²W) | O(n) | **0** | O(W·log²W·CL + n·CL) | Yes (stack) | ≈FIFO |
-| `cn_ticket_lamport` | O(n·log²W)‡ | O(n) | **0** | O(W·log²W·CL + n·CL) | Yes (stack) | ≈FIFO |
 | `bitonic_cas` | O(log²W) | O(n) | log²W × fetch\_add | O(W·log²W + n·CL) | Yes (stack) | ≈FIFO |
 | `bitonic_bl` | O(n·log²W) | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
 | `bitonic_lamport` | O(n·log²W)‡ | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
-| `bitonic_elevator` | O(log²W) | O(n) | log²W × XCHG | O(n·W·log²W + n·CL) | Yes (stack+node) | ≈FIFO |
+| `bitonic_elevator` | O(log²W) | O(n) | log²W × (XCHG + CAS) | O(n·W·log²W + n·CL) | Yes (stack+node) | ≈FIFO |
 | `bitonic_bakery` | O(n·log²W) | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
 | `periodic_cas` | O(log²W) | O(n) | log²W × fetch\_add | O(W·log²W + n·CL) | Yes (stack) | ≈FIFO |
 | `periodic_bl` | O(n·log²W) | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
 | `periodic_lamport` | O(n·log²W)‡ | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
-| `periodic_elevator` | O(log²W) | O(n) | log²W × XCHG | O(n·W·log²W + n·CL) | Yes (stack+node) | ≈FIFO |
+| `periodic_elevator` | O(log²W) | O(n) | log²W × (XCHG + CAS) | O(n·W·log²W + n·CL) | Yes (stack+node) | ≈FIFO |
 | `periodic_bakery` | O(n·log²W) | O(n) | **0** | O(n·W·log²W + n·CL) | Yes (stack) | ≈FIFO |
-| `seq_bitonic_cas` | O(log²W) + O(1) | **O(1)** | log²W fetch\_add + 1 fetch\_add | O(n·CL) | Yes (now\_serving) | Strict FIFO |
-| `seq_periodic_cas` | O(log²W) + O(1) | **O(1)** | log²W fetch\_add + 1 fetch\_add | O(n·CL) | Yes (now\_serving) | Strict FIFO |
 | `wf_bitonic_cas` | O(log²W) | **O(1)** | log²W fetch\_add | O(n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_bitonic_bl` | O(n·log²W) | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_bitonic_lamport` | O(n·log²W)‡ | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_bitonic_bakery` | O(n·log²W) | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
 | `wf_periodic_cas` | O(log²W) | **O(1)** | log²W fetch\_add | O(n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_periodic_bl` | O(n·log²W) | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_periodic_lamport` | O(n·log²W)‡ | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
+| `wf_periodic_bakery` | O(n·log²W) | **O(1)** | **0** | O(n·W·log²W + n·CL) | Yes (phase bit) | ≈FIFO |
 
 \* `mcs_nca` nodes not CL-padded — false sharing possible.  
 † `linear_lamport_elevator` grant flags not CL-padded.  
-‡ O(1) fast path when uncontended; degrades to O(n) per balancer under contention.
+‡ O(1) fast path when uncontended; degrades to O(n) per balancer under contention.  
+§ Seq designs are currently broken under multi-threaded contention.
 
 ---
 
@@ -61,8 +64,8 @@ pass through to acquire the lock.
 | **Tree walk** | `tree_*_elevator` | O(log n) tree nodes + waker | O(log n) — write from leaf to root |
 | **Network traverse (CAS)** | `net_elevator`, `bitonic_cas`, `periodic_cas` | O(log²W) atomics | O(log²W) — each balancer is 1 RMW |
 | **Network traverse (elevator sync)** | `bitonic_elevator`, `periodic_elevator` | O(log²W) MCS-style locks | O(log²W) — each balancer is 1 XCHG + local spin |
-| **Network traverse (software)** | `cn_ticket_bl`, `bitonic_bl`, `periodic_bl`, `*_bakery` | O(log²W) mutex acquires, each O(n) | O(n·log²W) — most expensive |
-| **Network traverse (Lamport)** | `cn_ticket_lamport`, `bitonic_lamport`, `periodic_lamport` | O(log²W) Lamport locks | O(1)–O(n) per balancer × log²W |
+| **Network traverse (software)** | `bitonic_bl`, `periodic_bl`, `*_bakery` | O(log²W) mutex acquires, each O(n) | O(n·log²W) — most expensive |
+| **Network traverse (Lamport)** | `bitonic_lamport`, `periodic_lamport` | O(log²W) Lamport locks | O(1)–O(n) per balancer × log²W |
 
 **Concrete example** (n = 16 threads → W = 4, log²W = 4 balancers traversed):
 
@@ -73,7 +76,7 @@ pass through to acquire the lock.
 | `linear_bl_elevator` | 16-thread BL doorway scan |
 | `tree_cas_elevator` | 4 tree writes + 1 TAS |
 | `bitonic_cas` / `periodic_cas` | 4 fetch\_add |
-| `bitonic_elevator` / `periodic_elevator` | 4 XCHG (MCS-style per balancer) |
+| `bitonic_elevator` / `periodic_elevator` | 4 XCHG + 4 CAS (MCS-style per balancer) |
 | `bitonic_bl` / `periodic_bl` | 4 × 16-thread BL doorways = 64 flag reads |
 | `bitonic_bakery` / `periodic_bakery` | 4 × 16-thread bakery doorways = 64 reads + 64 writes |
 
@@ -85,13 +88,12 @@ pass through to acquire the lock.
 | **O(1) handoff** | `mcs`, `mcs_nca` | O(1) | Write to successor's node (1 CAS if tail) |
 | **O(log n) tree walk** | `tree_*_elevator` | O(log n) | Root-to-leaf sibling check + ring dequeue |
 | **O(n) linear scan** | `linear_*_elevator` | O(n) | Cyclic scan of waiting[] flags |
-| **O(n) step-property scan** | `net_elevator`, `cn_ticket_*`, `bitonic_*`, `periodic_*` | O(n) | Scan all ThreadMeta, use (wire\_dist, round, tid) ordering |
+| **O(n) step-property scan** | `net_elevator`, `bitonic_*`, `periodic_*` | O(n) | Scan all ThreadMeta, use (wire\_dist, round, tid) ordering |
 
 The new bitonic/periodic locks and the existing counting network locks share
 the same O(n) unlock scan. This is the primary scaling bottleneck — every
-unlock must inspect all n thread metadata slots. The cn\_array variants
-(`cn_array_cas`, `cn_array_try_yield`, `cn_array_peek_try`) achieve O(1) unlock
-by using a slot array indexed by globally-unique tokens.
+unlock must inspect all n thread metadata slots. The WF (Waiting-Filter)
+variants solve this with O(1) unlock via a phase-bit chain.
 
 ### 2.3 Space Overhead
 
@@ -102,7 +104,7 @@ by using a slot array indexed by globally-unique tokens.
 | `linear_*_elevator` | 1 CL-padded grant flag + 1 bool | Waker lock O(n) | O(n·CL) |
 | `tree_*_elevator` | 1 CL-padded grant flag | 2n+1 tree nodes + ring buffer | O(n·CL) |
 | `net_elevator` | 1 CL-padded meta slot | W²/2 · log²W atomics | O(W²·log²W + n·CL) |
-| `cn_ticket_*` | 1 CL-padded meta slot | CL-padded balancer array | O(W·log²W·CL + n·CL) |
+| `cn_ticket_*` | 1 CL-padded meta slot | CL-padded balancer array | O(W·log²W·CL + n·CL) | *removed* |
 | `bitonic_cas` / `periodic_cas` | 1 CL-padded meta slot | Heap-allocated balancer tree | O(W·log²W + n·CL) |
 | `bitonic_bl` / `periodic_bl` | 1 CL-padded meta slot | Balancer tree + n flags/balancer | O(n·W·log²W + n·CL) |
 | `bitonic_elevator` / `periodic_elevator` | 1 CL-padded meta slot | Balancer tree + n MCS nodes/balancer | O(n·W·log²W + n·CL) |
@@ -129,7 +131,7 @@ stage.
 | `tree_*_elevator` | Tree root | n (up to O(log n) per level) |
 | `net_elevator` | W/2 balancers per stage | n/W per balancer (expected) |
 | `bitonic_*` / `periodic_*` | W/2 balancers per stage | n/W per balancer (expected) |
-| `cn_ticket_*` | W/2 CL-padded balancers per stage | n/W per balancer |
+| `cn_ticket_*` | W/2 CL-padded balancers per stage | n/W per balancer | *removed* |
 
 For n = 64 threads with W = 8: each balancer sees ~8 threads instead of 64.
 This reduces cache-line bouncing by ~8× compared to a single-point lock.
@@ -149,19 +151,20 @@ This reduces cache-line bouncing by ~8× compared to a single-point lock.
 | `tree_bl_elevator` | **No** | **Yes** | Good — local spin |
 | `tree_lamport_elevator` | **No** | **Yes** | Good — local spin |
 | `net_elevator` | Yes (fetch\_xor) | No | Good — local spin, distributed balancers |
-| `cn_ticket_bl` | **No** | **Yes** | Good — stack-local spin |
-| `cn_ticket_lamport` | **No** | **Yes** | Good — stack-local spin |
+| `cn_ticket_bl` | **No** | **Yes** | Good — stack-local spin | *removed* |
+| `cn_ticket_lamport` | **No** | **Yes** | Good — stack-local spin | *removed* |
 | `bitonic_cas` / `periodic_cas` | Yes (fetch\_add) | No | Good — stack-local spin, distributed |
 | `bitonic_bl` / `periodic_bl` | **No** | **Yes** | Good — stack-local spin, distributed |
 | `bitonic_lamport` / `periodic_lamport` | **No** | **Yes** | Good — stack-local spin, distributed |
-| `bitonic_elevator` / `periodic_elevator` | Yes (XCHG) | No | **Best** — local spin at both balancer and lock level |
+| `bitonic_elevator` / `periodic_elevator` | Yes (XCHG + CAS) | No | **Best** — local spin at both balancer and lock level |
 | `bitonic_bakery` / `periodic_bakery` | **No** | **Yes** | Good — stack-local spin, no atomics at all |
 
 **Pure software locks** (no atomic RMW instructions, fences only):
 `linear_bl_elevator`, `linear_lamport_elevator`, `tree_bl_elevator`,
-`tree_lamport_elevator`, `cn_ticket_bl`, `cn_ticket_lamport`, `bitonic_bl`,
+`tree_lamport_elevator`, `bitonic_bl`,
 `bitonic_lamport`, `bitonic_bakery`, `periodic_bl`, `periodic_lamport`,
-`periodic_bakery`.
+`periodic_bakery`, `wf_bitonic_bl`, `wf_bitonic_lamport`, `wf_bitonic_bakery`,
+`wf_periodic_bl`, `wf_periodic_lamport`, `wf_periodic_bakery`.
 
 ---
 
@@ -204,8 +207,11 @@ This reduces cache-line bouncing by ~8× compared to a single-point lock.
   `periodic_bl`, `periodic_bakery` provide distributed counting with only
   loads, stores, and fences.
 - **No other lock in this set** combines distributed contention reduction
-  with pure-software execution except `cn_ticket_bl` and `cn_ticket_lamport`
-  (flat network) and the new bitonic/periodic variants (recursive network).
+  with pure-software execution except the bitonic/periodic variants (recursive network)
+  and their WF counterparts.
+- **No other lock in this set** combines distributed contention reduction,
+  O(1) unlock, AND pure-software execution except the `wf_*_bl`,
+  `wf_*_lamport`, and `wf_*_bakery` variants.
 
 ### Bitonic vs Periodic
 
@@ -236,9 +242,9 @@ or when structural regularity is valued.
 | Pure software, many threads | `bitonic_bl` or `periodic_bl` | Distributed contention without any atomics |
 | NUMA/CXL, best locality | `bitonic_elevator` or `periodic_elevator` | MCS-style local spin at every balancer |
 | Most portable (no atomics, no fences under SC) | `bitonic_bakery` or `periodic_bakery` | Pure loads and stores |
-| Strict FIFO with O(1) unlock | `cn_array_cas` | Array-slot indexing, no scan |
+| Strict FIFO with O(1) unlock | `wf_bitonic_cas` or `wf_periodic_cas` | Waiting-filter, O(1) phase-bit unlock, no extra atomics |
 | O(1) unlock + distributed lock | `wf_bitonic_cas` or `wf_periodic_cas` | Waiting-filter, best balance of throughput and unlock cost |
-| O(1) unlock + single bottleneck | `seq_bitonic_cas` | Sequenced, global fetch\_add linearization |
+| O(1) unlock + single bottleneck | `seq_bitonic_cas` | Sequenced, global fetch\_add linearization (currently broken) |
 
 ---
 

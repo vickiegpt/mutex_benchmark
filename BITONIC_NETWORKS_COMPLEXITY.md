@@ -26,7 +26,7 @@ All networks have width **w** (must be a power of 2).
 | **CAS** (fetch_add) | O(1) amortised | Yes (LOCK prefix / LDXR-STXR) | O(1) — single atomic counter |
 | **Burns-Lamport** | O(n) doorway + O(n) wait | No — loads, stores, fences only | O(n) — per-thread flags |
 | **Lamport Fast** | O(1) fast path, O(n) slow | No — loads, stores, fences only | O(n) — per-thread arrays |
-| **Elevator (Buhr)** | O(1) enqueue + local spin | Single CAS at enqueue | O(n) — per-thread queue nodes |
+| **Elevator (Buhr)** | O(1) enqueue + local spin | 1 XCHG (enqueue) + 1 CAS (dequeue) | O(n) — per-thread queue nodes |
 | **Bakery** | O(n) doorway + O(n) wait | No — pure loads & stores (SC) | O(n) — choosing[] + number[] |
 
 ### End-to-End Lock Complexity
@@ -35,8 +35,16 @@ All networks have width **w** (must be a power of 2).
 |---|---|---|---|---|
 | **bitonic_{sync}** | O(log²w) × T_sync | O(log²w × T_sync + n) | O(n) scan | O(w · log²w + n) |
 | **periodic_{sync}** | O(log²w) × T_sync | O(log²w × T_sync + n) | O(n) scan | O(w · log²w + n) |
+| **wf_bitonic_{sync}** | O(log²w) × T_sync | O(log²w × T_sync) + O(1) phase check | **O(1)** phase-bit set | O(n·CL) |
+| **wf_periodic_{sync}** | O(log²w) × T_sync | O(log²w × T_sync) + O(1) phase check | **O(1)** phase-bit set | O(n·CL) |
+| **seq_bitonic_cas** | O(log²w) × O(1) | O(log²w) + 1 fetch_add | **O(1)** slot lookup | O(n·CL) |
+| **seq_periodic_cas** | O(log²w) × O(1) | O(log²w) + 1 fetch_add | **O(1)** slot lookup | O(n·CL) |
 
 Where **T_sync** is the per-balancer synchronisation cost from the table above.
+
+**Note**: Design A (Wire-Indexed / `lw_*`) and Design B (Sequenced / `seq_*`)
+are currently broken under multi-threaded contention. Only Design C
+(Waiting-Filter / `wf_*`) is fully functional across all sync policies.
 
 ---
 
@@ -187,15 +195,27 @@ must be serialised**.  This can be achieved through:
 
 | File | Contents |
 |---|---|
-| `lib/lock/bitonic_networks.hpp` | All network + lock implementations |
+| `lib/lock/bitonic_networks.hpp` | All network + lock implementations (base counting locks) |
+| `lib/lock/linearizable_counting_lock.hpp` | Linearizable counting lock designs (WF, Seq, LW) |
 | `lib/utils/bench_utils.cpp` | Factory registration (both CXL and standard paths) |
 | `BITONIC_NETWORKS_COMPLEXITY.md` | This document |
+| `LINEARIZABLE_COUNTING_ANALYSIS.md` | Theoretical analysis of linearizable counting lock designs |
+| `ELEVATOR_SET_COMPARISON.md` | Cross-lock overhead comparison |
 
 ## Lock Name Registry
 
+Base counting locks (bitonic_networks.hpp):
 ```
 bitonic_cas        bitonic_bl         bitonic_lamport
 bitonic_elevator   bitonic_bakery
 periodic_cas       periodic_bl        periodic_lamport
 periodic_elevator  periodic_bakery
+```
+
+Linearizable counting locks (linearizable_counting_lock.hpp):
+```
+wf_bitonic_cas     wf_bitonic_bl      wf_bitonic_lamport    wf_bitonic_bakery
+wf_periodic_cas    wf_periodic_bl     wf_periodic_lamport   wf_periodic_bakery
+seq_bitonic_cas    seq_periodic_cas   (Seq: broken under contention)
+lw_bitonic_cas     lw_periodic_cas    (LW: broken under contention)
 ```

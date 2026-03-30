@@ -194,6 +194,11 @@ O(n) to O(W). Under practical linearizability, prediction hits often → O(1) av
 **Key limitation**: Non-contiguous per-pair rounds break the `next_to_serve` prediction
 under high concurrency. Fallback to O(W) sweep. Still much better than O(n).
 
+> **Status (current implementation):** Design A is **broken** under multi-thread
+> contention. The designated-waker protocol deadlocks when multiple threads
+> compete across iterations. 2T+ benchmarks show 0 throughput. The `lw_*` type
+> aliases exist in code but should not be benchmarked.
+
 ### Design B: Sequenced Counting Lock (Guaranteed O(1) Unlock)
 
 **Architecture**:
@@ -225,11 +230,16 @@ contention, this becomes a serialization bottleneck. However, the counting netwo
 distributes arrival times, so threads hit global_seq at staggered intervals,
 reducing contention on it compared to a pure ticket lock.
 
-**Comparison to `cn_array_lock`**: Architecturally similar — both use a global
-counter for contiguous tokens + slot array for O(1) unlock. The difference:
-cn_array uses a FLAT (non-recursive) bitonic network where the last-layer
-balancer's counter IS the global sequence. Our design uses a RECURSIVE network
-(deeper, better contention distribution at scale) with a SEPARATE global counter.
+> **Status (current implementation):** Design B is **broken** under multi-thread
+> contention — similar deadlock issues as Design A. The `seq_*` type aliases
+> exist in code but should not be benchmarked.
+
+**Comparison to `cn_array_lock`** (removed): Architecturally similar — both use
+a global counter for contiguous tokens + slot array for O(1) unlock. The
+difference: cn_array used a FLAT (non-recursive) bitonic network where the
+last-layer balancer's counter was the global sequence. Design B uses a RECURSIVE
+network (deeper, better contention distribution at scale) with a SEPARATE global
+counter. The cn_array implementation has been removed from the codebase.
 
 ### Design C: True Linearizable Network (Herlihy-Shavit-Waarts Construction)
 
@@ -311,7 +321,7 @@ The per-wire slot infrastructure works regardless of which network produced the
 
 3. **Window-based scheduling**: Under practical linearizability, the unlock
    examines a window of O(depth) candidates. Different networks have different
-   depths (bitonic: O(log²W), periodic: O(W·logW)), giving different window
+   depths (bitonic: O(log²W), periodic: O(log²W)), giving different window
    sizes and thus different scheduling precision/cost trade-offs.
 
 ---

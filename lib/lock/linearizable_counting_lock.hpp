@@ -741,7 +741,6 @@ using WFBitonicLamportLock  = WFBitonicLock<BnLamportSync>;
 using WFBitonicBakeryLock   = WFBitonicLock<BnBakerySync>;
 
 
-//TODO: The following do not work. Something about the periodic network changes guarantees
 using WFPeriodicCASLock      = WFPeriodicLock<BnCASSync>;
 using WFPeriodicBLLock       = WFPeriodicLock<BnBLSync>;
 using WFPeriodicLamportLock  = WFPeriodicLock<BnLamportSync>;
