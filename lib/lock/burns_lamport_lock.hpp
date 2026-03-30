@@ -33,13 +33,13 @@ public:
     bool trylock(size_t thread_id) override {
         in_contention[thread_id] = true;
         Fence();
-        for (size_t higher_priority_thread = 0; higher_priority_thread < thread_id; higher_priority_thread++) {
+        for (size_t higher_priority_thread = 0; higher_priority_thread < thread_id; higher_priority_thread += 1) {
             if (in_contention[higher_priority_thread]) {
                 in_contention[thread_id] = false;
                 return false;
             }
         }
-        for (size_t lower_priority_thread = thread_id + 1; lower_priority_thread < num_threads; lower_priority_thread++) {
+        for (size_t lower_priority_thread = thread_id + 1; lower_priority_thread < num_threads; lower_priority_thread += 1) {
             while (in_contention[lower_priority_thread]) {
                 // Busy wait for lower-priority thread to give up.
             }

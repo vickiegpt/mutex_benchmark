@@ -54,6 +54,8 @@
 // #include "../lock/futex_mutex.cpp"
 #include "../lock/elevator_mutex.hpp"
 #include "../lock/net_elevator_lock.hpp"
+#include "../lock/bitonic_networks.hpp"
+#include "../lock/linearizable_counting_lock.hpp"
 #include "../lock/szymanski.cpp"
 #include "../lock/broken_lock.cpp"
 #include "../lock/yang_lock.cpp"
@@ -307,6 +309,7 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "burns_lamport") == 0)               lock = numa_new<BurnsLamportMutex>();
     else if (strcmp(mutex_name, "elevator") == 0)                    lock = numa_new<ElevatorMutex>();
     else if (strcmp(mutex_name, "net_elevator") == 0)                lock = numa_new<NetElevatorMutex>();
+
     else if (strcmp(mutex_name, "yang") == 0)                        lock = numa_new<YangMutex>();
     else if (strcmp(mutex_name, "yang_sleeper") == 0)                lock = numa_new<YangSleeperMutex>();
     else if (strcmp(mutex_name, "cohortMCS") == 0)                   lock = numa_new<CMCSLock>();
@@ -316,6 +319,40 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "cohortTAS") == 0)                   lock = numa_new<CohortTASLock>();
     else if (strcmp(mutex_name, "cohortPTicket") == 0)               lock = numa_new<CohortPTicketLock>();
     else if (strcmp(mutex_name, "hclh") == 0)                        lock = numa_new<hclh::HCLHMutex>();
+    else if (strcmp(mutex_name, "bitonic_cas") == 0)                 lock = numa_new<BitonicCASLock>();
+    else if (strcmp(mutex_name, "bitonic_bl") == 0)                  lock = numa_new<BitonicBLLock>();
+    else if (strcmp(mutex_name, "bitonic_lamport") == 0)             lock = numa_new<BitonicLamportLock>();
+    else if (strcmp(mutex_name, "bitonic_elevator") == 0)            lock = numa_new<BitonicElevatorLock>();
+    else if (strcmp(mutex_name, "bitonic_bakery") == 0)              lock = numa_new<BitonicBakeryLock>();
+    else if (strcmp(mutex_name, "periodic_cas") == 0)                lock = numa_new<PeriodicCASLock>();
+    else if (strcmp(mutex_name, "periodic_bl") == 0)                 lock = numa_new<PeriodicBLLock>();
+    else if (strcmp(mutex_name, "periodic_lamport") == 0)            lock = numa_new<PeriodicLamportLock>();
+    else if (strcmp(mutex_name, "periodic_elevator") == 0)           lock = numa_new<PeriodicElevatorLock>();
+    else if (strcmp(mutex_name, "periodic_bakery") == 0)             lock = numa_new<PeriodicBakeryLock>();
+    else if (strcmp(mutex_name, "lw_bitonic_cas") == 0)              lock = numa_new<LWBitonicCASLock>();
+    else if (strcmp(mutex_name, "lw_bitonic_bl") == 0)               lock = numa_new<LWBitonicBLLock>();
+    else if (strcmp(mutex_name, "lw_bitonic_lamport") == 0)          lock = numa_new<LWBitonicLamportLock>();
+    else if (strcmp(mutex_name, "lw_bitonic_bakery") == 0)           lock = numa_new<LWBitonicBakeryLock>();
+    else if (strcmp(mutex_name, "lw_periodic_cas") == 0)             lock = numa_new<LWPeriodicCASLock>();
+    else if (strcmp(mutex_name, "lw_periodic_bl") == 0)              lock = numa_new<LWPeriodicBLLock>();
+    else if (strcmp(mutex_name, "lw_periodic_lamport") == 0)         lock = numa_new<LWPeriodicLamportLock>();
+    else if (strcmp(mutex_name, "lw_periodic_bakery") == 0)          lock = numa_new<LWPeriodicBakeryLock>();
+    else if (strcmp(mutex_name, "seq_bitonic_cas") == 0)             lock = numa_new<SeqBitonicCASLock>();
+    else if (strcmp(mutex_name, "seq_bitonic_bl") == 0)              lock = numa_new<SeqBitonicBLLock>();
+    else if (strcmp(mutex_name, "seq_bitonic_lamport") == 0)         lock = numa_new<SeqBitonicLamportLock>();
+    else if (strcmp(mutex_name, "seq_bitonic_bakery") == 0)          lock = numa_new<SeqBitonicBakeryLock>();
+    else if (strcmp(mutex_name, "seq_periodic_cas") == 0)            lock = numa_new<SeqPeriodicCASLock>();
+    else if (strcmp(mutex_name, "seq_periodic_bl") == 0)             lock = numa_new<SeqPeriodicBLLock>();
+    else if (strcmp(mutex_name, "seq_periodic_lamport") == 0)        lock = numa_new<SeqPeriodicLamportLock>();
+    else if (strcmp(mutex_name, "seq_periodic_bakery") == 0)         lock = numa_new<SeqPeriodicBakeryLock>();
+    else if (strcmp(mutex_name, "wf_bitonic_cas") == 0)              lock = numa_new<WFBitonicCASLock>();
+    else if (strcmp(mutex_name, "wf_bitonic_bl") == 0)               lock = numa_new<WFBitonicBLLock>();
+    else if (strcmp(mutex_name, "wf_bitonic_lamport") == 0)          lock = numa_new<WFBitonicLamportLock>();
+    else if (strcmp(mutex_name, "wf_bitonic_bakery") == 0)           lock = numa_new<WFBitonicBakeryLock>();
+    else if (strcmp(mutex_name, "wf_periodic_cas") == 0)             lock = numa_new<WFPeriodicCASLock>();
+    else if (strcmp(mutex_name, "wf_periodic_bl") == 0)              lock = numa_new<WFPeriodicBLLock>();
+    else if (strcmp(mutex_name, "wf_periodic_lamport") == 0)         lock = numa_new<WFPeriodicLamportLock>();
+    else if (strcmp(mutex_name, "wf_periodic_bakery") == 0)          lock = numa_new<WFPeriodicBakeryLock>();
     #ifdef inc_futex
         else if (strcmp(mutex_name, "futex") == 0)               lock = numa_new<FutexLock>();
     #endif
@@ -403,6 +440,40 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "cohortTAS") == 0)                   lock =new CohortTASLock() ;
     else if (strcmp(mutex_name, "cohortPTicket") == 0)               lock =new CohortPTicketLock() ;
     else if (strcmp(mutex_name, "hclh") == 0)                        lock =new hclh::HCLHMutex() ;
+    else if (strcmp(mutex_name, "bitonic_cas") == 0)                 lock =new BitonicCASLock() ;
+    else if (strcmp(mutex_name, "bitonic_bl") == 0)                  lock =new BitonicBLLock() ;
+    else if (strcmp(mutex_name, "bitonic_lamport") == 0)             lock =new BitonicLamportLock() ;
+    else if (strcmp(mutex_name, "bitonic_elevator") == 0)            lock =new BitonicElevatorLock() ;
+    else if (strcmp(mutex_name, "bitonic_bakery") == 0)              lock =new BitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "periodic_cas") == 0)                lock =new PeriodicCASLock() ;
+    else if (strcmp(mutex_name, "periodic_bl") == 0)                 lock =new PeriodicBLLock() ;
+    else if (strcmp(mutex_name, "periodic_lamport") == 0)            lock =new PeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "periodic_elevator") == 0)           lock =new PeriodicElevatorLock() ;
+    else if (strcmp(mutex_name, "periodic_bakery") == 0)             lock =new PeriodicBakeryLock() ;
+    else if (strcmp(mutex_name, "lw_bitonic_cas") == 0)              lock =new LWBitonicCASLock() ;
+    else if (strcmp(mutex_name, "lw_bitonic_bl") == 0)               lock =new LWBitonicBLLock() ;
+    else if (strcmp(mutex_name, "lw_bitonic_lamport") == 0)          lock =new LWBitonicLamportLock() ;
+    else if (strcmp(mutex_name, "lw_bitonic_bakery") == 0)           lock =new LWBitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "lw_periodic_cas") == 0)             lock =new LWPeriodicCASLock() ;
+    else if (strcmp(mutex_name, "lw_periodic_bl") == 0)              lock =new LWPeriodicBLLock() ;
+    else if (strcmp(mutex_name, "lw_periodic_lamport") == 0)         lock =new LWPeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "lw_periodic_bakery") == 0)          lock =new LWPeriodicBakeryLock() ;
+    else if (strcmp(mutex_name, "seq_bitonic_cas") == 0)             lock =new SeqBitonicCASLock() ;
+    else if (strcmp(mutex_name, "seq_bitonic_bl") == 0)              lock =new SeqBitonicBLLock() ;
+    else if (strcmp(mutex_name, "seq_bitonic_lamport") == 0)         lock =new SeqBitonicLamportLock() ;
+    else if (strcmp(mutex_name, "seq_bitonic_bakery") == 0)          lock =new SeqBitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "seq_periodic_cas") == 0)            lock =new SeqPeriodicCASLock() ;
+    else if (strcmp(mutex_name, "seq_periodic_bl") == 0)             lock =new SeqPeriodicBLLock() ;
+    else if (strcmp(mutex_name, "seq_periodic_lamport") == 0)        lock =new SeqPeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "seq_periodic_bakery") == 0)         lock =new SeqPeriodicBakeryLock() ;
+    else if (strcmp(mutex_name, "wf_bitonic_cas") == 0)              lock =new WFBitonicCASLock() ;
+    else if (strcmp(mutex_name, "wf_bitonic_bl") == 0)               lock =new WFBitonicBLLock() ;
+    else if (strcmp(mutex_name, "wf_bitonic_lamport") == 0)          lock =new WFBitonicLamportLock() ;
+    else if (strcmp(mutex_name, "wf_bitonic_bakery") == 0)           lock =new WFBitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "wf_periodic_cas") == 0)             lock =new WFPeriodicCASLock() ;
+    else if (strcmp(mutex_name, "wf_periodic_bl") == 0)              lock =new WFPeriodicBLLock() ;
+    else if (strcmp(mutex_name, "wf_periodic_lamport") == 0)         lock =new WFPeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "wf_periodic_bakery") == 0)          lock =new WFPeriodicBakeryLock() ;
     #ifdef inc_futex
         else if (strcmp(mutex_name, "futex") == 0)               lock =new FutexLock() ;
     #endif

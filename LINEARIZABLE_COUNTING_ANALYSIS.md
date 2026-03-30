@@ -1,0 +1,342 @@
+# Linearizable Counting Networks for Mutual Exclusion: Analysis & Design
+
+## 1. Paper Summaries
+
+### 1.1 Lynch, Shavit, Shvartsman (1996) — "Counting Networks Are Practically Linearizable"
+
+**Core result**: Standard counting networks (bitonic, periodic) are only *quiescently
+consistent*, not linearizable. However, under bounded-time execution assumptions
+(each balancer access completes within time *s*), the tokens produced are
+**approximately linearizable** — the ordering deviates from a linearizable
+counter by at most O(depth × concurrency).
+
+**Key insight for locks**: If balancer access time is bounded (reasonable on
+non-preemptive or real-time systems), then the successor of a thread holding
+token *k* is likely to hold a token within *k ± window*, where
+*window = O(depth) = O(log²W)*. This bounds the search for the successor
+from O(n) to O(log²W) under favorable conditions.
+
+**Timing assumption**: Each thread's step (balancer access) takes at most *s*
+time units. Network processing of a single token takes at most *d* steps (depth).
+Under these bounds, the "linearizability window" — the maximum reordering
+distance — is O(d · s).
+
+### 1.2 Herlihy, Shavit, Waarts (1996) — "Linearizable Counting Networks"
+
+**Core result**: Constructs counting networks that ARE linearizable (not just
+quiescently consistent). The construction modifies standard networks to add
+a comparison-based routing mechanism.
+
+**Key construction**: Each "comparable balancer" compares timestamps of arrivals
+and routes the earlier arrival to the lower output wire. This serializes
+traversals at each balancer, creating a linearization point.
+
+**Lower bound**: Any **nonblocking** linearizable counting network requires
+contention Ω(n). This means lock-free linearizable counting must have at least
+linear contention — the distributed advantage of counting networks is lost.
+
+**Blocking construction**: O(log²n) depth is achievable with **blocking**
+balancers (threads may wait at balancers). This preserves the contention
+distribution but sacrifices lock-freedom.
+
+**Implication for locks**: Since we're building locks (inherently blocking),
+the Ω(n) lower bound for nonblocking doesn't apply. We CAN have linearizable
+counting with O(log²n) depth using blocking balancers. However, the blocking
+at each balancer adds latency to the lock path.
+
+---
+
+## 2. The Successor-Lookup Problem
+
+### 2.1 Current State: O(n) Scan
+
+The existing `BitonicCountingLock` and `PeriodicCountingLock` unlock via:
+
+```
+grant_next():
+  for i in [0, n):                      // O(n) scan
+    if thread[i].waiting:
+      compute (wire_dist, round, tid) priority
+      track minimum
+  wake minimum-priority thread
+```
+
+This scans ALL n threads to find the one with the best (wire_distance, round,
+tid) triple. The priority ordering ensures the step-property-predicted successor
+is preferred, but every thread must still be checked.
+
+### 2.2 Goal: O(1) or O(W) Successor Lookup
+
+If the network produces tokens with predictable structure, the unlocker can
+compute the successor's (wire, round) pair directly:
+
+```
+Given current thread at (wire=w, round=r):
+  successor_wire  = (w + 1) % W
+  successor_round = r + (w == W-1 ? 1 : 0)
+```
+
+This prediction is exact under the step property (quiescence) and approximately
+correct under practical linearizability (bounded timing).
+
+### 2.3 Why Linearizability Matters
+
+**Quiescent consistency** (standard counting networks):
+- The step property y_i = ⌈(m-i)/W⌉ holds only at quiescent states
+- Between quiescent states, tokens may be assigned "out of order"
+- Per-pair rounds from different final-layer balancers are INDEPENDENT
+- Tokens from `traverse_full()` are unique but NOT contiguous during concurrent access
+- The successor at the predicted (wire, round) might not exist yet → scan needed
+
+**Linearizability** (Lynch et al. practical, or Herlihy et al. construction):
+- Token ordering is consistent with real-time (or approximately so)
+- The successor's token value is close to predicted → bounded window search
+- Under practical linearizability: window = O(depth) = O(log²W)
+- Under true linearizability: successor is exactly at predicted position
+
+**The critical difference**: Linearizability bounds the REAL-TIME gap between
+consecutive tokens. Thread k's successor (token k+1) entered the network at
+approximately the same time, so it will register soon. With mere quiescent
+consistency, token k+1 could be a thread that entered much later, leaving the
+unlocker spinning unpredictably.
+
+---
+
+## 3. Assumptions (Made Explicit)
+
+### A1: Step Property Holds Approximately Under Concurrency
+The step property y_i = ⌈(m-i)/W⌉ holds at quiescence. Under concurrent access,
+the distribution across wires is approximately even but may deviate by up to
+O(depth) tokens. This affects accuracy of the successor prediction.
+
+**Where this breaks**: Under extreme contention, many tokens are "in flight"
+simultaneously. The step property violation can be as large as the number of
+concurrent traversals (bounded by n).
+
+### A2: Balancer Access Time is Bounded (Practical Linearizability)
+Each balancer access (fetch_add, TAS, or software lock) completes within bounded
+time *s*. The network depth *d* gives a total traversal time bound of *d·s*.
+
+**Where this breaks**: OS preemption. A thread can be descheduled mid-traversal
+for arbitrarily long. This violates the timing bound and invalidates the
+practical linearizability window. On preemptive systems, the "window" is
+effectively unbounded.
+
+**Mitigation**: The waker protocol handles this — if the predicted successor
+hasn't registered, the unlocker sets a waker flag and the successor self-starts
+on registration. The lock is still correct; only the O(1) prediction fails.
+
+### A3: Thread Registration After Traversal is Bounded-Time
+After completing network traversal, a thread writes its metadata to the per-wire
+slot before spinning. The window between traversal completion and registration
+is the "registration gap."
+
+**Where this breaks**: Preemption between traversal and registration. Same
+mitigation as A2: waker flag handles this.
+
+### A4: Per-Wire Round Capacity is Sufficient
+The per-wire slot array has finite capacity (rounds_cap). If more than
+rounds_cap tokens land on a single wire before earlier tokens are served,
+slots wrap around and corrupt.
+
+**Condition**: rounds_cap ≥ max_concurrent_waiters / width. With n threads and
+W = O(√n) width, this is O(√n) slots per wire.
+
+### A5: Per-Pair Rounds Are Independent Across Final-Layer Balancers
+The `traverse()` last-balancer value encodes a per-PAIR round, not a global round.
+Two final-layer balancers may have arbitrarily different round counts during
+concurrent access. This means `(last_val >> 1) * width + wire` produces unique
+but NON-CONTIGUOUS tokens.
+
+**Impact**: Direct successor prediction `next_token = my_token + 1` may reference
+a token that doesn't exist (gap in the token space). The per-wire sweep fallback
+handles this at O(W) cost.
+
+### A6: Truly Linearizable Network Construction Requires Blocking
+Herlihy-Shavit-Waarts proved that any nonblocking linearizable counting network
+has contention Ω(n). Their blocking construction achieves O(log²n) but adds
+waiting at each balancer. This increases lock-path latency.
+
+**Trade-off**: True linearizability gives guaranteed O(1) successor lookup but
+at the cost of higher lock-path latency. Practical linearizability gives O(1)
+best-case with O(W) fallback, without modifying the network.
+
+---
+
+## 4. Proposed Designs
+
+### Design A: Wire-Indexed Counting Lock (Predictive, O(W) Unlock)
+
+**Architecture**:
+- Standard bitonic/periodic network (unchanged)
+- Per-wire slot arrays indexed by per-pair round
+- Each wire tracks its `serve_round` (next round to serve)
+- Non-atomic `next_to_serve` counter protected by lock ownership
+
+**Lock path** (same complexity as current):
+1. `(wire, round) = network.traverse(input, tid, &lv); round = lv >> 1`
+2. Register at `wire_slots[wire][round % cap]`
+3. Waker protocol (same as existing)
+
+**Unlock path** (O(1) best, O(W) worst):
+1. Increment `next_to_serve` (non-atomic, protected by lock)
+2. Predict: `pred_wire = next_to_serve % width`, `pred_round computed from wire_heads`
+3. Check `wire_slots[pred_wire][pred_round % cap]`
+4. If hit: wake thread, advance `wire_heads[pred_wire]` → **O(1)**
+5. Else: sweep all W wires for minimum `(serve_round, wire)` → **O(W)**
+6. If none found: set waker flag
+
+**Space**: O(W × rounds_cap) = O(W × n/W) = O(n) per-wire slots + O(W) wire heads
+
+**Key advantage**: No extra atomic instruction on lock path. Unlock reduces from
+O(n) to O(W). Under practical linearizability, prediction hits often → O(1) average.
+
+**Key limitation**: Non-contiguous per-pair rounds break the `next_to_serve` prediction
+under high concurrency. Fallback to O(W) sweep. Still much better than O(n).
+
+### Design B: Sequenced Counting Lock (Guaranteed O(1) Unlock)
+
+**Architecture**:
+- Standard bitonic/periodic network (for contention distribution)
+- ONE global `atomic<size_t> global_seq` (the linearization point)
+- Slot array indexed by sequence number
+- `now_serving` counter (non-atomic, protected by lock)
+
+**Lock path** (one extra atomic):
+1. `network.traverse(input, tid)` — distributes contention across W/2 balancers
+2. `seq = global_seq.fetch_add(1)` — THE linearization point. Contiguous.
+3. Register at `slots[seq % cap]`
+4. If `now_serving == seq`: self-grant
+5. Else: spin on local flag
+
+**Unlock path** (guaranteed O(1)):
+1. `now_serving++`
+2. Check `slots[now_serving % cap]`
+3. If occupied: wake → **O(1) always**
+4. Else: brief spin, then waker flag (successor hasn't registered yet)
+
+**Space**: O(cap) slots where cap ≥ n (total threads)
+
+**Key advantage**: Guaranteed O(1) unlock. The global_seq provides a true
+linearization point — tokens are contiguous and globally ordered.
+
+**Key limitation**: One additional shared cache line (global_seq). Under very high
+contention, this becomes a serialization bottleneck. However, the counting network
+distributes arrival times, so threads hit global_seq at staggered intervals,
+reducing contention on it compared to a pure ticket lock.
+
+**Comparison to `cn_array_lock`**: Architecturally similar — both use a global
+counter for contiguous tokens + slot array for O(1) unlock. The difference:
+cn_array uses a FLAT (non-recursive) bitonic network where the last-layer
+balancer's counter IS the global sequence. Our design uses a RECURSIVE network
+(deeper, better contention distribution at scale) with a SEPARATE global counter.
+
+### Design C: True Linearizable Network (Herlihy-Shavit-Waarts Construction)
+
+**Not implemented.** The Ω(n) lower bound for nonblocking linearizable counting
+makes this design impractical compared to Design B (which achieves linearization
+with one atomic). A blocking construction is possible but adds complexity and
+latency at each balancer without clear benefit over Design B.
+
+---
+
+## 5. Performance Analysis
+
+| Metric               | Current O(n)           | Design A (Wire-Indexed) | Design B (Sequenced)  |
+|-----------------------|------------------------|-------------------------|-----------------------|
+| Lock atomics          | O(log²W) (network)     | O(log²W) (network)      | O(log²W + 1)          |
+| Unlock scan           | O(n)                   | O(1) to O(W)            | O(1) guaranteed       |
+| Unlock worst-case     | Θ(n)                   | O(W) + waker            | O(1) + waker          |
+| Extra shared state    | None                   | Per-wire slots + heads  | Global seq + slot arr |
+| Space                 | O(n) thread meta       | O(n) wire slots         | O(n) token slots      |
+| Contention bottleneck | None added             | None added              | global_seq (bounded)  |
+| Prediction accuracy   | N/A                    | High under step prop    | Perfect (linearizable)|
+
+### 5.1 When to Use Which
+
+- **Design A**: When lock-path contention must be minimized (no extra atomic).
+  Good for moderate contention where the step property holds well.
+
+- **Design B**: When unlock latency must be guaranteed O(1). The extra
+  fetch_add on the lock path is a small price for deterministic unlock.
+  Preferred for high-throughput scenarios where O(n) scan is the bottleneck.
+
+- **Current O(n)**: When n is small (≤16) or when W ≈ n (so O(W) ≈ O(n) anyway).
+  The simpler code may be faster for small thread counts due to lower constant factors.
+
+### 5.2 The Step Property Under Concurrency
+
+The step property guarantees even distribution at quiescence. Under k concurrent
+traversals, the wire distribution can differ by at most k from the step property
+prediction. Since the network has depth d = O(log²W), and at most d threads can
+be simultaneously inside the network, the maximum deviation is O(d) = O(log²W).
+
+This means Design A's prediction fails at most O(log²W) times per "epoch" of W
+tokens, giving amortized O(1 + log²W/W) per unlock — essentially O(1) for large W.
+
+### 5.3 Preemption Sensitivity
+
+Both designs handle preemption correctly via the waker protocol:
+- If the predicted successor hasn't registered (preempted mid-traversal):
+  - Design A: falls back to wire sweep, then waker flag
+  - Design B: brief spin, then waker flag
+- The preempted thread self-starts when it eventually registers and finds the
+  waker flag set
+
+Correctness is unaffected. Performance degrades gracefully: one preemption adds
+O(W) cost to Design A or O(spin) cost to Design B, not O(n).
+
+---
+
+## 6. Composable Unlock Schedules
+
+The user's hypothesis about "composable unlock schedules" from linearizability
+windows has a precise technical interpretation:
+
+**Schedule**: The sequence of (wire, round) pairs in which threads are granted
+the lock. The step property defines a "natural" schedule: wire 0 round 0,
+wire 1 round 0, ..., wire W-1 round 0, wire 0 round 1, ...
+
+**Composability**: If two counting networks (e.g., bitonic and periodic) produce
+tokens with the same step property, their unlock schedules are interchangeable.
+The per-wire slot infrastructure works regardless of which network produced the
+(wire, round) assignment. This enables:
+
+1. **Network-agnostic unlock**: The unlock logic is independent of whether the
+   network is bitonic, periodic, or any other step-property-satisfying network.
+
+2. **Modular design**: Swap networks without changing the unlock mechanism.
+   Different networks may perform better under different contention patterns,
+   and the per-wire unlock handles all of them.
+
+3. **Window-based scheduling**: Under practical linearizability, the unlock
+   examines a window of O(depth) candidates. Different networks have different
+   depths (bitonic: O(log²W), periodic: O(W·logW)), giving different window
+   sizes and thus different scheduling precision/cost trade-offs.
+
+---
+
+## 7. Summary of Critical Findings
+
+1. **Standard counting networks are NOT linearizable** — even with linearizable
+   (CAS/fetch_add) balancers. The network composition only guarantees quiescent
+   consistency. Per-pair rounds from different final-layer balancers are
+   independent, producing unique but non-contiguous tokens.
+
+2. **Practical linearizability** (Lynch et al.) bounds the non-contiguity under
+   timing assumptions. The window is O(depth × concurrency). This enables
+   predicted successor lookup with bounded fallback.
+
+3. **True linearizability** (Herlihy et al.) requires Ω(n) contention for
+   nonblocking, or O(log²n) with blocking. A single global fetch_add achieves
+   the same linearization more efficiently (Design B).
+
+4. **Per-wire indexing** (Design A) reduces the unlock scan from O(n) threads to
+   O(W) wires without any extra atomic. This is the most novel contribution.
+
+5. **The step property IS the key** — it enables wire-based organization and
+   successor prediction. Linearizability refines the prediction accuracy but
+   the step property alone provides the O(n) → O(W) reduction.
+
+6. **OS preemption** is the practical enemy of all these optimizations. The waker
+   protocol is essential for correctness under arbitrary scheduling.
