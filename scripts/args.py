@@ -93,6 +93,16 @@ def init_args():
 
     parser.add_argument('--bench', type=str, default='max')
     parser.add_argument('--skip-plotting', action='store_true')
+    parser.add_argument('--variability', action='store_true', default=False,
+                     help='additionally plot coefficient of variation (σ/μ) vs iter variable')
+    parser.add_argument('--speedup', nargs='?', const='exp_spin', default=None, metavar='REF_MUTEX',
+                     help='print speedup table relative to REF_MUTEX (default: exp_spin)')
+
+    plot_layout = parser.add_mutually_exclusive_group()
+    plot_layout.add_argument('--faceted', action='store_true', default=False,
+                     help='force faceted subplot layout grouped by mutex family')
+    plot_layout.add_argument('--combined', action='store_true', default=False,
+                     help='force single combined plot even with many series')
 
     # parser.add_argument('--numactl',  action='store_true',
     #                     help='use numactl to bind memory')
@@ -196,6 +206,15 @@ def init_args():
     Constants.low_contention = args.low_contention
     Constants.stagger_ms     = args.stagger_ms
     Constants.skip_plotting = args.skip_plotting
+    Constants.variability = args.variability
+    Constants.speedup = args.speedup is not None
+    Constants.speedup_ref = args.speedup
+    if args.faceted:
+        Constants.faceted = True
+    elif args.combined:
+        Constants.faceted = False
+    else:
+        Constants.faceted = None  # auto-decide based on series count
     Constants.software_cxl = args.scxl
     Constants.hardware_cxl = args.hcxl
 

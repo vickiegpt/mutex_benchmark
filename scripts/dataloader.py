@@ -55,6 +55,7 @@ def load_data_iter():
             for i in range(Constants.n_program_iterations):
                 data_file_name = get_data_file_name(mutex_name, i, **extra_command_args)
                 dataframe = pd.read_csv(data_file_name, names=get_column_names(Constants.rusage))
+                dataframe["run"] = i
                 dataframes.append(dataframe)
             dataframes=pd.concat(dataframes)
             dataframes[Constants.iter_variable_name] = iter_variable_value
