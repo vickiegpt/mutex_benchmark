@@ -353,6 +353,22 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "wf_periodic_bl") == 0)              lock = numa_new<WFPeriodicBLLock>();
     else if (strcmp(mutex_name, "wf_periodic_lamport") == 0)         lock = numa_new<WFPeriodicLamportLock>();
     else if (strcmp(mutex_name, "wf_periodic_bakery") == 0)          lock = numa_new<WFPeriodicBakeryLock>();
+    else if (strcmp(mutex_name, "skew_bitonic_cas") == 0)            lock = numa_new<SkewBitonicCASLock>();
+    else if (strcmp(mutex_name, "skew_bitonic_bl") == 0)             lock = numa_new<SkewBitonicBLLock>();
+    else if (strcmp(mutex_name, "skew_bitonic_lamport") == 0)        lock = numa_new<SkewBitonicLamportLock>();
+    else if (strcmp(mutex_name, "skew_bitonic_bakery") == 0)         lock = numa_new<SkewBitonicBakeryLock>();
+    else if (strcmp(mutex_name, "skew_periodic_cas") == 0)           lock = numa_new<SkewPeriodicCASLock>();
+    else if (strcmp(mutex_name, "skew_periodic_bl") == 0)            lock = numa_new<SkewPeriodicBLLock>();
+    else if (strcmp(mutex_name, "skew_periodic_lamport") == 0)       lock = numa_new<SkewPeriodicLamportLock>();
+    else if (strcmp(mutex_name, "skew_periodic_bakery") == 0)        lock = numa_new<SkewPeriodicBakeryLock>();
+    else if (strcmp(mutex_name, "rskew_bitonic_cas") == 0)           lock = numa_new<RSkewBitonicCASLock>();
+    else if (strcmp(mutex_name, "rskew_bitonic_bl") == 0)            lock = numa_new<RSkewBitonicBLLock>();
+    else if (strcmp(mutex_name, "rskew_bitonic_lamport") == 0)       lock = numa_new<RSkewBitonicLamportLock>();
+    else if (strcmp(mutex_name, "rskew_bitonic_bakery") == 0)        lock = numa_new<RSkewBitonicBakeryLock>();
+    else if (strcmp(mutex_name, "rskew_periodic_cas") == 0)          lock = numa_new<RSkewPeriodicCASLock>();
+    else if (strcmp(mutex_name, "rskew_periodic_bl") == 0)           lock = numa_new<RSkewPeriodicBLLock>();
+    else if (strcmp(mutex_name, "rskew_periodic_lamport") == 0)      lock = numa_new<RSkewPeriodicLamportLock>();
+    else if (strcmp(mutex_name, "rskew_periodic_bakery") == 0)       lock = numa_new<RSkewPeriodicBakeryLock>();
     #ifdef inc_futex
         else if (strcmp(mutex_name, "futex") == 0)               lock = numa_new<FutexLock>();
     #endif
@@ -474,6 +490,22 @@ SoftwareMutex *get_mutex(const char *mutex_name, size_t num_threads) {
     else if (strcmp(mutex_name, "wf_periodic_bl") == 0)              lock =new WFPeriodicBLLock() ;
     else if (strcmp(mutex_name, "wf_periodic_lamport") == 0)         lock =new WFPeriodicLamportLock() ;
     else if (strcmp(mutex_name, "wf_periodic_bakery") == 0)          lock =new WFPeriodicBakeryLock() ;
+    else if (strcmp(mutex_name, "skew_bitonic_cas") == 0)            lock =new SkewBitonicCASLock() ;
+    else if (strcmp(mutex_name, "skew_bitonic_bl") == 0)             lock =new SkewBitonicBLLock() ;
+    else if (strcmp(mutex_name, "skew_bitonic_lamport") == 0)        lock =new SkewBitonicLamportLock() ;
+    else if (strcmp(mutex_name, "skew_bitonic_bakery") == 0)         lock =new SkewBitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "skew_periodic_cas") == 0)           lock =new SkewPeriodicCASLock() ;
+    else if (strcmp(mutex_name, "skew_periodic_bl") == 0)            lock =new SkewPeriodicBLLock() ;
+    else if (strcmp(mutex_name, "skew_periodic_lamport") == 0)       lock =new SkewPeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "skew_periodic_bakery") == 0)        lock =new SkewPeriodicBakeryLock() ;
+    else if (strcmp(mutex_name, "rskew_bitonic_cas") == 0)           lock =new RSkewBitonicCASLock() ;
+    else if (strcmp(mutex_name, "rskew_bitonic_bl") == 0)            lock =new RSkewBitonicBLLock() ;
+    else if (strcmp(mutex_name, "rskew_bitonic_lamport") == 0)       lock =new RSkewBitonicLamportLock() ;
+    else if (strcmp(mutex_name, "rskew_bitonic_bakery") == 0)        lock =new RSkewBitonicBakeryLock() ;
+    else if (strcmp(mutex_name, "rskew_periodic_cas") == 0)          lock =new RSkewPeriodicCASLock() ;
+    else if (strcmp(mutex_name, "rskew_periodic_bl") == 0)           lock =new RSkewPeriodicBLLock() ;
+    else if (strcmp(mutex_name, "rskew_periodic_lamport") == 0)      lock =new RSkewPeriodicLamportLock() ;
+    else if (strcmp(mutex_name, "rskew_periodic_bakery") == 0)       lock =new RSkewPeriodicBakeryLock() ;
     #ifdef inc_futex
         else if (strcmp(mutex_name, "futex") == 0)               lock =new FutexLock() ;
     #endif

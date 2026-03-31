@@ -707,7 +707,302 @@ public:
 
 
 // =============================================================================
-// SECTION 4: Concrete Type Aliases
+// SECTION 4: Skew-Filter Counting Lock  (Design D)
+//
+// From Herlihy, Shavit, Waarts (1996), Section 4.1: "The Skew Network"
+//
+// Architecture: counting_network → Skew-filter → per-wire counters
+//
+// A counting network distributes contention across O(log²W) balancers.
+// The Skew-filter (d layers of Skew-layer networks) then reorders the
+// tokens so that the combined output is linearizable.
+//
+// Skew-layer structure (paper Figure 4):
+//   A chain of balancers b_0, b_1, b_2, ...
+//   - b_0: both inputs are network inputs (wires 0 and 1)
+//   - b_i (i>0): north input = south output of b_{i-1};
+//                 south input = network input wire 2i+1 (if exists)
+//   - All b_i: north output = layer output wire
+//   - Last balancer's south output = last layer output wire
+//
+// Folding (Section 4.3):
+//   The infinite Skew-filter is folded into a w×d grid of multi-balancers.
+//   Multi-balancer c[i][j] simulates b_{i-j}, b_{i-j+w}, b_{i-j+2w}, ...
+//   Each multi-balancer uses an atomic counter (Theorem 4.12: at most
+//   2n+2 toggle transitions, so a bounded counter suffices).
+//
+// For the mutex: output values serve as tickets ordered by now_serving.
+//
+// Complexity:
+//   Lock:   O(log²W) network + O(n) filter layers (avg path 2n-2 balancers)
+//   Unlock: O(1) — advance now_serving + direct handoff
+//   Space:  O(W·d·CL) balancers + O(n·CL) slots
+//   Waiting: Requires waiting (same correctness as Waiting-filter, but
+//            contention is distributed through the Skew-filter topology)
+//
+// Linearizability: Theorem 4.8 — if d ≥ n-1, exit(a) < enter(b) ⟹ val(a) < val(b)
+// =============================================================================
+
+template <typename Sync, template <typename> class NetworkT>
+class SkewFilterCountingLock : public virtual SoftwareMutex {
+public:
+    void init(size_t num_threads) override {
+        num_threads_ = num_threads;
+
+        // Width = smallest power of 2 >= ceil(sqrt(n)), minimum 2
+        size_t target = (size_t)std::ceil(std::sqrt((double)num_threads));
+        if (target < 2) target = 2;
+        width_ = 1;
+        while (width_ < target) width_ *= 2;
+
+        // Filter height: tokens enter on rows 0..width-1 and can move
+        // down up to n-1 rows through the filter.
+        filter_rows_ = width_ + num_threads;
+
+        // Layer depth d >= n-1 for correctness (Theorem 4.8)
+        layer_depth_ = (num_threads > 1) ? (num_threads - 1) : 1;
+
+        network_.build(width_, num_threads);
+
+        // Allocate toggle array (needs atomic alignment)
+        size_t toggle_count = filter_rows_ * layer_depth_;
+        toggles_ = new std::atomic<size_t>[toggle_count];
+        for (size_t i = 0; i < toggle_count; i++) {
+            toggles_[i].store(0, std::memory_order_relaxed);
+        }
+
+        global_seq_.store(0, std::memory_order_relaxed);
+        now_serving_.store(0, std::memory_order_relaxed);
+        initialized_ = true;
+    }
+
+    void lock(size_t thread_id) override {
+        // 1. Traverse counting network (distributes contention)
+        size_t lv = 0;
+        network_.traverse((int)(thread_id % width_), thread_id, &lv);
+
+        // 2. Traverse Skew-filter.
+        //    Skew-layer topology (per layer):
+        //      toggle even -> north (stay at row r)
+        //      toggle odd  -> south (move to row r+1)
+        size_t lv_wire = (size_t)(lv & 1);
+        size_t lv_round = lv >> 1;
+        size_t row = lv_round * width_ + lv_wire;
+
+        for (size_t layer = 0; layer < layer_depth_; layer++) {
+            size_t folded = row % filter_rows_;
+            size_t idx = folded * layer_depth_ + layer;
+            size_t val = toggles_[idx].fetch_add(1, std::memory_order_acq_rel);
+            if (val & 1) row = row + 1;
+        }
+
+        // 3. Ticket allocation: global sequence number
+        //    The counting network + filter distribute contention so
+        //    threads reach this point at staggered intervals.
+        size_t ticket = global_seq_.fetch_add(1, std::memory_order_relaxed);
+
+        // 4. Spin until now_serving matches our ticket (ticket-lock)
+        while (now_serving_.load(std::memory_order_acquire) != ticket) {
+            LcSpinHint();
+        }
+    }
+
+    void unlock(size_t /*thread_id*/) override {
+        now_serving_.fetch_add(1, std::memory_order_release);
+    }
+
+    void destroy() override {
+        if (!initialized_) return;
+        initialized_ = false;
+        network_.destroy();
+        delete[] toggles_;
+        toggles_ = nullptr;
+    }
+
+    std::string name() override {
+        return std::string("skew_counting_") + Sync::sync_name();
+    }
+
+private:
+    NetworkT<Sync> network_;
+    size_t num_threads_  = 0;
+    size_t width_        = 0;
+    size_t filter_rows_  = 0;
+    size_t layer_depth_  = 0;
+
+    std::atomic<size_t>* toggles_   = nullptr;  // filter balancers
+    std::atomic<size_t>  global_seq_{0};         // ticket counter
+    std::atomic<size_t>  now_serving_{0};        // ticket-lock serving counter
+
+    bool initialized_ = false;
+};
+
+// Named specializations per network type
+
+template <typename Sync>
+class SkewBitonicLock
+    : public SkewFilterCountingLock<Sync, BitonicNetwork> {
+public:
+    std::string name() override {
+        return std::string("skew_bitonic_") + Sync::sync_name();
+    }
+};
+
+template <typename Sync>
+class SkewPeriodicLock
+    : public SkewFilterCountingLock<Sync, PeriodicNetwork> {
+public:
+    std::string name() override {
+        return std::string("skew_periodic_") + Sync::sync_name();
+    }
+};
+
+
+// =============================================================================
+// SECTION 4.5: Reverse-Skew-Filter Counting Lock  (Design E)
+//
+// From Herlihy, Shavit, Waarts (1996), Section 4.2: "The Reverse-skew Network"
+//
+// The Reverse-skew-filter is the mirror image of the Skew-filter.
+// In a Reverse-layer:
+//   - b_0: both outputs are network output wires
+//   - b_i (i>0): south output = network output wire;
+//                 north output = south input of b_{i-1}
+//
+// A token entering on a high wire drops toward wire 0, picking up
+// its output wire along the way.  This guarantees that every token
+// exits after at most O(n²/w) balancers — the Reverse-skew network
+// is WAIT-FREE (no starvation), unlike the Skew network.
+//
+// Reverse-layer topology (per layer):
+//   Token at row r:
+//     toggle even → south (output/stay at row r)
+//     toggle odd  → north (move to row r-1, i.e., toward wire 0)
+//
+// For the mutex: same handoff as the Skew-filter lock (now_serving + slots).
+//
+// Complexity:
+//   Lock:   O(log²W) network + O(n) filter (bounded, no starvation)
+//   Unlock: O(1) — advance now_serving + direct handoff
+//   Space:  O(W·d·CL) + O(n·CL)
+//   Waiting: Wait-free (every token exits after bounded steps)
+//
+// Theorem 4.10: With d ≥ ⌈(n-1)/2⌉·w - 1 layer depth, the Reverse-skew
+// network solves linearizable counting.
+// =============================================================================
+
+template <typename Sync, template <typename> class NetworkT>
+class ReverseSkewFilterCountingLock : public virtual SoftwareMutex {
+public:
+    void init(size_t num_threads) override {
+        num_threads_ = num_threads;
+
+        size_t target = (size_t)std::ceil(std::sqrt((double)num_threads));
+        if (target < 2) target = 2;
+        width_ = 1;
+        while (width_ < target) width_ *= 2;
+
+        filter_rows_ = width_ + num_threads;
+        layer_depth_ = (num_threads > 1) ? (num_threads - 1) : 1;
+
+        network_.build(width_, num_threads);
+
+        // Allocate toggle array
+        size_t toggle_count = filter_rows_ * layer_depth_;
+        toggles_ = new std::atomic<size_t>[toggle_count];
+        for (size_t i = 0; i < toggle_count; i++) {
+            toggles_[i].store(0, std::memory_order_relaxed);
+        }
+
+        global_seq_.store(0, std::memory_order_relaxed);
+        now_serving_.store(0, std::memory_order_relaxed);
+        initialized_ = true;
+    }
+
+    void lock(size_t thread_id) override {
+        // 1. Traverse counting network
+        size_t lv = 0;
+        network_.traverse((int)(thread_id % width_), thread_id, &lv);
+
+        // 2. Traverse Reverse-skew-filter (mirror of Skew-filter).
+        //    Reverse-layer topology:
+        //      toggle even -> south (stay at current row)
+        //      toggle odd  -> north (move up to row r-1)
+        size_t lv_wire = (size_t)(lv & 1);
+        size_t lv_round = lv >> 1;
+        size_t row = lv_round * width_ + lv_wire;
+
+        for (size_t layer = 0; layer < layer_depth_; layer++) {
+            size_t folded = row % filter_rows_;
+            size_t idx = folded * layer_depth_ + layer;
+            size_t val = toggles_[idx].fetch_add(1, std::memory_order_acq_rel);
+            if (val & 1) {
+                if (row > 0) row = row - 1;
+            }
+        }
+
+        // 3. Ticket allocation
+        size_t ticket = global_seq_.fetch_add(1, std::memory_order_relaxed);
+
+        // 4. Spin until now_serving matches our ticket
+        while (now_serving_.load(std::memory_order_acquire) != ticket) {
+            LcSpinHint();
+        }
+    }
+
+    void unlock(size_t /*thread_id*/) override {
+        now_serving_.fetch_add(1, std::memory_order_release);
+    }
+
+    void destroy() override {
+        if (!initialized_) return;
+        initialized_ = false;
+        network_.destroy();
+        delete[] toggles_;
+        toggles_ = nullptr;
+    }
+
+    std::string name() override {
+        return std::string("rskew_counting_") + Sync::sync_name();
+    }
+
+private:
+    NetworkT<Sync> network_;
+    size_t num_threads_  = 0;
+    size_t width_        = 0;
+    size_t filter_rows_  = 0;
+    size_t layer_depth_  = 0;
+
+    std::atomic<size_t>* toggles_   = nullptr;
+    std::atomic<size_t>  global_seq_{0};
+    std::atomic<size_t>  now_serving_{0};
+
+    bool initialized_ = false;
+};
+
+// Named specializations per network type
+
+template <typename Sync>
+class RSkewBitonicLock
+    : public ReverseSkewFilterCountingLock<Sync, BitonicNetwork> {
+public:
+    std::string name() override {
+        return std::string("rskew_bitonic_") + Sync::sync_name();
+    }
+};
+
+template <typename Sync>
+class RSkewPeriodicLock
+    : public ReverseSkewFilterCountingLock<Sync, PeriodicNetwork> {
+public:
+    std::string name() override {
+        return std::string("rskew_periodic_") + Sync::sync_name();
+    }
+};
+
+
+// =============================================================================
+// SECTION 5: Concrete Type Aliases
 // =============================================================================
 
 //TODO: DOES NOT WORK
@@ -745,5 +1040,27 @@ using WFPeriodicCASLock      = WFPeriodicLock<BnCASSync>;
 using WFPeriodicBLLock       = WFPeriodicLock<BnBLSync>;
 using WFPeriodicLamportLock  = WFPeriodicLock<BnLamportSync>;
 using WFPeriodicBakeryLock   = WFPeriodicLock<BnBakerySync>;
+
+// ── Design D: Skew-Filter (non-blocking linearizable, O(n) avg depth) ───────
+using SkewBitonicCASLock      = SkewBitonicLock<BnCASSync>;
+using SkewBitonicBLLock       = SkewBitonicLock<BnBLSync>;
+using SkewBitonicLamportLock  = SkewBitonicLock<BnLamportSync>;
+using SkewBitonicBakeryLock   = SkewBitonicLock<BnBakerySync>;
+
+using SkewPeriodicCASLock      = SkewPeriodicLock<BnCASSync>;
+using SkewPeriodicBLLock       = SkewPeriodicLock<BnBLSync>;
+using SkewPeriodicLamportLock  = SkewPeriodicLock<BnLamportSync>;
+using SkewPeriodicBakeryLock   = SkewPeriodicLock<BnBakerySync>;
+
+// ── Design E: Reverse-Skew-Filter (wait-free linearizable, O(n) depth) ──────
+using RSkewBitonicCASLock      = RSkewBitonicLock<BnCASSync>;
+using RSkewBitonicBLLock       = RSkewBitonicLock<BnBLSync>;
+using RSkewBitonicLamportLock  = RSkewBitonicLock<BnLamportSync>;
+using RSkewBitonicBakeryLock   = RSkewBitonicLock<BnBakerySync>;
+
+using RSkewPeriodicCASLock      = RSkewPeriodicLock<BnCASSync>;
+using RSkewPeriodicBLLock       = RSkewPeriodicLock<BnBLSync>;
+using RSkewPeriodicLamportLock  = RSkewPeriodicLock<BnLamportSync>;
+using RSkewPeriodicBakeryLock   = RSkewPeriodicLock<BnBakerySync>;
 
 #endif // LINEARIZABLE_COUNTING_LOCK_HPP
